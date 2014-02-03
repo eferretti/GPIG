@@ -10,7 +10,7 @@ public class RecordSet<DataType>
 	private Date toTime;
 	private int sensorID;
 	private List<SensorRecord<DataType>> data;
-	
+
 	public RecordSet(Date from, Date to, int sensor)
 	{
 		this.fromTime = from;
