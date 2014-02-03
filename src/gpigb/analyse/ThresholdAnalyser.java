@@ -24,14 +24,16 @@ public boolean Analyse(RecordSet<?> input){
 	boolean r = false;
 	
 	for(int i = 0; i<size; i++){
-		if(inputs.getReadingAtPosition(i).getData() < lowerThreshold ||
-			inputs.getReadingAtPosition(i).getData() > upperThreshold){
+		SensorRecord<Integer> rec = inputs.getReadingAtPosition(i);
+		if(rec.getData() < lowerThreshold ||
+			rec.getData() > upperThreshold){
 			
 			r = true;
 			
 			List<RecordSet<?>> rt = new ArrayList<RecordSet<?>>();
 			RecordSet<Integer> add = new RecordSet<Integer>(inputs.getFromTime(), inputs.getToTime(), inputs.getSensorID());  
 			add.addRecord(inputs.getReadingAtPosition(i));
+			rt.add(add);
 			
 			new Reporter1().GenerateReport(rt);
 		

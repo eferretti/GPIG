@@ -1,4 +1,5 @@
 package gpigb.classloading;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -18,59 +19,68 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JarFileComponentManager<Interface> implements ComponentManager<Interface>
+public class JarFileComponentManager<Interface> implements
+		ComponentManager<Interface>
 {
 	// Used to automatically assign new, unique IDs
 	private static int nextID = 1;
-	
+
 	// Maintain a record of available plugins and searchable directories
-	Set<File> moduleDirectories = Collections.synchronizedSet(new HashSet<File>());
-	Map<Integer, ClassRecord> modules = Collections.synchronizedMap(new HashMap<Integer, ClassRecord>());
-	
+	Set<File> moduleDirectories = Collections
+			.synchronizedSet(new HashSet<File>());
+	Map<Integer, ClassRecord> modules = Collections
+			.synchronizedMap(new HashMap<Integer, ClassRecord>());
+
 	// And references to instantiated objects
-	Map<InstanceSummary, StrongReference<Interface>> instances 
-		= Collections.synchronizedMap(new HashMap<InstanceSummary, StrongReference<Interface>>());
-	
+	Map<InstanceSummary, StrongReference<Interface>> instances = Collections
+			.synchronizedMap(new HashMap<InstanceSummary, StrongReference<Interface>>());
+
 	// Used to ensure that discovered plugins are applicable to this loader
 	private Class<?> classAncestor;
-	
-	// A new class loader is created on each refresh to allow reloading of classes
+
+	// A new class loader is created on each refresh to allow reloading of
+	// classes
 	private GPIGClassLoader loader;
-	
+
 	/**
-	 * Maintains a list of plugin directories which will be scanned for JAR files.
-	 * For any JAR file found in the available search directories each will be scanned
-	 * and all valid classes loaded. Any existing objects of this type will be updated.
+	 * Maintains a list of plugin directories which will be scanned for JAR
+	 * files. For any JAR file found in the available search directories each
+	 * will be scanned and all valid classes loaded. Any existing objects of
+	 * this type will be updated.
 	 * 
-	 * @param superClass An ancestor of any plugins that should be loaded
+	 * @param superClass
+	 *            An ancestor of any plugins that should be loaded
 	 */
 	public JarFileComponentManager(Class<? extends Interface> superClass)
 	{
 		this.classAncestor = superClass;
 	}
-	
+
 	/**
 	 * Adds a new directory to the list of searchable directories.
-	 * @param path The path to be added
+	 * 
+	 * @param path
+	 *            The path to be added
 	 * @return true iff the path passed refers to a valid directory
 	 */
 	@Override
 	public boolean addModuleDirectory(String path)
 	{
 		File newDir = new File(path);
-		
-		if(newDir.exists() && newDir.isDirectory())
+
+		if (newDir.exists() && newDir.isDirectory())
 		{
 			moduleDirectories.add(newDir);
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
-	 * Refreshes the available plugin directories, loading new versions of classes
-	 * and updating existing references as required. Does not scan subdirectories.
+	 * Refreshes the available plugin directories, loading new versions of
+	 * classes and updating existing references as required. Does not scan
+	 * subdirectories.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -79,56 +89,60 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 		// Scan each directory in turn to find JAR files
 		// Subdirectories are not scanned
 		List<File> jarFiles = new ArrayList<>();
-		
-		for(File dir:moduleDirectories)
+
+		for (File dir : moduleDirectories)
 		{
-			for(File jarFile:dir.listFiles(jarFileFilter))
+			for (File jarFile : dir.listFiles(jarFileFilter))
 			{
 				jarFiles.add(jarFile);
 			}
 		}
-		
+
 		// Create a new class loader to ensure there are no class name clashes.
 		loader = new GPIGClassLoader(jarFiles);
-		for(String className:loader.moduleVersions.keySet())
+		for (String className : loader.moduleVersions.keySet())
 		{
 			try
 			{
 				// Update the record of each class
-				Class<? extends Interface> clz = (Class<? extends Interface>) loader.loadClass(className);
+				Class<? extends Interface> clz = (Class<? extends Interface>) loader
+						.loadClass(className);
 				ClassRecord rec = null;
-				for(ClassRecord searchRec:modules.values())
+				for (ClassRecord searchRec : modules.values())
 				{
-					if(searchRec.clz.getName().equals(className))
+					if (searchRec.clz.getName().equals(className))
 					{
 						rec = searchRec;
 						break;
 					}
 				}
-				
-				if(rec!=null)
+
+				if (rec != null)
 				{
 					// This is not an upgrade, ignore it
-					if(rec.summary.moduleVersion >= loader.moduleVersions.get(className))
-						continue;
-					
+					if (rec.summary.moduleVersion >= loader.moduleVersions
+							.get(className)) continue;
+
 					// Otherwise update the version number stored
-					rec.summary.moduleVersion = loader.moduleVersions.get(className);
+					rec.summary.moduleVersion = loader.moduleVersions
+							.get(className);
 				}
 				else
 				{
 					rec = new ClassRecord();
-					rec.summary = new ModuleSummary(nextID++, loader.moduleVersions.get(className), className);
+					rec.summary = new ModuleSummary(nextID++,
+							loader.moduleVersions.get(className), className);
 					modules.put(rec.summary.moduleID, rec);
 				}
 				rec.clz = clz;
-				
+
 				// Update references to existing objects
-				for(StrongReference<Interface> ref:instances.values())
+				for (StrongReference<Interface> ref : instances.values())
 				{
-					if(ref.get().getClass().getName().equals(className))
+					if (ref.get().getClass().getName().equals(className))
 					{
-						Constructor<? extends Interface> ctor = clz.getConstructor(Object.class);
+						Constructor<? extends Interface> ctor = clz
+								.getConstructor(Object.class);
 						ref.object = ctor.newInstance(ref.get());
 					}
 				}
@@ -136,30 +150,39 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 			catch (NoSuchMethodException e)
 			{
 				// Thrown when trying to find a suitable constructor
-				System.err.println("Discovered class which has no available upgrade constructor: " + className + "\n\t" + e.getLocalizedMessage());
+				System.err
+						.println("Discovered class which has no available upgrade constructor: "
+								+ className + "\n\t" + e.getLocalizedMessage());
 			}
-			catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+			catch (InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException e)
 			{
 				// All thrown by the instantiate call
-				System.err.println("Unable to create new instance of class: " + className + "\n\t" + e.getLocalizedMessage());
+				System.err.println("Unable to create new instance of class: "
+						+ className + "\n\t" + e.getLocalizedMessage());
 			}
 			catch (ClassNotFoundException e)
 			{
 				// Should never occur but required to stop the compiler moaning
-				System.err.println("Discovered class which has no available upgrade constructor: " + className + "\n\t" + e.getLocalizedMessage());
+				System.err
+						.println("Discovered class which has no available upgrade constructor: "
+								+ className + "\n\t" + e.getLocalizedMessage());
 			}
 		}
 	}
 
 	/**
 	 * Provides a list of all available modules
-	 * @return A List of {@link gpigb.classloading.ComponentManager.ModuleSummary}s which have been loaded
+	 * 
+	 * @return A List of
+	 *         {@link gpigb.classloading.ComponentManager.ModuleSummary}s which
+	 *         have been loaded
 	 */
 	@Override
 	public List<ModuleSummary> getAvailableModules()
 	{
 		List<ModuleSummary> ret = new ArrayList<>();
-		for(ClassRecord rec:modules.values())
+		for (ClassRecord rec : modules.values())
 		{
 			ret.add(rec.summary);
 		}
@@ -167,10 +190,13 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 	}
 
 	/**
-	 * Given a module ID, as returned by {@link #getAvailableModules()}, instantiate a new object
-	 * and return its ID
-	 * @param moduleID The ID relating to the class of the object to be created
-	 * @return The ID of the newly created object, or -1 if an object could not be created
+	 * Given a module ID, as returned by {@link #getAvailableModules()},
+	 * instantiate a new object and return its ID
+	 * 
+	 * @param moduleID
+	 *            The ID relating to the class of the object to be created
+	 * @return The ID of the newly created object, or -1 if an object could not
+	 *         be created
 	 */
 	@Override
 	public int createObjectOfModule(int moduleID)
@@ -181,20 +207,25 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 			// Lookup the required module and create a new instance and record
 			Interface instance = modules.get(moduleID).clz.newInstance();
 			ret = nextID++;
-			instances.put(new InstanceSummary(ret, moduleID, ""), new StrongReference<Interface>(instance));
+			instances.put(new InstanceSummary(ret, moduleID, ""),
+					new StrongReference<Interface>(instance));
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
-			System.err.println("Failed to instantiate object of type " + moduleID + "\n\t" + e.getLocalizedMessage());
+			System.err.println("Failed to instantiate object of type "
+					+ moduleID + "\n\t" + e.getLocalizedMessage());
 			e.printStackTrace();
 		}
-		
+
 		return ret;
 	}
 
 	/**
-	 * Similar to {@link #getAvailableModules()} but for use with instantiated objects
-	 * @return A List of {@link gpigb.classloading.ComponentManager.InstanceSummary}s
+	 * Similar to {@link #getAvailableModules()} but for use with instantiated
+	 * objects
+	 * 
+	 * @return A List of
+	 *         {@link gpigb.classloading.ComponentManager.InstanceSummary}s
 	 */
 	@Override
 	public List<InstanceSummary> getAvailableObjects()
@@ -204,37 +235,38 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 
 	/**
 	 * Acquire a reference to an instantiated object
-	 * @param instanceID The ID of the object to be returned
-	 * @return A {@link gpigb.classloading.StrongReference} to the requested object, or null if an invalid ID is passed
+	 * 
+	 * @param instanceID
+	 *            The ID of the object to be returned
+	 * @return A {@link gpigb.classloading.StrongReference} to the requested
+	 *         object, or null if an invalid ID is passed
 	 */
 	@Override
 	public StrongReference<Interface> getObjectByID(int instanceID)
 	{
-		for(InstanceSummary summary:instances.keySet())
+		for (InstanceSummary summary : instances.keySet())
 		{
-			if(summary.instanceID == instanceID)
-			{
-				return instances.get(summary);
-			}
+			if (summary.instanceID == instanceID) { return instances
+					.get(summary); }
 		}
 		return null;
 	}
 
 	/**
 	 * Where the magic happens. Upon instantiation scans the JAR files provided.
-	 * Each class is loaded in turn (unconditionally) and a record is created iff
-	 * the class is relevant.
+	 * Each class is loaded in turn (unconditionally) and a record is created
+	 * iff the class is relevant.
 	 */
 	private class GPIGClassLoader extends ClassLoader
 	{
 		private HashMap<String, Integer> moduleVersions;
-		
+
 		public GPIGClassLoader(List<File> jarFiles)
 		{
 			super();
 			this.moduleVersions = new HashMap<>();
-			
-			for(File file:jarFiles)
+
+			for (File file : jarFiles)
 			{
 				JarFile jarFile = null;
 				try
@@ -243,51 +275,57 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 					jarFile = new JarFile(file);
 					Enumeration<JarEntry> e = jarFile.entries();
 					JarEntry entry;
-					while(e.hasMoreElements())
+					while (e.hasMoreElements())
 					{
 						entry = e.nextElement();
-						
+
 						// For each class file found
-						if(entry.getName().endsWith(".class"))
+						if (entry.getName().endsWith(".class"))
 						{
-							//Read it into memory
+							// Read it into memory
 							byte[] buffer = new byte[1024];
 							InputStream is = jarFile.getInputStream(entry);
 							ByteArrayOutputStream baos = new ByteArrayOutputStream();
-							
+
 							int bytesRead;
 							do
 							{
 								bytesRead = is.read(buffer, 0, 1024);
-								if(bytesRead <= 0) break;
-								
+								if (bytesRead <= 0) break;
+
 								baos.write(buffer, 0, bytesRead);
-							}while(bytesRead > 0);
-							
+							} while (bytesRead > 0);
+
 							baos.flush();
-							
-							// Determine its name from its path within the JAR file
+
+							// Determine its name from its path within the JAR
+							// file
 							String className = entry.getName();
-							className = className.substring(0, className.length()-".class".length());
-							className = className.replace(File.separatorChar, '.');
+							className = className.substring(0,
+									className.length() - ".class".length());
+							className = className.replace('/',
+									'.');
+							className = className.replace('\\',
+									'.');
 							
 							// And load it into the JVM
-							Class<?> clz = defineClass(className, baos.toByteArray(), 0, baos.size());
-							
-							// If the class is not one of interest the do no more
-							if(!classAncestor.isAssignableFrom(clz))
-								continue;
-							
+							Class<?> clz = defineClass(className,
+									baos.toByteArray(), 0, baos.size());
+
+							// If the class is not one of interest the do no
+							// more
+							if (!classAncestor.isAssignableFrom(clz)) continue;
+
 							// Otherwise extract its version number (if present)
 							int version = -1;
-							for(Field f:clz.getFields())
+							for (Field f : clz.getFields())
 							{
-								if(f.getName().equals(versionNumberFieldName))
+								if (f.getName().equals(versionNumberFieldName))
 								{
 									version = f.getInt(clz);
 								}
 							}
-							
+
 							// And maintain a record of it
 							moduleVersions.put(className, version);
 						}
@@ -298,7 +336,7 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 				}
 				finally
 				{
-					if(jarFile!=null) try
+					if (jarFile != null) try
 					{
 						jarFile.close();
 					}
@@ -311,14 +349,15 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 	}
 
 	/**
-	 * A small utility class to provide storage for modules and related information
+	 * A small utility class to provide storage for modules and related
+	 * information
 	 */
 	private class ClassRecord
 	{
 		private Class<? extends Interface> clz;
 		private ModuleSummary summary;
 	}
-	
+
 	/**
 	 * Used to filter out JAR files based on name
 	 */

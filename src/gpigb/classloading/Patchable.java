@@ -7,14 +7,16 @@ public abstract class Patchable
 {
 	public Patchable()
 	{
-		
+
 	}
-	
+
 	/**
-	 * Default implementation of a dynamically patchable class
-	 * Uses reflection to extract fields from the old and new objects
-	 * and assign values based on common variable names.
-	 * @param oldInstance The object being upgraded from.
+	 * Default implementation of a dynamically patchable class Uses reflection
+	 * to extract fields from the old and new objects and assign values based on
+	 * common variable names.
+	 * 
+	 * @param oldInstance
+	 *            The object being upgraded from.
 	 */
 	public Patchable(Object oldInstance)
 	{
@@ -27,9 +29,8 @@ public abstract class Patchable
 		for (Field newField : newFields)
 		{
 			// Skip static fields
-			if(Modifier.isStatic(newField.getModifiers()))
-				continue;
-			
+			if (Modifier.isStatic(newField.getModifiers())) continue;
+
 			// Scan for a match
 			Field matchingField = null;
 			for (Field oldField : oldFields)
@@ -40,10 +41,11 @@ public abstract class Patchable
 					break;
 				}
 			}
-			
+
 			if (matchingField != null)
 			{
-				// If we find one then update the value of this instance to that of the old one
+				// If we find one then update the value of this instance to that
+				// of the old one
 				try
 				{
 					newField.set(this, matchingField.get(oldInstance));
@@ -60,7 +62,9 @@ public abstract class Patchable
 
 	/**
 	 * Uses reflection to determine a version number for this object
-	 * @return The version number set as a field with the appropriate name or -1 if this field is not found.
+	 * 
+	 * @return The version number set as a field with the appropriate name or -1
+	 *         if this field is not found.
 	 */
 	public final int getVersionNumber()
 	{
@@ -68,7 +72,8 @@ public abstract class Patchable
 		{
 			for (Field f : getClass().getFields())
 			{
-				if (f.getName() == ComponentManager.versionNumberFieldName) return f.getInt(this);
+				if (f.getName() == ComponentManager.versionNumberFieldName)
+					return f.getInt(this);
 			}
 		}
 		catch (Exception e)

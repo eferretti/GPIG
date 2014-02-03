@@ -1,31 +1,49 @@
 package gpigb.store;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
+import gpigb.classloading.Patchable;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 
-public class InMemoryStore implements Store
+public class InMemoryStore extends Patchable implements Store
 {
-	ArrayList<SensorRecord<?>> history = new ArrayList<>(); 
+	List<SensorRecord<?>> history = Collections.synchronizedList(new ArrayList<SensorRecord<?>>());
+
+	public static final int VERSION_NUMBER = 2;
+	
+	public InMemoryStore()
+	{
+		super();
+	}
+	
+	public InMemoryStore(Object oldInstance)
+	{
+		super(oldInstance);
+	}
 	
 	@Override
 	public boolean read(RecordSet<?> unpopulated)
-	{		
-		Collections.sort(history);
+	{
+		if(history.size() <= 0)
+			return false;
 		
 		int idx = 0;
-		while(history.get(idx++).getTimestamp().before(unpopulated.getFromTime()));
-		
-		while(history.get(idx).getTimestamp().before(unpopulated.getToTime()))
+		while (idx < history.size() && history.get(idx++).getTimestamp()
+				.before(unpopulated.getFromTime()))
+			;
+
+		while (idx < history.size() && history.get(idx).getTimestamp().before(unpopulated.getToTime()))
 		{
-			if(history.get(idx).getSensorID() == unpopulated.getSensorID())
+			if (history.get(idx).getSensorID() == unpopulated.getSensorID())
 				unpopulated.addRecord((SensorRecord) history.get(idx));
-			
+
 			idx++;
 		}
-		
+
 		return true;
 	}
 
@@ -34,13 +52,15 @@ public class InMemoryStore implements Store
 	{
 		int pos = 0;
 		SensorRecord rec = null;
-		while((rec = data.getReadingAtPosition(pos)) != null)
+		while ((rec = data.getReadingAtPosition(pos++)) != null)
 		{
 			history.add(rec);
 		}
+
+		System.out.println("Added " + pos + " new objects");
 		
 		Collections.sort(history);
-		
+
 		return true;
 	}
 
@@ -49,7 +69,7 @@ public class InMemoryStore implements Store
 	{
 		int pos = 0;
 		SensorRecord rec = null;
-		while((rec = items.getReadingAtPosition(pos)) != null)
+		while ((rec = items.getReadingAtPosition(pos++)) != null)
 		{
 			history.remove(rec);
 		}
