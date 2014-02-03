@@ -27,12 +27,12 @@ public class TestImpl
 	public static void main(String[] args)
 	{
 		ConcreteSensorOne s1 = new ConcreteSensorOne();
-		//Sensor<Integer> s2 = new ConcreteSensorTwo();
+		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
 		
 		final Store store = new InMemoryStore();
 		
 		final Analyser atemp = new ThresholdAnalyser(40, 20);
-		final Analyser aelev = new ThresholdAnalyser(1000, 10100);
+		final Analyser aelev = new ThresholdAnalyser(1000, 1100);
 		final Analyser a2 = new Analyser2();
 		
 		final Reporter r1 = new Reporter1();
@@ -49,17 +49,17 @@ public class TestImpl
 			}
 		});
 		
-//		s2.registerObserver(new SensorObserver<Integer>()
-//				{
-//					@Override
-//					public void update(int sensorID, Integer reading)
-//					{
-//						RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
-//						rs.addRecord(new SensorRecord<Integer>(2, reading));
-//						store.write(rs);
-//					}
-//				});
-//	
+		s2.registerObserver(new SensorObserver<Integer>()
+				{
+					@Override
+					public void update(int sensorID, Integer reading)
+					{
+						RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
+						rs.addRecord(new SensorRecord<Integer>(2, reading));
+						store.write(rs);
+					}
+				});
+	
 		(new Thread(new Runnable()
 		{
 			
@@ -76,9 +76,19 @@ public class TestImpl
 					Date d1 = c.getTime();
 					c.set(2015, 1, 1, 1, 1);
 					Date d2 = c.getTime();
-					RecordSet<Integer> rs = new RecordSet<Integer>(d1, d2, 1);
-					store.read(rs);
-					System.out.println("\tResult: " + (atemp.Analyse(rs) ? "True" : "False"));
+					RecordSet<Integer> rs1 = new RecordSet<Integer>(d1, d2, 1);
+					store.read(rs1);
+					atemp.Analyse(rs1);
+					RecordSet<Integer> rs2 = new RecordSet<Integer>(d1, d2, 2);
+					store.read(rs2);
+					aelev.Analyse(rs2);
+					List<RecordSet<?>> rc = new ArrayList <RecordSet<?>>();
+					rc.add(rs1);
+					rc.add(rs2);
+					a2.Analyse(rc);
+					
+					
+					
 				}
 			}
 		})).start();

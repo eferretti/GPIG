@@ -21,7 +21,7 @@ public class Reporter2 implements Reporter
 		Integer valueDifference = errorSigniture.getReadingAtPosition(0)
 				.getData()
 				- errorSigniture.getReadingAtPosition(
-						errorSigniture.getRecordCount()).getData();
+						errorSigniture.getRecordCount() - 1).getData();
 		errorMessage = "In " + timeFrame
 				+ "ms the sensor experianced a change of " + valueDifference
 				+ "\n";

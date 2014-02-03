@@ -17,6 +17,7 @@ public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
 	public ConcreteSensorTwo()
 	{
 		observers = new ArrayList<SensorObserver<Integer>>();
+		new Thread(this).start();
 	}
 
 	@Override
