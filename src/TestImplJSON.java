@@ -19,17 +19,17 @@ import gpigb.sense.ConcreteSensorOne;
 import gpigb.sense.ConcreteSensorTwo;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
-import gpigb.store.FileStore;
+import gpigb.store.InMemoryStore;
 import gpigb.store.Store;
 
-public class TestImpl
+public class TestImplJSON
 {
 	public static void main(String[] args)
 	{
 		ConcreteSensorOne s1 = new ConcreteSensorOne();
 		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
 		
-		final Store store = new FileStore();
+		final Store store = new InMemoryStore();
 		
 		final Analyser atemp = new ThresholdAnalyser(40, 20);
 		final Analyser aelev = new ThresholdAnalyser(1000, 1100);
