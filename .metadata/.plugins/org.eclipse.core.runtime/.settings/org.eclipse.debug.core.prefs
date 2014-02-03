@@ -1,0 +1,2 @@
+//org.eclipse.debug.core.PREFERRED_DELEGATES/org.eclipse.ptp.launch.parallelLaunch=org.eclipse.ptp.rm.launch.parallelLaunch,debug;org.eclipse.ptp.rm.launch.parallelLaunch,run
+eclipse.preferences.version=1

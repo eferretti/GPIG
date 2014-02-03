@@ -14,7 +14,7 @@ public class Analyser2 implements Analyser{
 	 */
 	public boolean Analyse(List<RecordSet<?>> data)
 	{
-		//if(data.get(0).getRecordCount() < 2 || data.get(1).getRecordCount() < 2 ) return false; 
+		if(data.get(0).getRecordCount() < 2 || data.get(1).getRecordCount() < 2 ) return false; 
 		
 		List<RecordSet<?>> changeRecord = new ArrayList <RecordSet<?>>();
 		for(int i = 0; i <data.size(); i++)
