@@ -18,8 +18,8 @@ public class ThresholdAnalyser implements Analyser{
 	}
 	
 
-public boolean analyse(RecordSet<Integer> inputs){
-	
+public boolean Analyse(RecordSet<?> input){
+	RecordSet<Integer> inputs = (RecordSet<Integer>)input;
 	int size = inputs.getRecordCount();
 	boolean r = false;
 	
@@ -44,6 +44,9 @@ public boolean analyse(RecordSet<Integer> inputs){
 	
 	}
 	
+public boolean Analyse(List<RecordSet<?>> input){
+	return false; 
+}
 
 				
 	
