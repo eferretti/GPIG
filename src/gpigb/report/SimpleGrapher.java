@@ -18,21 +18,25 @@ import java.util.Random;
 /**
  * Class SimpleGrapher - 
  */
-
 public class SimpleGrapher   
 {
     private DrawSpace theDrawSpace;
     
+    // Coordinate basis set-up
     final int axisXStart;
     final int axisYStart;
     final int axisXEnd;
     final int axisYEnd;
+    
+    // lineWidth when drawing a line
     int lineWidth = 2;
-    final int pointR = 2;
+    // cur_x position for the point which we are currently graphing
     int cur_x = 1;
     
     /**
-     * Constructors for SimpleGrapher objects. Creates a fresh draw space and makes it visible.
+     * Constructors for SimpleGrapher objects. Draw window used default name
+     * @param width - width of the drawing space window
+     * @param height - height of the drawing space window
      */
     public SimpleGrapher(int width, int height) {
         this("Simple Grapher", width, height);
@@ -42,6 +46,11 @@ public class SimpleGrapher
         this("Simple Grapher", 800, 500);
     }
     
+    /** Constructor for SimpleGraph objects
+     * @param title - Title of the current Graph window
+     * @param width - width if the window
+     * @param height - height of the window
+     */
     public SimpleGrapher(String title, int width, int height) {
         theDrawSpace = new DrawSpace(title, width, height);
         theDrawSpace.setVisible(true);
@@ -53,7 +62,12 @@ public class SimpleGrapher
         this.drawLegend();
         theDrawSpace.setLineWidth(lineWidth);
     }
-
+    
+    /**
+     * Draws the axis of the 2D base of the drawing space
+     * We are using the conventional coordinate basis - (0,0) is at the bottom left
+     * In the default Java coordinate basis (0,0) is at the top left 
+     */
     private void drawAxis()
     {
         // draw the axes in red
@@ -64,6 +78,9 @@ public class SimpleGrapher
         theDrawSpace.drawLine(axisXStart, getTrueY(0), axisXEnd,  getTrueY(0));
     }
     
+    /**
+     * Draws the legend for the graph
+     */
     private void drawLegend()
     {
     	theDrawSpace.setLineWidth(3);
@@ -78,22 +95,47 @@ public class SimpleGrapher
 
     }
     
+    /** Because Java uses a non-conventional 2D basis, need to convert each point
+     * @param x - x Coordinate of a specific point
+     * @return returns the new x coordinate according to the basis of the 
+     * drawing space
+     */
     private int getTrueX(int x) {
         return  x + axisXStart;
     }
     
+    /** Because Java uses a non-conventional 2D basis, need to convert each point
+     * @param y - y Coordinate of a specific point
+     * @return returns the new y coordinate according to the basis of the 
+     * drawing space
+     */
     private int getTrueY(int y) {
          return axisYEnd - y;
     }
-    /* Point is essentially a small vertical bar - looks prettier */
+
+    /**
+     * Draws a point (which is essentially a small vertical bar due to 
+     * aesthetic reasons :)
+     * @param xPos - x Coordinate of the point
+     * @param yPos - y Coordinate of the point
+     */
     private void drawPoint(int xPos, int yPos) {
     	theDrawSpace.drawLine(getTrueX(xPos), getTrueY(yPos-2), getTrueX(xPos), getTrueY(yPos));
     }
     
+    /**
+     * Draws a vertical bar to represent a point on the drawing space
+     * @param xPos - x Coordinate of the point
+     * @param yPos - y Coordinate of the point
+     */
     private void drawBar(int xPos, int yPos) {
         theDrawSpace.drawLine(getTrueX(xPos), getTrueY(0), getTrueX(xPos), getTrueY(yPos));
     }
     
+    /**
+     * Plots the specified data record (usually used for real-time monitoring)
+     * @param record - data record
+     */
     public void plotData(SensorRecord<?> record) {        
             int dataPoint = (Integer)record.getData();
     		theDrawSpace.setForegroundColor(Color.gray);
@@ -103,13 +145,19 @@ public class SimpleGrapher
             cur_x += lineWidth;
     }
     
+    /** Plots the specified datastream (set of records)
+     * @param recordSet - set of records
+     */
     public void plotData(RecordSet<?> recordSet) {
         for( int i = 0 ; i < recordSet.getRecordCount() ; i++) {
             plotData(recordSet.getReadingAtPosition(i));
         }
     }
     
-     public void clear() {
+     /**
+     * Clears the drawing space
+     */
+    public void clear() {
         theDrawSpace.erase();
         cur_x = 1;
     }

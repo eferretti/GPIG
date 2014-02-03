@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.geom.*;
 
 /**
- * Class DrawingBoard - a class representing the drawing space 
+ * Class DrawingBoard - a class creating a drawing space window to draw on..
  * 
  * @author 
  */
@@ -21,13 +21,13 @@ public class DrawSpace
     /* default values of the drawing space */
     final static int DEFAULT_WIDHT  = 800;
     final static int DEFAULT_HEIGHT = 500;
+    
     /**
      * Create a drawing space with default height, width and background color 
      * (800, 500, white).
      * @param title  title to appear in Drawing Space Frame     
      */
-    public DrawSpace(String title)
-    {
+    public DrawSpace(String title) {
         this(title, DEFAULT_WIDHT, DEFAULT_HEIGHT, Color.white);
     }
 
@@ -37,8 +37,7 @@ public class DrawSpace
      * @param width  the desired width for the frame
      * @param height  the desired height for the frame
      */
-    public DrawSpace(String title, int width, int height)
-    {
+    public DrawSpace(String title, int width, int height) {
         this(title, width, height, Color.white);
     }
 
@@ -49,8 +48,7 @@ public class DrawSpace
      * @param height  the desired height for the frame
      * @param bgClour  the desired background color of the frame
      */
-    public DrawSpace(String title, int width, int height, Color bgColor)
-    {
+    public DrawSpace(String title, int width, int height, Color bgColor) {
         frame = new JFrame();
         canvas = new CanvasPane();
         frame.setContentPane(canvas);
@@ -68,8 +66,7 @@ public class DrawSpace
      * @param visibility  boolean value representing the desired visibility of
      * the drawing space (true or false) 
      */
-    public void setVisible(boolean visibility)
-    {
+    public void setVisible(boolean visibility) {
         if(graphic == null) {
             // initial start: instantiate the offscreen image and fill it with
             // the desired background color
@@ -87,8 +84,7 @@ public class DrawSpace
      * Provide information on visibility of the drawing space.
      * @return  true if current window is visible, false otherwise
      */
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return frame.isVisible();
     }
 
@@ -96,8 +92,7 @@ public class DrawSpace
      * Draw the outline of a given shape onto the canvas.
      * @param  shape  the shape object to be drawn on the canvas
      */
-    public void draw(Shape shape)
-    {
+    public void draw(Shape shape) {
         graphic.draw(shape);
         canvas.repaint();
     }
@@ -110,8 +105,7 @@ public class DrawSpace
      * foreground color of the canvas.
      * @param  shape  the shape object to be filled 
      */
-    public void fill(Shape shape)
-    {
+    public void fill(Shape shape) {
         graphic.fill(shape);
         canvas.repaint();
     }
@@ -123,8 +117,7 @@ public class DrawSpace
      * @param  yPos  The y-coordinate of the circle center point
      * @param  diameter  The diameter of the circle to be drawn
      */
-    public void fillCircle(int xPos, int yPos, int diameter)
-    {
+    public void fillCircle(int xPos, int yPos, int diameter) {
         Ellipse2D.Double circle = new Ellipse2D.Double(xPos, yPos, diameter, diameter);
         fill(circle);
     }
@@ -134,8 +127,7 @@ public class DrawSpace
      * foreground color of the drawing space. This is a convenience method. A similar 
      * effect can be achieved with the "fill" method.
      */
-    public void fillRectangle(int xPos, int yPos, int width, int height)
-    {
+    public void fillRectangle(int xPos, int yPos, int width, int height) {
         fill(new Rectangle(xPos, yPos, width, height));
     }
     
@@ -143,8 +135,7 @@ public class DrawSpace
     /**
      * Erase the whole canvas.
      */
-    public void erase()
-    {
+    public void erase() {
         Color original = graphic.getColor();
         graphic.setColor(backgroundColor);
         Dimension size = canvas.getSize();
@@ -158,8 +149,7 @@ public class DrawSpace
      * convenience method. A similar effect can be achieved with
      * the "erase" method.
      */
-    public void eraseCircle(int xPos, int yPos, int diameter)
-    {
+    public void eraseCircle(int xPos, int yPos, int diameter) {
         Ellipse2D.Double circle = new Ellipse2D.Double(xPos, yPos, diameter, diameter);
         erase(circle);
     }
@@ -169,8 +159,7 @@ public class DrawSpace
      * convenience method. A similar effect can be achieved with
      * the "erase" method.
      */
-    public void eraseRectangle(int xPos, int yPos, int width, int height)
-    {
+    public void eraseRectangle(int xPos, int yPos, int width, int height) {
         erase(new Rectangle(xPos, yPos, width, height));
     }
 
@@ -178,8 +167,7 @@ public class DrawSpace
      * Erase a given shape's interior on the screen.
      * @param  shape  the shape object to be erased 
      */
-    public void erase(Shape shape)
-    {
+    public void erase(Shape shape) {
         Color original = graphic.getColor();
         graphic.setColor(backgroundColor);
         graphic.fill(shape);              // erase by filling background color
@@ -221,8 +209,7 @@ public class DrawSpace
      * @param  x      x co-ordinate for text placement 
      * @param  y      y co-ordinate for text placement
      */
-    public void drawString(String text, int x, int y)
-    {
+    public void drawString(String text, int x, int y) {
         graphic.drawString(text, x, y);   
         canvas.repaint();
     }
@@ -233,8 +220,7 @@ public class DrawSpace
      * @param  x        x co-ordinate for text placement 
      * @param  y        y co-ordinate for text placement
      */
-    public void eraseString(String text, int x, int y)
-    {
+    public void eraseString(String text, int x, int y) {
         Color original = graphic.getColor();
         graphic.setColor(backgroundColor);
         graphic.drawString(text, x, y);   
@@ -249,8 +235,7 @@ public class DrawSpace
      * @param  x2   x co-ordinate of starting point of the line 
      * @param  y2   y co-ordinate of starting point of the line 
      */
-    public void drawLine(int x1, int y1, int x2, int y2)
-    {
+    public void drawLine(int x1, int y1, int x2, int y2) {
         graphic.drawLine(x1, y1, x2, y2);   
         canvas.repaint();
     }
@@ -259,8 +244,7 @@ public class DrawSpace
      * Sets the foreground color of the drawing space.
      * @param  newColor   the new color for the foreground of the drawing space 
      */
-    public void setForegroundColor(Color newColor)
-    {
+    public void setForegroundColor(Color newColor) {
         graphic.setColor(newColor);
     }
 
@@ -268,8 +252,7 @@ public class DrawSpace
      * Returns the current foreground color
      * @return   the foreground color of the drawing space 
      */
-    public Color getForegroundColor()
-    {
+    public Color getForegroundColor() {
         return graphic.getColor();
     }
 
@@ -277,8 +260,7 @@ public class DrawSpace
      * Sets the background color of the drawing space.
      * @param  newColor   the new background color of the drawing space 
      */
-    public void setBackgroundColor(Color newColor)
-    {
+    public void setBackgroundColor(Color newColor) {
         backgroundColor = newColor;   
         graphic.setBackground(newColor);
     }
@@ -287,8 +269,7 @@ public class DrawSpace
      * Returns the current background color
      * @return   the background color of the drawing space 
      */
-    public Color getBackgroundColor()
-    {
+    public Color getBackgroundColor() {
         return backgroundColor;
     }
 
@@ -296,8 +277,7 @@ public class DrawSpace
      * set the current Font used on the drawing space
      * @param  newFont   new font to be used for String output
      */
-    public void setFont(Font newFont)
-    {
+    public void setFont(Font newFont) {
         graphic.setFont(newFont);
     }
 
@@ -305,8 +285,7 @@ public class DrawSpace
      * Returns the current font of the canvas.
      * @return     the font currently in use
      **/
-    public Font getFont()
-    {
+    public Font getFont() {
         return graphic.getFont();
     }
 
@@ -315,8 +294,7 @@ public class DrawSpace
      * @param  width    new width 
      * @param  height   new height 
      */
-    public void setSize(int width, int height)
-    {
+    public void setSize(int width, int height) {
         canvas.setPreferredSize(new Dimension(width, height));
         Image oldImage = canvasImage;
         canvasImage = canvas.createImage(width, height);
@@ -331,8 +309,7 @@ public class DrawSpace
      * Returns the size of the canvas.
      * @return     The current dimension of the canvas
      */
-    public Dimension getSize()
-    {
+    public Dimension getSize() {
         return canvas.getSize();
     }
 
@@ -342,14 +319,11 @@ public class DrawSpace
      * used when producing animations.
      * @param  milliseconds  the number 
      */
-    public void wait(int milliseconds)
-    {
-        try
-        {
+    public void wait(int milliseconds) {
+        try {
             Thread.sleep(milliseconds);
         } 
-        catch (InterruptedException e)
-        {
+        catch (InterruptedException e) {
             // CATCH A FLU
         }
     }
@@ -359,10 +333,8 @@ public class DrawSpace
      * drawing space frame. This is essentially a JPanel with added capability to
      * refresh the image drawn on it.
      */
-    private class CanvasPane extends JPanel
-    {
-        public void paint(Graphics g)
-        {
+    private class CanvasPane extends JPanel {
+        public void paint(Graphics g) {
             g.drawImage(canvasImage, 0, 0, null);
         }
     }
