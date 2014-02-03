@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class SensorRecord<ReadingType>
+public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 {
 	private Date timestamp;
 	private ReadingType data;
@@ -68,5 +68,11 @@ public class SensorRecord<ReadingType>
 	public Dictionary<String, String> getMeta()
 	{
 		return meta;
+	}
+
+	@Override
+	public int compareTo(SensorRecord<?> o)
+	{
+		return this.timestamp.compareTo(o.timestamp);
 	}
 }
