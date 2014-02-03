@@ -12,9 +12,7 @@ import gpigb.classloading.ComponentManager.ModuleSummary;
 import gpigb.classloading.JarFileComponentManager;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
-import gpigb.report.Reporter;
-import gpigb.report.Reporter1;
-import gpigb.report.Reporter2;
+import gpigb.report.*;
 import gpigb.sense.ConcreteSensorOne;
 import gpigb.sense.ConcreteSensorTwo;
 import gpigb.sense.Sensor;
@@ -37,6 +35,9 @@ public class TestImpl
 		
 		final Reporter r1 = new Reporter1();
 		final Reporter r2 = new Reporter2();
+		final Reporter r3 = new ReporterPlotRT();
+		//final Reporter r4 = new ReporterPlot();
+		
 		
 		s1.registerObserver(new SensorObserver<Integer>()
 		{
@@ -45,6 +46,9 @@ public class TestImpl
 			{
 				RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
 				rs.addRecord(new SensorRecord<Integer>(1, reading));
+				List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
+				newList.add(rs);
+				r3.GenerateReport(newList);
 				store.write(rs);
 			}
 		});

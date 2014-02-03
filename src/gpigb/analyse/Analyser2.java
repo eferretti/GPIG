@@ -5,6 +5,7 @@ import java.util.List;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.report.Reporter2;
+import gpigb.report.ReporterPlot;
 
 public class Analyser2 implements Analyser{
 	
@@ -64,6 +65,10 @@ public class Analyser2 implements Analyser{
 		// Send to reporter
 		if (!changeRecord.isEmpty())
 			new Reporter2().GenerateReport(changeRecord);
+		if (!averageRecord.isEmpty())
+			new ReporterPlot().GenerateReport(averageRecord);
+		
+		
 		//Reporter3.GenerateReport(averageRecord);
 		
 		return true;
