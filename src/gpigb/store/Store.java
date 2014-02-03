@@ -1,6 +1,6 @@
 package gpigb.store;
 
-public class Store
+public interface Store
 {
-
+	
 }
