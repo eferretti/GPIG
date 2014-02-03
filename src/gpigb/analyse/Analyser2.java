@@ -14,11 +14,13 @@ public class Analyser2 implements Analyser{
 	 */
 	public boolean Analyse(List<RecordSet<?>> data)
 	{
-		
+		//if(data.get(0).getRecordCount() < 2 || data.get(1).getRecordCount() < 2 ) return false; 
 		
 		List<RecordSet<?>> changeRecord = new ArrayList <RecordSet<?>>();
 		for(int i = 0; i <data.size(); i++)
 		{
+			if(data.get(i).getRecordCount() < 2)
+				return false;
 			SensorRecord<?> x = data.get(i).getReadingAtPosition(0);
 			SensorRecord<?> y = data.get(i).getReadingAtPosition(1);
 			// Check for sharp increase or decrease
@@ -28,14 +30,15 @@ public class Analyser2 implements Analyser{
 			}
 		}
 		
-		// Send any data with sharp increase to reporter
-		new Reporter2().GenerateReport(changeRecord);
+		// Send any data with sharp increase to reporter)
+		if (!changeRecord.isEmpty())
+			new Reporter2().GenerateReport(changeRecord);
 		
 		// Calculate average of every RecordSet
 		List<RecordSet<?>> averageRecord = new ArrayList <RecordSet<?>>();
 		for(int j = 0; j < data.size(); j++)
 		{
-			Double average = (Double) data.get(j).getReadingAtPosition(0).getData();
+			Integer average = (Integer) data.get(j).getReadingAtPosition(0).getData();
 			for(int i = 1; i < data.get(j).getRecordCount(); i++)
 			{
 				average = average + (Integer) data.get(j).getReadingAtPosition(i).getData();
@@ -43,8 +46,8 @@ public class Analyser2 implements Analyser{
 			// Calculate average
 			average = average / data.get(j).getRecordCount();
 			// Create new record and add to list
-			RecordSet<Double> av = new RecordSet<Double>(data.get(j).getFromTime(), data.get(j).getToTime(), data.get(j).getSensorID());
-			SensorRecord<Double> as = new SensorRecord<Double>(data.get(j).getSensorID(), average, null);
+			RecordSet<Integer> av = new RecordSet<Integer>(data.get(j).getFromTime(), data.get(j).getToTime(), data.get(j).getSensorID());
+			SensorRecord<Integer> as = new SensorRecord<Integer>(data.get(j).getSensorID(), average);
 			av.addRecord(as);
 			averageRecord.add(av);
 		}
