@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
-import gpigb.report.Reporter2;
-import gpigb.report.ReporterPlot;
+import gpigb.report.*;
+
 
 public class Analyser2 implements Analyser{
 	
+	Reporter r = new ReporterPlot("ReporterPlot 1");
 	/**
 	 * 
 	 * @param data
 	 */
+
 	public boolean Analyse(List<RecordSet<?>> data)
 	{
 		List<RecordSet<?>> changeRecord = new ArrayList <RecordSet<?>>();
@@ -65,8 +67,8 @@ public class Analyser2 implements Analyser{
 		// Send to reporter
 		if (!changeRecord.isEmpty())
 			new Reporter2().GenerateReport(changeRecord);
-		//if (!averageRecord.isEmpty())
-		//	new ReporterPlot().GenerateReport(averageRecord);
+		if (!averageRecord.isEmpty())
+			r.GenerateReport(averageRecord);
 		
 		
 		//Reporter3.GenerateReport(averageRecord);

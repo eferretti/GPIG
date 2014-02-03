@@ -22,9 +22,14 @@ import java.util.Random;
 public class SimpleGrapher   
 {
     private DrawSpace theDrawSpace;
-    final int axisSurface = 15;
+    
+    final int axisXStart;
+    final int axisYStart;
+    final int axisXEnd;
+    final int axisYEnd;
+    int lineWidth = 2;
     final int pointR = 2;
-    int cur_x = 0;
+    int cur_x = 1;
     
     /**
      * Constructors for SimpleGrapher objects. Creates a fresh draw space and makes it visible.
@@ -40,32 +45,49 @@ public class SimpleGrapher
     public SimpleGrapher(String title, int width, int height) {
         theDrawSpace = new DrawSpace(title, width, height);
         theDrawSpace.setVisible(true);
+        axisXStart = (int) (width*0.05);
+        axisXEnd   = (int) (width*0.95);
+        axisYStart = (int) (height*0.05);
+        axisYEnd   = (int) (height*0.7);
         this.drawAxis();
+        this.drawLegend();
+        theDrawSpace.setLineWidth(lineWidth);
     }
 
     private void drawAxis()
     {
-        int height = theDrawSpace.getSize().height;
-        int width = theDrawSpace.getSize().height;
         // draw the axes in red
         theDrawSpace.setForegroundColor(Color.red);
         // Y axis
-        theDrawSpace.drawLine(axisSurface, axisSurface, axisSurface, height - axisSurface);
+        theDrawSpace.drawLine(getTrueX(0), axisYStart, getTrueX(0), axisYEnd);
         // X axis
-        theDrawSpace.drawLine(axisSurface, height - axisSurface, width - axisSurface, height - axisSurface);
+        theDrawSpace.drawLine(axisXStart, getTrueY(0), axisXEnd,  getTrueY(0));
+    }
+    
+    private void drawLegend()
+    {
+    	theDrawSpace.setLineWidth(3);
+    	// Sensor Value
+        theDrawSpace.setForegroundColor(Color.gray);
+        theDrawSpace.drawLine(axisXEnd - 70, axisYStart, axisXEnd - 50, axisYStart);
+        theDrawSpace.drawString("Sensor Value", axisXEnd - 45, axisYStart + 5);
+        // Average Value
+        theDrawSpace.setForegroundColor(Color.blue);
+        theDrawSpace.drawLine(axisXEnd - 70, axisYStart + 15, axisXEnd - 50,  axisYStart + 15);
+        theDrawSpace.drawString("Avg Value", axisXEnd - 45, axisYStart + 20);
+
     }
     
     private int getTrueX(int x) {
-        return x + axisSurface;
+        return  x + axisXStart;
     }
     
     private int getTrueY(int y) {
-         int height = theDrawSpace.getSize().height;
-         return height - axisSurface - y;
+         return axisYEnd - y;
     }
-    
+    /* Point is essentially a small vertical bar - looks prettier */
     private void drawPoint(int xPos, int yPos) {
-        theDrawSpace.fill(new Ellipse2D.Double (getTrueX(xPos), getTrueY(yPos) - pointR , pointR, pointR));
+    	theDrawSpace.drawLine(getTrueX(xPos), getTrueY(yPos-2), getTrueX(xPos), getTrueY(yPos));
     }
     
     private void drawBar(int xPos, int yPos) {
@@ -73,10 +95,12 @@ public class SimpleGrapher
     }
     
     public void plotData(SensorRecord<?> record) {        
-            theDrawSpace.setForegroundColor(Color.gray);
-            drawBar(cur_x, (Integer) record.getData());
+            int dataPoint = (Integer)record.getData();
+    		theDrawSpace.setForegroundColor(Color.gray);
+            drawBar(cur_x, dataPoint);
             theDrawSpace.setForegroundColor(Color.black);
-            drawPoint(cur_x++, (Integer) record.getData());
+            drawPoint(cur_x, dataPoint);
+            cur_x += lineWidth;
     }
     
     public void plotData(RecordSet<?> recordSet) {
@@ -87,6 +111,6 @@ public class SimpleGrapher
     
      public void clear() {
         theDrawSpace.erase();
-        cur_x = 0;
+        cur_x = 1;
     }
 }

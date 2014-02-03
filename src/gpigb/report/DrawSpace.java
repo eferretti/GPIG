@@ -19,11 +19,11 @@ public class DrawSpace
     private Image canvasImage;
     
     /* default values of the drawing space */
-    final static int DEFAULT_WIDHT  = 300;
-    final static int DEFAULT_HEIGHT = 300;
+    final static int DEFAULT_WIDHT  = 800;
+    final static int DEFAULT_HEIGHT = 500;
     /**
-     * Create a Canvas with default height, width and background color 
-     * (300, 300, white).
+     * Create a drawing space with default height, width and background color 
+     * (800, 500, white).
      * @param title  title to appear in Drawing Space Frame     
      */
     public DrawSpace(String title)
@@ -101,7 +101,10 @@ public class DrawSpace
         graphic.draw(shape);
         canvas.repaint();
     }
- 
+    
+    public void setLineWidth(int width){
+    	graphic.setStroke(new BasicStroke(width));
+    }
     /**
      * Fill the internal dimensions of a given shape with the current 
      * foreground color of the canvas.
@@ -128,7 +131,7 @@ public class DrawSpace
 
     /**
      * Fill the internal dimensions of the given rectangle with the current 
-     * foreground color of the canvas. This is a convenience method. A similar 
+     * foreground color of the drawing space. This is a convenience method. A similar 
      * effect can be achieved with the "fill" method.
      */
     public void fillRectangle(int xPos, int yPos, int width, int height)
@@ -213,7 +216,7 @@ public class DrawSpace
     }
 
     /**
-     * Draws a String on the Canvas.
+     * Draws a String on the drawing space.
      * @param  text   the String to be displayed 
      * @param  x      x co-ordinate for text placement 
      * @param  y      y co-ordinate for text placement
@@ -225,7 +228,7 @@ public class DrawSpace
     }
 
     /**
-     * Erases a String on the Canvas.
+     * Erases a String on the drawing space.
      * @param  text     the String to be displayed 
      * @param  x        x co-ordinate for text placement 
      * @param  y        y co-ordinate for text placement
@@ -240,11 +243,11 @@ public class DrawSpace
     }
 
     /**
-     * Draws a line on the Canvas.
-     * @param  x1   x co-ordinate of start of line 
-     * @param  y1   y co-ordinate of start of line 
-     * @param  x2   x co-ordinate of end of line 
-     * @param  y2   y co-ordinate of end of line 
+     * Draws a line on the drawing space.
+     * @param  x1   x co-ordinate of starting point of the line 
+     * @param  y1   y co-ordinate of starting point of the line 
+     * @param  x2   x co-ordinate of starting point of the line 
+     * @param  y2   y co-ordinate of starting point of the line 
      */
     public void drawLine(int x1, int y1, int x2, int y2)
     {
@@ -253,8 +256,8 @@ public class DrawSpace
     }
 
     /**
-     * Sets the foreground color of the Canvas.
-     * @param  newColor   the new color for the foreground of the Canvas 
+     * Sets the foreground color of the drawing space.
+     * @param  newColor   the new color for the foreground of the drawing space 
      */
     public void setForegroundColor(Color newColor)
     {
@@ -262,8 +265,8 @@ public class DrawSpace
     }
 
     /**
-     * Returns the current color of the foreground.
-     * @return   the color of the foreground of the Canvas 
+     * Returns the current foreground color
+     * @return   the foreground color of the drawing space 
      */
     public Color getForegroundColor()
     {
@@ -271,8 +274,8 @@ public class DrawSpace
     }
 
     /**
-     * Sets the background color of the Canvas.
-     * @param  newColor   the new color for the background of the Canvas 
+     * Sets the background color of the drawing space.
+     * @param  newColor   the new background color of the drawing space 
      */
     public void setBackgroundColor(Color newColor)
     {
@@ -281,8 +284,8 @@ public class DrawSpace
     }
 
     /**
-     * Returns the current color of the background
-     * @return   the color of the background of the Canvas 
+     * Returns the current background color
+     * @return   the background color of the drawing space 
      */
     public Color getBackgroundColor()
     {
@@ -290,7 +293,7 @@ public class DrawSpace
     }
 
     /**
-     * changes the current Font used on the Canvas
+     * set the current Font used on the drawing space
      * @param  newFont   new font to be used for String output
      */
     public void setFont(Font newFont)
@@ -353,7 +356,7 @@ public class DrawSpace
 
     /************************************************************************
      * Inner class CanvasPane - the actual canvas component contained in the
-     * Canvas frame. This is essentially a JPanel with added capability to
+     * drawing space frame. This is essentially a JPanel with added capability to
      * refresh the image drawn on it.
      */
     private class CanvasPane extends JPanel
