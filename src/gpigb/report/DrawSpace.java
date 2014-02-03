@@ -5,13 +5,9 @@ import java.awt.*;
 import java.awt.geom.*;
 
 /**
- * Class DrawingBoard - a class to allow for simple graphical 
- * drawing on a canvas.
+ * Class DrawingBoard - a class representing the drawing space 
  * 
- * @author Michael Kölling (mik)
- * @author Bruce Quig
- *
- * @version 2011.07.31
+ * @author 
  */
 
 public class DrawSpace
@@ -22,12 +18,13 @@ public class DrawSpace
     private Color backgroundColor;
     private Image canvasImage;
     
+    /* default values of the drawing space */
     final static int DEFAULT_WIDHT  = 300;
     final static int DEFAULT_HEIGHT = 300;
     /**
      * Create a Canvas with default height, width and background color 
      * (300, 300, white).
-     * @param title  title to appear in Canvas Frame     
+     * @param title  title to appear in Drawing Space Frame     
      */
     public DrawSpace(String title)
     {
@@ -35,10 +32,10 @@ public class DrawSpace
     }
 
     /**
-     * Create a Canvas with default background color (white).
-     * @param title  title to appear in Canvas Frame
-     * @param width  the desired width for the canvas
-     * @param height  the desired height for the canvas
+     * Create a Drawing Space with white color
+     * @param title  title to appear in the Drawing Space Frame
+     * @param width  the desired width for the frame
+     * @param height  the desired height for the frame
      */
     public DrawSpace(String title, int width, int height)
     {
@@ -46,11 +43,11 @@ public class DrawSpace
     }
 
     /**
-     * Create a Canvas.
-     * @param title  title to appear in Canvas Frame
-     * @param width  the desired width for the canvas
-     * @param height  the desired height for the canvas
-     * @param bgClour  the desired background color of the canvas
+     * Create a Drawing Space.
+     * @param title  title to appear in the Drawing Space Frame
+     * @param width  the desired width for the frame
+     * @param height  the desired height for the frame
+     * @param bgClour  the desired background color of the frame
      */
     public DrawSpace(String title, int width, int height, Color bgColor)
     {
@@ -67,15 +64,15 @@ public class DrawSpace
     /**
      * Set the canvas visibility and brings canvas to the front of screen
      * when made visible. This method can also be used to bring an already
-     * visible canvas to the front of other windows.
-     * @param visible  boolean value representing the desired visibility of
-     * the canvas (true or false) 
+     * visible drawing spaces to the front of other windows (drawing spaces).
+     * @param visibility  boolean value representing the desired visibility of
+     * the drawing space (true or false) 
      */
-    public void setVisible(boolean visible)
+    public void setVisible(boolean visibility)
     {
         if(graphic == null) {
-            // first time: instantiate the offscreen image and fill it with
-            // the background color
+            // initial start: instantiate the offscreen image and fill it with
+            // the desired background color
             Dimension size = canvas.getSize();
             canvasImage = canvas.createImage(size.width, size.height);
             graphic = (Graphics2D)canvasImage.getGraphics();
@@ -83,12 +80,12 @@ public class DrawSpace
             graphic.fillRect(0, 0, size.width, size.height);
             graphic.setColor(Color.black);
         }
-        frame.setVisible(true);
+        frame.setVisible(visibility);
     }
 
     /**
-     * Provide information on visibility of the Canvas.
-     * @return  true if canvas is visible, false otherwise
+     * Provide information on visibility of the drawing space.
+     * @return  true if current window is visible, false otherwise
      */
     public boolean isVisible()
     {

@@ -16,39 +16,43 @@ import java.awt.Graphics2D;
 import java.util.Random;
 
 /**
- * Class SimpleGrapher - a short demonstration showing animation with the 
- * DrawSpace class. 
+ * Class SimpleGrapher - 
  */
 
 public class SimpleGrapher   
 {
-    private DrawSpace myCanvas;
+    private DrawSpace theDrawSpace;
     final int axisSurface = 15;
     final int pointR = 2;
     int cur_x = 0;
     
     /**
-     * Create a SimpleGrapher object. Creates a fresh canvas and makes it visible.
+     * Constructors for SimpleGrapher objects. Creates a fresh draw space and makes it visible.
      */
     public SimpleGrapher(int width, int height) {
-        myCanvas = new DrawSpace("Simple Grapher", width, height);
-        myCanvas.setVisible(true);
-        this.drawAxis();
+        this("Simple Grapher", width, height);
+    }
+     
+    public SimpleGrapher() {
+        this("Simple Grapher", 800, 500);
     }
     
-    public SimpleGrapher() {
-        myCanvas = new DrawSpace("Simple Grapher", 800, 500);
-        myCanvas.setVisible(true);
+    public SimpleGrapher(String title, int width, int height) {
+        theDrawSpace = new DrawSpace(title, width, height);
+        theDrawSpace.setVisible(true);
+        this.drawAxis();
     }
 
     private void drawAxis()
     {
-        int height = myCanvas.getSize().height;
-        int width = myCanvas.getSize().height;
-        // draw the axes
-        myCanvas.setForegroundColor(Color.red);
-        myCanvas.drawLine(axisSurface, axisSurface, axisSurface, height - axisSurface);
-        myCanvas.drawLine(axisSurface, height - axisSurface, width - axisSurface, height - axisSurface);
+        int height = theDrawSpace.getSize().height;
+        int width = theDrawSpace.getSize().height;
+        // draw the axes in red
+        theDrawSpace.setForegroundColor(Color.red);
+        // Y axis
+        theDrawSpace.drawLine(axisSurface, axisSurface, axisSurface, height - axisSurface);
+        // X axis
+        theDrawSpace.drawLine(axisSurface, height - axisSurface, width - axisSurface, height - axisSurface);
     }
     
     private int getTrueX(int x) {
@@ -56,22 +60,22 @@ public class SimpleGrapher
     }
     
     private int getTrueY(int y) {
-         int height = myCanvas.getSize().height;
+         int height = theDrawSpace.getSize().height;
          return height - axisSurface - y;
     }
     
     private void drawPoint(int xPos, int yPos) {
-        myCanvas.fill(new Ellipse2D.Double (getTrueX(xPos), getTrueY(yPos) - pointR , pointR, pointR));
+        theDrawSpace.fill(new Ellipse2D.Double (getTrueX(xPos), getTrueY(yPos) - pointR , pointR, pointR));
     }
     
     private void drawBar(int xPos, int yPos) {
-        myCanvas.drawLine(getTrueX(xPos), getTrueY(0), getTrueX(xPos), getTrueY(yPos));
+        theDrawSpace.drawLine(getTrueX(xPos), getTrueY(0), getTrueX(xPos), getTrueY(yPos));
     }
     
     public void plotData(SensorRecord<?> record) {        
-            myCanvas.setForegroundColor(Color.gray);
+            theDrawSpace.setForegroundColor(Color.gray);
             drawBar(cur_x, (Integer) record.getData());
-            myCanvas.setForegroundColor(Color.black);
+            theDrawSpace.setForegroundColor(Color.black);
             drawPoint(cur_x++, (Integer) record.getData());
     }
     
@@ -82,7 +86,7 @@ public class SimpleGrapher
     }
     
      public void clear() {
-        myCanvas.erase();
+        theDrawSpace.erase();
         cur_x = 0;
     }
 }

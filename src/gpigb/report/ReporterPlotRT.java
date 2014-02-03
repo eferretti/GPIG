@@ -5,7 +5,14 @@ import gpigb.data.*;
 import java.util.List;
 
 public class ReporterPlotRT implements Reporter {
-	SimpleGrapher grapher = new SimpleGrapher();
+	String title;
+	SimpleGrapher grapher;
+	
+	public ReporterPlotRT(String title){
+		this.title = title;
+		grapher = new SimpleGrapher(title, 800, 500);
+	}
+	
 	@Override
 	public void GenerateReport(List<RecordSet<?>> dataStream) {	 
 		RecordSet<Integer> data = (RecordSet<Integer>) dataStream.get(0);
