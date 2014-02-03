@@ -14,23 +14,23 @@ public class Analyser2 implements Analyser{
 	 */
 	public boolean Analyse(List<RecordSet<?>> data)
 	{
-		if(data.get(0).getRecordCount() < 2 || data.get(1).getRecordCount() < 2 ) return false; 
 		
 		List<RecordSet<?>> changeRecord = new ArrayList <RecordSet<?>>();
 		for(int i = 0; i <data.size(); i++)
 		{
+			//Check that there are at least 2 records
 			if(data.get(i).getRecordCount() < 2)
 				return false;
 			SensorRecord<?> x = data.get(i).getReadingAtPosition(0);
 			SensorRecord<?> y = data.get(i).getReadingAtPosition(1);
-			// Check for sharp increase or decrease
+			// Check for sharp increase or decrease (Just simple > at the moment)
 			if ((Integer) x.getData() > (Integer) y.getData())
 			{
 				changeRecord.add(data.get(i));	
 			}
 		}
 		
-		// Send any data with sharp increase to reporter)
+		// Send any data with sharp increase to reporter
 		if (!changeRecord.isEmpty())
 			new Reporter2().GenerateReport(changeRecord);
 		
