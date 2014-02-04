@@ -33,6 +33,7 @@ public class SimpleGrapher
     // cur_x position for the point which we are currently graphing
     int cur_x = 1;
     
+    int avg = 0;
     /**
      * Constructors for SimpleGrapher objects. Draw window used default name
      * @param width - width of the drawing space window
@@ -41,7 +42,10 @@ public class SimpleGrapher
     public SimpleGrapher(int width, int height) {
         this("Simple Grapher", width, height);
     }
-     
+
+    /**
+     * Constructors for SimpleGrapher objects. Draw window used default name and dimensions
+     */
     public SimpleGrapher() {
         this("Simple Grapher", 800, 500);
     }
@@ -92,10 +96,13 @@ public class SimpleGrapher
         theDrawSpace.setForegroundColor(Color.blue);
         theDrawSpace.drawLine(axisXEnd - 70, axisYStart + 15, axisXEnd - 50,  axisYStart + 15);
         theDrawSpace.drawString("Avg Value", axisXEnd - 45, axisYStart + 20);
-
+        // Time
+        theDrawSpace.setForegroundColor(Color.red);
+        theDrawSpace.drawString("Time", axisXEnd - 25, axisYEnd + 15);
+        
     }
     
-    /** Because Java uses a non-conventional 2D basis, need to convert each point
+    /** Because Java uses a non-conventional 2D basis, need to convert x of each point
      * @param x - x Coordinate of a specific point
      * @return returns the new x coordinate according to the basis of the 
      * drawing space
@@ -104,7 +111,7 @@ public class SimpleGrapher
         return  x + axisXStart;
     }
     
-    /** Because Java uses a non-conventional 2D basis, need to convert each point
+    /** Because Java uses a non-conventional 2D basis, need to convert y of each point
      * @param y - y Coordinate of a specific point
      * @return returns the new y coordinate according to the basis of the 
      * drawing space
@@ -142,6 +149,12 @@ public class SimpleGrapher
             drawBar(cur_x, dataPoint);
             theDrawSpace.setForegroundColor(Color.black);
             drawPoint(cur_x, dataPoint);
+            
+            //Plot Average - probably shouldn't be estimated here
+            avg += dataPoint;
+            theDrawSpace.setForegroundColor(Color.blue);
+            drawBar(cur_x, avg/cur_x);
+            
             cur_x += lineWidth;
     }
     
