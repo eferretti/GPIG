@@ -25,7 +25,7 @@ public class TestImpl
 {
 	public static void main(String[] args)
 	{
-		//ConcreteSensorOne s1 = new ConcreteSensorOne();
+		ConcreteSensorOne s1 = new ConcreteSensorOne();
 		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
 		
 		ComponentManager<Sensor<?>> mgr = new JarFileComponentManager<Sensor<?>>((Class<? extends Sensor<?>>) Sensor.class);
@@ -35,9 +35,9 @@ public class TestImpl
 		System.out.println(mgr.getAvailableModules());
 		
 		int id = mgr.createObjectOfModule(mgr.getAvailableModules().get(0).moduleID);
-		StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
-		Sensor<Float> s1 = (Sensor<Float>) ref1.get();
-		
+		//StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
+		//Sensor<Float> s1 = (Sensor<Float>) ref1.get();
+
 		final Store store = new FileStore();
 		
 		final Analyser atemp = new ThresholdAnalyser(40, 20);
@@ -50,14 +50,14 @@ public class TestImpl
 		//final Reporter r4 = new ReporterPlot();
 		
 		
-		s1.registerObserver(new SensorObserver<Float>()
+		s1.registerObserver(new SensorObserver<Integer>()
 		{
 			@Override
-			public void update(int sensorID, Float reading)
+			public void update(int sensorID, Integer reading)
 			{
 				System.out.println("Graphing result");
-				RecordSet<Float> rs = new RecordSet<>(new Date(), new Date(), sensorID);
-				rs.addRecord(new SensorRecord<Float>(1, reading));
+				RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
+				rs.addRecord(new SensorRecord<Integer>(1, reading));
 				List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
 				newList.add(rs);
 				r3.GenerateReport(newList);
