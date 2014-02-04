@@ -50,7 +50,6 @@ public class TestImpl
 		final Reporter r3 = new ReporterPlotRT("Real-time Plot 1");
 		//final Reporter r4 = new ReporterPlot();
 		
-		
 		s1.registerObserver(new SensorObserver<Float>()
 		{
 			@Override
