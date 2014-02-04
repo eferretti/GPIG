@@ -130,18 +130,21 @@ public class JSONFileStore implements Store
 					
 					ArrayList<SensorRecord<?>> records = new ArrayList<>();
 					Type dataType = new TypeToken<SensorRecord<?>>(){}.getType();
-					
+					int countDelete = 0;
+					int countNon = 0;
 					for (String x = br.readLine(); x != null; x = br.readLine())
 					{
 						SensorRecord<?> record = gson.fromJson(x, dataType);
 						
 						if (record.getTimestamp().getTime() <= items.getToTime().getTime() && record.getTimestamp().getTime() >= items.getFromTime().getTime())
 						{
+							countDelete++;
 							// "delete"
 							// basically just dont write back to file
 						}
 						else
 						{
+							countNon++;
 							records.add(record);
 						}
 					}
@@ -152,12 +155,23 @@ public class JSONFileStore implements Store
 						if (file.delete())
 						{
 							Collections.sort(records);
-							RecordSet<SensorRecord<?>> rs = new RecordSet<SensorRecord<?>>(records.get(0).getTimestamp(),
-									records.get(records.size()).getTimestamp(), items.getSensorID());
-							this.write(rs);
+							System.out.println(records.size());
+							RecordSet<?> rs = new RecordSet<>(records.get(0).getTimestamp(),
+									records.get(records.size()-1).getTimestamp(), items.getSensorID());
+							
+							for (SensorRecord record : records)
+							{
+								rs.addRecord(record);
+							}
+							
+							if(this.write(rs))
+								return true;
+							else
+								return false;
 						}
 						else
 						{
+							System.out.println("Couldnt remove file");
 							return false;
 						}
 					}
