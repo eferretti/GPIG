@@ -47,7 +47,7 @@ public class TestImpl
 		
 		final Reporter r1 = new Reporter1();
 		final Reporter r2 = new Reporter2();
-		final Reporter r3 = new ReporterPlotRT("Real-time Plot 1");
+		final Reporter r3 = new ReporterPlot("Real-time Plot 1");
 		//final Reporter r4 = new ReporterPlot();
 		
 		s1.registerObserver(new SensorObserver<Float>()
@@ -60,7 +60,7 @@ public class TestImpl
 				rs.addRecord(new SensorRecord<Float>(1, reading));
 				List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
 				newList.add(rs);
-				r3.GenerateReport(newList);
+				r3.generateReport(newList);
 				store.write(rs);
 				
 				Calendar c = Calendar.getInstance();
