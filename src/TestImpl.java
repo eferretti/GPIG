@@ -18,7 +18,10 @@ import gpigb.sense.ConcreteSensorTwo;
 import gpigb.sense.SNMPSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
+<<<<<<< HEAD
 import gpigb.store.FileStore;
+=======
+>>>>>>> 8ab6e6248371f1fdb9b5c467d3e857b12e587e56
 import gpigb.store.JSONFileStore;
 import gpigb.store.MongoStore;
 import gpigb.store.Store;
@@ -43,6 +46,10 @@ public class TestImpl
 		StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
 		Sensor<Float> s1 = (Sensor<Float>) ref1.get();
 		
+<<<<<<< HEAD
+=======
+		final Store store = new MongoStore();
+>>>>>>> 8ab6e6248371f1fdb9b5c467d3e857b12e587e56
 		
 		final Analyser atemp = new ThresholdAnalyser(40, 20);
 		final Analyser aelev = new ThresholdAnalyser(1000, 1100);
