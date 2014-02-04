@@ -9,7 +9,7 @@ import gpigb.report.*;
 
 public class Analyser2 implements Analyser{
 	
-	Reporter r = new ReporterPlot("ReporterPlot 1");
+	//Reporter r = new ReporterPlot("ReporterPlot 1");
 	/**
 	 * 
 	 * @param data
@@ -67,8 +67,8 @@ public class Analyser2 implements Analyser{
 		// Send to reporter
 		if (!changeRecord.isEmpty())
 			new Reporter2().GenerateReport(changeRecord);
-		if (!averageRecord.isEmpty())
-			r.GenerateReport(averageRecord);
+		//if (!averageRecord.isEmpty())
+		//	r.GenerateReport(averageRecord);
 		
 		
 		//Reporter3.GenerateReport(averageRecord);
