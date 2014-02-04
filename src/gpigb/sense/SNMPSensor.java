@@ -22,79 +22,20 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import gpigb.classloading.Patchable;
 
-public class SNMPSensor extends Patchable implements Sensor<Integer>, Runnable
+public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 {
-	private ArrayList<WeakReference<SensorObserver<Integer>>> observers = new ArrayList<>();
-	private Integer lastReading = null;
+	private ArrayList<WeakReference<SensorObserver<Float>>> observers = new ArrayList<>();
+	private Float lastReading = null;
 	
 	//JVM Heap Used
-	private String oid = "1.3.6.1.4.1.42.2.145.3.163.1.1.2.11";
+	private String oidString = ".1.3.6.1.4.1.42.2.145.3.163.1.1.2.11.0";
 	
 	// Default SNMP settings
-	private String port = "19004";
+	private String port = "16500";
 	
 	public SNMPSensor()
 	{
-		try
-		{
-			Snmp snmp = new Snmp(new DefaultUdpTransportMapping());
-			snmp.listen();
-			Address a = new UdpAddress("localhost/"+port);
-			CommunityTarget target = new CommunityTarget();
-			target.setAddress(a);
-			target.setTimeout(500);
-			target.setRetries(3);
-			target.setCommunity(new OctetString("public"));
-			target.setVersion(SnmpConstants.version2c);
-			
-			PDU req = new PDU();
-			req.setType(PDU.GET);
-			OID oid = new OID(this.oid);
-			req.add(new VariableBinding(oid));
-			
-			PDU responsePDU = null;
-			ResponseEvent rEv = snmp.send(req, target);
-			
-			if(rEv != null)
-			{
-				responsePDU = rEv.getResponse();
-                if ( responsePDU != null)
-                {
-                                
-                    Vector<? extends VariableBinding> tmpv = responsePDU.getVariableBindings();
-                    if(tmpv != null)
-                    {
-                        for(int k=0; k <tmpv.size();k++)
-                        {
-                            VariableBinding vb = (VariableBinding) tmpv.get(k);
-                            String output = null;
-                            if ( vb.isException())
-                            {
-
-                                String errorstring = vb.getVariable().getSyntaxString();
-                                System.out.println("Error:"+errorstring);
-                            }
-                            else
-                            {
-                                String sOid = vb.getOid().toString();
-                                Variable var = vb.getVariable();
-                                OctetString oct = new OctetString((OctetString)var);
-                                String sVar =  oct.toString();
-
-                                System.out.println("success:"+sVar);
-                            }
-
-                        
-                        }
-                    
-                    }
-                }
-			}
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		new Thread(this).start();
 	}
 
 	public SNMPSensor(Object oldInstance)
@@ -109,7 +50,7 @@ public class SNMPSensor extends Patchable implements Sensor<Integer>, Runnable
 	}
 
 	@Override
-	public Integer poll()
+	public Float poll()
 	{
 		return lastReading;
 	}
@@ -121,7 +62,7 @@ public class SNMPSensor extends Patchable implements Sensor<Integer>, Runnable
 	}
 
 	@Override
-	public void registerObserver(SensorObserver<Integer> obs)
+	public void registerObserver(SensorObserver<Float> obs)
 	{
 		for(WeakReference ref:observers)
 		{
@@ -131,11 +72,11 @@ public class SNMPSensor extends Patchable implements Sensor<Integer>, Runnable
 			}
 		}
 		
-		observers.add(new WeakReference<SensorObserver<Integer>>(obs));
+		observers.add(new WeakReference<SensorObserver<Float>>(obs));
 	}
 
 	@Override
-	public void removeObserver(SensorObserver<Integer> obs)
+	public void removeObserver(SensorObserver<Float> obs)
 	{
 		for(WeakReference ref : observers)
 		{
@@ -149,9 +90,9 @@ public class SNMPSensor extends Patchable implements Sensor<Integer>, Runnable
 	@Override
 	public void notifyObservers()
 	{
-		ArrayList<WeakReference<SensorObserver<Integer>>> toRemove = new ArrayList<>();
+		ArrayList<WeakReference<SensorObserver<Float>>> toRemove = new ArrayList<>();
 		
-		for(WeakReference<SensorObserver<Integer>> ref:observers)
+		for(WeakReference<SensorObserver<Float>> ref:observers)
 		{
 			if(ref.get() == null)
 			{
@@ -166,8 +107,49 @@ public class SNMPSensor extends Patchable implements Sensor<Integer>, Runnable
 	@Override
 	public void run()
 	{
-		// TODO Auto-generated method stub
+		Snmp snmp = null;
 		
+		PDU req = new PDU();
+		req.setType(PDU.GET);
+		
+		OID oid = new OID(oidString);
+		req.add(new VariableBinding(oid));
+		
+		CommunityTarget target = new CommunityTarget();
+
+		Address a = new UdpAddress("localhost/"+port);
+		target.setAddress(a);
+		target.setTimeout(500);
+		target.setRetries(3);
+		target.setCommunity(new OctetString("public"));
+		target.setVersion(SnmpConstants.version2c);
+		
+		try
+		{
+			snmp = new Snmp(new DefaultUdpTransportMapping());
+			snmp.listen();
+		}
+		catch(Exception e)
+		{
+		}
+		
+		while(true)
+		{
+			try
+			{
+				ResponseEvent responseEvent = snmp.send(req, target);
+				
+				PDU responsePDU = responseEvent.getResponse();
+	            VariableBinding binding = responsePDU.getVariableBindings().get(0);
+	            lastReading = Float.valueOf(binding.getVariable().toString());
+	            lastReading /= (1000*1000); //Convert to MB
+	            
+	            notifyObservers();
+	            
+	            Thread.sleep(500);
+	        }
+			catch(Exception e) {}
+		}
 	}
 
 }

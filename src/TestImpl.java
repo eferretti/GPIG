@@ -15,6 +15,7 @@ import gpigb.data.SensorRecord;
 import gpigb.report.*;
 import gpigb.sense.ConcreteSensorOne;
 import gpigb.sense.ConcreteSensorTwo;
+import gpigb.sense.SNMPSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 import gpigb.store.FileStore;
@@ -24,8 +25,18 @@ public class TestImpl
 {
 	public static void main(String[] args)
 	{
-		ConcreteSensorOne s1 = new ConcreteSensorOne();
+		//ConcreteSensorOne s1 = new ConcreteSensorOne();
 		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
+		
+		ComponentManager<Sensor<?>> mgr = new JarFileComponentManager<Sensor<?>>((Class<? extends Sensor<?>>) Sensor.class);
+		mgr.addModuleDirectory("./HUMS_Modules/");
+		mgr.refreshModules();
+		
+		System.out.println(mgr.getAvailableModules());
+		
+		int id = mgr.createObjectOfModule(mgr.getAvailableModules().get(0).moduleID);
+		StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
+		Sensor<Float> s1 = (Sensor<Float>) ref1.get();
 		
 		final Store store = new FileStore();
 		
@@ -39,13 +50,14 @@ public class TestImpl
 		//final Reporter r4 = new ReporterPlot();
 		
 		
-		s1.registerObserver(new SensorObserver<Integer>()
+		s1.registerObserver(new SensorObserver<Float>()
 		{
 			@Override
-			public void update(int sensorID, Integer reading)
+			public void update(int sensorID, Float reading)
 			{
-				RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
-				rs.addRecord(new SensorRecord<Integer>(1, reading));
+				System.out.println("Graphing result");
+				RecordSet<Float> rs = new RecordSet<>(new Date(), new Date(), sensorID);
+				rs.addRecord(new SensorRecord<Float>(1, reading));
 				List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
 				newList.add(rs);
 				r3.GenerateReport(newList);
@@ -63,39 +75,5 @@ public class TestImpl
 						store.write(rs);
 					}
 				});
-	
-		(new Thread(new Runnable()
-		{
-			
-			@Override
-			public void run()
-			{
-				while(true)
-				{
-					System.out.println("Looping...");
-					try{Thread.sleep(1000);}catch(Exception e){}
-					
-					Calendar c = Calendar.getInstance();
-					c.set(2010, 1, 1, 1, 1);
-					Date d1 = c.getTime();
-					c.set(2015, 1, 1, 1, 1);
-					Date d2 = c.getTime();
-					RecordSet<Integer> rs1 = new RecordSet<Integer>(d1, d2, 1);
-					store.read(rs1);
-					atemp.Analyse(rs1);
-					RecordSet<Integer> rs2 = new RecordSet<Integer>(d1, d2, 2);
-					store.read(rs2);
-					aelev.Analyse(rs2);
-					List<RecordSet<?>> rc = new ArrayList <RecordSet<?>>();
-					rc.add(rs1);
-					rc.add(rs2);
-					a2.Analyse(rc);
-					
-					
-					
-				}
-			}
-		})).start();
 	}
-
 }

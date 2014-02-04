@@ -66,6 +66,7 @@ public class JarFileComponentManager<Interface> implements
 	@Override
 	public boolean addModuleDirectory(String path)
 	{
+		path = path.replace("~",System.getProperty("user.home"));
 		File newDir = new File(path);
 
 		if (newDir.exists() && newDir.isDirectory())

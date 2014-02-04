@@ -198,7 +198,7 @@ public class SimpleGrapher
      * @param record - data record
      */
     public void plotData(SensorRecord<?> record) {        
-            int dataPoint = (Integer)record.getData();
+            int dataPoint = Math.round((float)Math.floor(Double.valueOf(record.getData().toString())));
     		//Draw data Bar
             theDrawSpace.setForegroundColor(Color.gray);
             drawBar(cur_x, dataPoint);

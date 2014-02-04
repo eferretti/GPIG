@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Test;
+import static org.junit.Test;
 
 public class JSONFileStoreTest
 {
