@@ -14,7 +14,7 @@ public class ReporterPlot implements Reporter {
 	}
 	
 	@Override
-	public void GenerateReport(List<RecordSet<?>> dataStream) {	 
+	public void generateReport(List<RecordSet<?>> dataStream) {	 
 		RecordSet<Integer> data = (RecordSet<Integer>) dataStream.get(0);
 		grapher.clear();
 		grapher.plotData(data.getReadingAtPosition(0));

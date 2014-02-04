@@ -12,7 +12,7 @@ import java.util.List;
 public class Reporter1 implements Reporter
 {
 
-	public void GenerateReport(List<RecordSet<?>> EroniousData)
+	public void generateReport(List<RecordSet<?>> EroniousData)
 	{
 		if(EroniousData.isEmpty())
 			return;

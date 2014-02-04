@@ -35,7 +35,7 @@ public boolean Analyse(RecordSet<?> input){
 			add.addRecord(inputs.getReadingAtPosition(i));
 			rt.add(add);
 			
-			new Reporter1().GenerateReport(rt);
+			new Reporter1().generateReport(rt);
 		
 		
 		}

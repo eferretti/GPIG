@@ -66,7 +66,7 @@ public class Analyser2 implements Analyser{
 		
 		// Send to reporter
 		if (!changeRecord.isEmpty())
-			new Reporter2().GenerateReport(changeRecord);
+			new Reporter2().generateReport(changeRecord);
 		//if (!averageRecord.isEmpty())
 		//	r.GenerateReport(averageRecord);
 		

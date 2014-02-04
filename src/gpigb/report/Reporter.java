@@ -12,6 +12,5 @@ public interface Reporter
 	 *            The information to be formatted and displayed , can contain
 	 *            record sets of sensor or analyser output
 	 */
-	public void GenerateReport(List<RecordSet<?>> data);
-
+	public void generateReport(List<RecordSet<?>> data);
 }
