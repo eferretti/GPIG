@@ -22,9 +22,6 @@ import java.util.jar.JarFile;
 public class JarFileComponentManager<Interface> implements
 		ComponentManager<Interface>
 {
-	// Used to automatically assign new, unique IDs
-	private static int nextID = 1;
-
 	// Maintain a record of available plugins and searchable directories
 	Set<File> moduleDirectories = Collections
 			.synchronizedSet(new HashSet<File>());
@@ -131,7 +128,7 @@ public class JarFileComponentManager<Interface> implements
 				else
 				{
 					rec = new ClassRecord();
-					rec.summary = new ModuleSummary(nextID++,
+					rec.summary = new ModuleSummary(IDGenerator.getNextID(),
 							loader.moduleVersions.get(className), className);
 					modules.put(rec.summary.moduleID, rec);
 				}
@@ -207,7 +204,7 @@ public class JarFileComponentManager<Interface> implements
 		{
 			// Lookup the required module and create a new instance and record
 			Interface instance = modules.get(moduleID).clz.newInstance();
-			ret = nextID++;
+			ret = IDGenerator.getNextID();
 			instances.put(new InstanceSummary(ret, moduleID, ""),
 					new StrongReference<Interface>(instance));
 		}
