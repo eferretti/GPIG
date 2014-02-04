@@ -9,7 +9,7 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	private Date timestamp;
 	private ReadingType data;
 	private int sensorID;
-	private Dictionary<String, String> meta;
+	private Hashtable<String, String> meta;
 
 	/**
 	 * A record class for a single sensor reading.

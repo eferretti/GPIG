@@ -23,8 +23,8 @@ public class RecordSet<DataType>
 	 */
 	public RecordSet(Date from, Date to, int sensor)
 	{
-		this.fromTime = from;
-		this.toTime = to;
+		this.fromTime = new Date(from.getTime());
+		this.toTime = new Date(to.getTime());
 		this.sensorID = sensor;
 		this.data = new ArrayList<>();
 	}
@@ -37,7 +37,8 @@ public class RecordSet<DataType>
 	 */
 	public void addRecord(SensorRecord<DataType> data)
 	{
-		this.data.add(data);
+		if(data != null)
+			this.data.add(data);
 	}
 
 	/**
@@ -49,6 +50,8 @@ public class RecordSet<DataType>
 	 */
 	public SensorRecord<DataType> getReadingAtPosition(int pos)
 	{
+		if (pos < 0) return null;
+		
 		if (this.data.size() > pos) return this.data.get(pos);
 
 		return null;
@@ -69,7 +72,7 @@ public class RecordSet<DataType>
 	 */
 	public Date getFromTime()
 	{
-		return fromTime;
+		return new Date(fromTime.getTime());
 	}
 
 	/**
@@ -77,7 +80,7 @@ public class RecordSet<DataType>
 	 */
 	public Date getToTime()
 	{
-		return toTime;
+		return new Date(toTime.getTime());
 	}
 
 	/**
