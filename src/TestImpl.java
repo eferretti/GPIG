@@ -19,13 +19,14 @@ import gpigb.sense.SNMPSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 import gpigb.store.FileStore;
+import gpigb.store.JSONFileStore;
+import gpigb.store.MongoStore;
 import gpigb.store.Store;
 
 public class TestImpl
 {
 	public static void main(String[] args)
 	{
-		ConcreteSensorOne s1 = new ConcreteSensorOne();
 		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
 		
 		ComponentManager<Sensor<?>> mgr = new JarFileComponentManager<Sensor<?>>((Class<? extends Sensor<?>>) Sensor.class);
@@ -39,6 +40,9 @@ public class TestImpl
 		//Sensor<Float> s1 = (Sensor<Float>) ref1.get();
 
 		final Store store = new FileStore();
+		StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
+		Sensor<Float> s1 = (Sensor<Float>) ref1.get();
+		
 		
 		final Analyser atemp = new ThresholdAnalyser(40, 20);
 		final Analyser aelev = new ThresholdAnalyser(1000, 1100);
@@ -49,19 +53,27 @@ public class TestImpl
 		final Reporter r3 = new ReporterPlotRT("Real-time Plot 1");
 		//final Reporter r4 = new ReporterPlot();
 		
-		
-		s1.registerObserver(new SensorObserver<Integer>()
+		s1.registerObserver(new SensorObserver<Float>()
 		{
 			@Override
-			public void update(int sensorID, Integer reading)
+			public void update(int sensorID, Float reading)
 			{
 				System.out.println("Graphing result");
-				RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
-				rs.addRecord(new SensorRecord<Integer>(1, reading));
+				RecordSet<Float> rs = new RecordSet<>(new Date(), new Date(), sensorID);
+				rs.addRecord(new SensorRecord<Float>(1, reading));
 				List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
 				newList.add(rs);
 				r3.GenerateReport(newList);
 				store.write(rs);
+				
+				Calendar c = Calendar.getInstance();
+				c.set(Calendar.YEAR, 1980);
+				Date f = c.getTime();
+				c.set(Calendar.YEAR, 5000);
+				Date t = c.getTime();
+				RecordSet<Float> tmp = new RecordSet<>(f, t, 1);
+				store.read(tmp);
+				System.out.println("" + tmp.getRecordCount());
 			}
 		});
 		
