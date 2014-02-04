@@ -26,7 +26,7 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	{
 		this.sensorID = sensorID;
 		this.data = data;
-		this.meta = new Hashtable<>();
+		this.meta = null;//new Hashtable<>();
 		for (int i = 0; i + 1 < metaArgs.length; i += 2)
 		{
 			this.meta.put(metaArgs[i], metaArgs[i + 1]);
