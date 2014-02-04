@@ -19,6 +19,7 @@ import gpigb.sense.SNMPSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 import gpigb.store.JSONFileStore;
+import gpigb.store.MongoStore;
 import gpigb.store.Store;
 
 public class TestImpl
@@ -26,7 +27,7 @@ public class TestImpl
 	public static void main(String[] args)
 	{
 		//ConcreteSensorOne s1 = new ConcreteSensorOne();
-//		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
+		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
 		
 		ComponentManager<Sensor<?>> mgr = new JarFileComponentManager<Sensor<?>>((Class<? extends Sensor<?>>) Sensor.class);
 		mgr.addModuleDirectory("./HUMS_Modules/");
@@ -38,7 +39,7 @@ public class TestImpl
 		StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
 		Sensor<Float> s1 = (Sensor<Float>) ref1.get();
 		
-		final Store store = new JSONFileStore();
+		final Store store = new MongoStore();
 		
 		final Analyser atemp = new ThresholdAnalyser(40, 20);
 		final Analyser aelev = new ThresholdAnalyser(1000, 1100);
@@ -61,18 +62,27 @@ public class TestImpl
 				newList.add(rs);
 				r3.GenerateReport(newList);
 				store.write(rs);
+				
+				Calendar c = Calendar.getInstance();
+				c.set(Calendar.YEAR, 1980);
+				Date f = c.getTime();
+				c.set(Calendar.YEAR, 5000);
+				Date t = c.getTime();
+				RecordSet<Float> tmp = new RecordSet<>(f, t, 1);
+				store.read(tmp);
+				System.out.println("" + tmp.getRecordCount());
 			}
 		});
 		
-//		s2.registerObserver(new SensorObserver<Integer>()
-//				{
-//					@Override
-//					public void update(int sensorID, Integer reading)
-//					{
-//						RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
-//						rs.addRecord(new SensorRecord<Integer>(2, reading));
-//						store.write(rs);
-//					}
-//				});
+		s2.registerObserver(new SensorObserver<Integer>()
+				{
+					@Override
+					public void update(int sensorID, Integer reading)
+					{
+						RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
+						rs.addRecord(new SensorRecord<Integer>(2, reading));
+						store.write(rs);
+					}
+				});
 	}
 }

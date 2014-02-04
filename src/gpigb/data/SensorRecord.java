@@ -9,7 +9,7 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	private Date timestamp;
 	private ReadingType data;
 	private int sensorID;
-	private Dictionary<String, String> meta;
+	private Hashtable<String, String> meta;
 
 	/**
 	 * A record class for a single sensor reading.
@@ -26,7 +26,7 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	{
 		this.sensorID = sensorID;
 		this.data = data;
-		this.meta = null;//new Hashtable<>();
+		this.meta = new Hashtable<>();
 		for (int i = 0; i + 1 < metaArgs.length; i += 2)
 		{
 			this.meta.put(metaArgs[i], metaArgs[i + 1]);
