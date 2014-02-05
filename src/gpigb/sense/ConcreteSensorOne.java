@@ -11,8 +11,8 @@ public class ConcreteSensorOne implements Sensor<Integer>, Runnable
 	private Integer currentReading;
 	private int id = 1;
 
-	private Integer min = -50;
-	private Integer max = 200;
+	private Integer min = -5000;
+	private Integer max = 20000;
 
 	public ConcreteSensorOne()
 	{
@@ -30,7 +30,7 @@ public class ConcreteSensorOne implements Sensor<Integer>, Runnable
 			try
 			{
 				// sleep for 2 seconds
-				Thread.sleep(800);
+				Thread.sleep(50);
 			}
 			catch (InterruptedException e)
 			{

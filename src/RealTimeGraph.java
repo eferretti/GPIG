@@ -18,11 +18,12 @@ import gpigb.sense.ConcreteSensorTwo;
 import gpigb.sense.SNMPSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
+import gpigb.store.InMemoryStore;
 import gpigb.store.JSONFileStore;
 import gpigb.store.MongoStore;
 import gpigb.store.Store;
 
-public class TestImpl
+public class RealTimeGraph
 {
 	public static void main(String[] args)
 	{
@@ -41,7 +42,7 @@ public class TestImpl
 		StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
 		Sensor<Float> s1 = (Sensor<Float>) ref1.get();
 		
-		final Store store = new MongoStore();
+		final Store store = new InMemoryStore();
 		
 		final Analyser atemp = new ThresholdAnalyser(40, 20);
 		final Analyser aelev = new ThresholdAnalyser(1000, 1100);
@@ -49,17 +50,17 @@ public class TestImpl
 		
 		final Reporter r1 = new Reporter1();
 		final Reporter r2 = new Reporter2();
-		final Reporter r3 = new ReporterPlot("Real-time Plot 1");
+		final Reporter r3 = new ReporterPlotRTSmart("Real-time Plot 1");
 		//final Reporter r4 = new ReporterPlot();
 		
-		s1.registerObserver(new SensorObserver<Float>()
+		s2.registerObserver(new SensorObserver<Integer>()
 		{
 			@Override
-			public void update(int sensorID, Float reading)
+			public void update(int sensorID, Integer reading)
 			{
 				System.out.println("Graphing result");
-				RecordSet<Float> rs = new RecordSet<>(new Date(), new Date(), sensorID);
-				rs.addRecord(new SensorRecord<Float>(1, reading));
+				RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
+				rs.addRecord(new SensorRecord<Integer>(1, reading));
 				List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
 				newList.add(rs);
 				r3.generateReport(newList);
