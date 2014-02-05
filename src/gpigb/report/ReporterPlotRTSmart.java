@@ -10,13 +10,13 @@ public class ReporterPlotRTSmart implements Reporter {
 	
 	public ReporterPlotRTSmart(String title){
 		this.title = title;
-		grapher = new SmartGrapher(800, 500, 300);
+		grapher = new SmartGrapher(800, 500);
 	}
 	
 	@Override
-	public void GenerateReport(List<RecordSet<?>> dataStream) {	 
+	public void generateReport(List<RecordSet<?>> dataStream) {	 
 		RecordSet<?> data = dataStream.get(0);
-		grapher.plot((Integer)data.getReadingAtPosition(0).getData());
+		grapher.plot(data.getReadingAtPosition(0));
 		}
 	}
 
