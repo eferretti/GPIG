@@ -2,17 +2,18 @@ package gpigb.report;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
+import java.util.LinkedList;
 
 class GraphPanel extends JComponent
     {
-        private static final double SCALE_FACTOR = .8;
-        private int SCALE_TIMES = 0;
-        // An internal image buffer that is used for painting. For
-        // actual display, this image buffer is then copied to screen.
-        private BufferedImage graphImage;
+		// An internal image buffer that is used for painting. For
+	    // actual display, this image buffer is then copied to screen.
+		private BufferedImage graphImage;
+	
+		private static final double SCALE_FACTOR = .8;
         private static final double yAxisHeight = .7;
-        private int yMax;
-        private int yMin;
+        
+        private static final int mAvgSize = 6;
         private static final int axisYgran = 20;
         private static final Color SHADOW = new Color(0, 0, 0, 40);
         private static final Color DARK_GREEN = new Color(0, 128, 0);
@@ -20,11 +21,16 @@ class GraphPanel extends JComponent
         private static final Color DATA_POINT = new Color(51, 25, 0);
         
         private static final Color STATS_COLOR = new Color(192, 192, 192);
-        private static final Color AVG_COLOR = new Color(51, 51, 0);
+        private static final Color AVG_COLOR = new Color(51, 51, 0, 200);
+        private static final Color M_AVG_COLOR = new Color(0, 51, 102, 200);
         private static final Color BG_COLOR = Color.black;
         private static final Color AXIS_COLOR = DARK_GREEN;
         
         private static final int DistFromRightBoarder = 20;
+        
+        private int yMax;
+        private int yMin;
+        private int SCALE_TIMES = 0;
         
         private int cur = 0;
         private int min = Integer.MAX_VALUE;
@@ -32,6 +38,9 @@ class GraphPanel extends JComponent
         private int count = 0;
         private int sum = 0;
         private int avg = 0;
+        private int m_avg = 0;
+        private LinkedList<Integer> moving_avg;
+
      
         public GraphPanel(int width, int height)
         {
@@ -42,6 +51,7 @@ class GraphPanel extends JComponent
         
         public void setToDefault(){
             int height = graphImage.getHeight();
+            int width  = graphImage.getWidth();
             yMin = (int)(height* .1);
             yMax = (int)(height* .95);
             cur = 0;
@@ -51,6 +61,7 @@ class GraphPanel extends JComponent
             count = 0;
             sum = 0;
             avg = 0;
+            moving_avg = new LinkedList<Integer>();
         }
         
         /* no no really math is really fun... I hate my life*/
@@ -75,9 +86,9 @@ class GraphPanel extends JComponent
         Graphics g = graphImage.getGraphics();
         int height = graphImage.getHeight();
         
-        g.setColor(BG_COLOR); 
+        g.setColor(BG_COLOR); /* LULZ KELW */
         g.fillRect(0, 0, 40, height);
-        g.setColor(SHADOW); /* AWESOME SHADOW BLURRY BUGGY THINGY - nono its a feature */
+        g.setColor(SHADOW); /* LULZ KELW */
         g.fillRect(0, 40, 60, height);
 
        }
@@ -93,6 +104,9 @@ class GraphPanel extends JComponent
 
             g.fillRect((int)(width*.85), (int)(height*.073), (int)(width*.015), (int)(height*.015));
             g.drawString("Avrg value", (int)(width*.87), (int)(height*(.073 + .015)));
+            
+            g.fillRect((int)(width*.85), (int)(height*.096), (int)(width*.015), (int)(height*.015));
+            g.drawString("Moving avg", (int)(width*.87), (int)(height*(.096 + .015)));
 
         }
        
@@ -111,6 +125,10 @@ class GraphPanel extends JComponent
             g.setColor(AVG_COLOR);
             g.fillRect((int)(width*.85), (int)(height*.073), (int)(width*.015), (int)(height*.015));
             g.drawString("Avrg value", (int)(width*.87), (int)(height*(.073 + .015)));
+            
+            g.setColor(M_AVG_COLOR);
+            g.fillRect((int)(width*.85), (int)(height*.096), (int)(width*.015), (int)(height*.015));
+            g.drawString("Moving avg", (int)(width*.87), (int)(height*(.096 + .015)));
            
         }
         
@@ -138,7 +156,12 @@ class GraphPanel extends JComponent
             g.drawString("max: " + max, (int)(width*.61), (int)(height*(.05 + .015)));
         }
         
-        
+        public Integer sumList(LinkedList<Integer> list) {
+             Integer sum = 0; 
+             for (Integer i : list)
+                 sum = sum + i;
+             return sum;
+        } 
         /**
          * Dispay a new point of data.
          */
@@ -152,7 +175,13 @@ class GraphPanel extends JComponent
                 avg = sum / count;
                 if(newData < min)min = newData;
                 if(newData > max)max = newData;
-                
+
+                moving_avg.addLast(newData);
+                if(moving_avg.size() >= mAvgSize){
+                    m_avg = sumList(moving_avg) / mAvgSize;
+                    moving_avg.removeFirst();
+                }
+                    
                 Graphics g = graphImage.getGraphics();
 
                 int height = graphImage.getHeight();
@@ -166,25 +195,38 @@ class GraphPanel extends JComponent
                 // scale down if necessary.
                 int y = (int)(height*yAxisHeight - newData*Math.pow(SCALE_FACTOR,SCALE_TIMES));
                 int y_avg  = (int)(height*yAxisHeight - avg*Math.pow(SCALE_FACTOR,SCALE_TIMES));
+                int y_m_avg = (int)(height*yAxisHeight - m_avg*Math.pow(SCALE_FACTOR,SCALE_TIMES));
                 while (y < yMin || y > yMax) {
                     zoomOut();
                     SCALE_TIMES++;
                     y = (int)(height*yAxisHeight - newData*Math.pow(SCALE_FACTOR,  SCALE_TIMES));
                     y_avg  = (int)(height*yAxisHeight - avg*Math.pow(SCALE_FACTOR, SCALE_TIMES));
+                    y_m_avg = (int)(height*yAxisHeight - m_avg*Math.pow(SCALE_FACTOR,SCALE_TIMES));
                 }
                 g.setColor(DATA_BAR);
                 g.drawLine(width - DistFromRightBoarder, y, 
                            width - DistFromRightBoarder, (int)(height*yAxisHeight));
 
+                
+                        
+                
+                
+                if(count >= mAvgSize){
+                    g.setColor(M_AVG_COLOR);
+                    g.drawLine(width - DistFromRightBoarder, y_m_avg, 
+                             width - DistFromRightBoarder, (int)(height*yAxisHeight));
+                }
+                
                 g.setColor(AVG_COLOR);
                 g.drawLine(width - DistFromRightBoarder, y_avg, 
                            width - DistFromRightBoarder, (int)(height*yAxisHeight));
-                
+                           
                 int sign = (int)Math.signum(newData);
                 int scaled_length = Math.abs((int)(height*yAxisHeight - y));
                 g.setColor(DATA_POINT);
                 g.drawLine(width - DistFromRightBoarder, y, 
                            width - DistFromRightBoarder, (int)(y + sign*scaled_length*0.05));
+                
                 eraseAxis();
                 drawAxis();
                 
@@ -206,7 +248,7 @@ class GraphPanel extends JComponent
             int height = graphImage.getHeight();
             int width = graphImage.getWidth();            
             
-            BufferedImage tmpImage = new BufferedImage(width, (int)(height*SCALE_FACTOR),                                                        BufferedImage.TYPE_INT_RGB);
+            BufferedImage tmpImage = new BufferedImage(width, (int)(height*SCALE_FACTOR), BufferedImage.TYPE_INT_RGB);
             Graphics2D gtmp = (Graphics2D) tmpImage.getGraphics();
             //scale the Y axis by the SCALE_FACTOR
             gtmp.scale(1., SCALE_FACTOR);
