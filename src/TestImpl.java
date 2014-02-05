@@ -50,7 +50,7 @@ public class TestImpl
 		
 		final Reporter r1 = new Reporter1();
 		final Reporter r2 = new Reporter2();
-		final Reporter r3 = new ReporterPlot("Real-time Plot 1");
+		final Reporter r3 = new ReporterPlotRTSmart("Real-time Plot 1");
 		//final Reporter r4 = new ReporterPlot();
 		
 		s1.registerObserver(new SensorObserver<Float>()
