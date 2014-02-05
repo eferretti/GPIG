@@ -15,8 +15,9 @@ public class ReporterPlotRTSmart implements Reporter {
 	
 	@Override
 	public void generateReport(List<RecordSet<?>> dataStream) {	 
-		RecordSet<?> data = dataStream.get(0);
-		grapher.plot(data.getReadingAtPosition(0));
+		RecordSet<?> dataSet = dataStream.get(0);
+		int data = (Integer)dataSet.getReadingAtPosition(0).getData();
+		grapher.plot(data);
 		}
 	}
 

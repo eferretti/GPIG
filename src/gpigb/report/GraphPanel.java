@@ -11,7 +11,7 @@ class GraphPanel extends JComponent
 		private BufferedImage graphImage;
 	
 		private static final double SCALE_FACTOR = .8;
-        private static final double yAxisHeight = .7;
+        private static final double yAxisHeight = .6;
         
         private static final int mAvgSize = 6;
         private static final int axisYgran = 20;
@@ -52,7 +52,7 @@ class GraphPanel extends JComponent
         public void setToDefault(){
             int height = graphImage.getHeight();
             int width  = graphImage.getWidth();
-            yMin = (int)(height* .1);
+            yMin = (int)(height* .12);
             yMax = (int)(height* .95);
             cur = 0;
             min = Integer.MAX_VALUE;

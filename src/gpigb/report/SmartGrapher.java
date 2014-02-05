@@ -4,8 +4,8 @@ import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 
 import java.awt.*;
-import javax.swing.*;
 
+import javax.swing.*;
 
 import java.util.Random;
 import java.lang.Math;
@@ -43,14 +43,23 @@ public class SmartGrapher
     }
     
     
-    public void plot(SensorRecord<?> record){
-    	int data = Math.round((float)Math.floor(Double.valueOf(record.getData().toString())));
+    public static void main(String[] args){
+        SmartGrapher sg = new SmartGrapher();
+        sg.testRun();
+        sg.clear();
+        sg.testRun2();
+        sg.clear();
+        sg.testChunk();
+    }
+    
+    public void plot(int data){
     	graph.update(data);
     }
     
-    public void plotData(RecordSet<?> recordSet) {
-        for( int i = 0 ; i < recordSet.getRecordCount() ; i++) {
-            plot(recordSet.getReadingAtPosition(i));
+    
+    public void plot(int[] data) {
+        for( int i = 0 ; i < data.length ; i++) {
+            plot(data[i]);
         }
     }
     
@@ -63,7 +72,7 @@ public class SmartGrapher
         }
         
         for(int i = 0 ; i < 500 ; i++){
-            graph.update(data[i]);
+            plot(data[i]);
             wait(30);
         }
     }
@@ -77,12 +86,26 @@ public class SmartGrapher
             else if (i<200)data[i] = 500 - g.nextInt(1000);
             else if (i<400)data[i] = 800 - g.nextInt(1600);
             else if (i<500)data[i] = 1000 - g.nextInt(2000);
-            else if (i<2000)data[i] = g.nextInt(3000);
+            else if (i<1500)data[i] = g.nextInt(3000);
+            else if (i<2000)data[i] = 0 - g.nextInt(5000);
         }
         
         for(int i = 0 ; i < 2000 ; i++){
-            graph.update(data[i]);
+            plot(data[i]);
             wait(15);
+        }
+    }
+    
+    public void testChunk(){
+        
+        Random g = new Random();
+        for(int j = 0 ; j < 50 ; j ++){
+            int[] data = new int[100];
+            for(int i = 0 ; i < 100 ; i ++){
+                data[i] = 1000 - g.nextInt(2500);
+            }
+            plot(data);
+            wait(50);
         }
     }
     
@@ -98,7 +121,7 @@ public class SmartGrapher
     protected JFrame makeFrame(int width, int height)
     {
         JFrame frame = new JFrame("Graph View");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setResizable(false);
         Container contentPane = frame.getContentPane();
         
@@ -106,11 +129,15 @@ public class SmartGrapher
         contentPane.add(graph, BorderLayout.CENTER);
         
         frame.pack();
-        frame.setLocation(20, 400);
+        frame.setLocation(50, 250);
 
         frame.setVisible(true);
         
         return frame;
+    }
+    
+    public void clear(){
+        graph.clear();
     }
 }
 
