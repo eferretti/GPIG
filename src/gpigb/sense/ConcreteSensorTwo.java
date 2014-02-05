@@ -30,7 +30,7 @@ public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
 			try
 			{
 				// sleep for 2 seconds
-				Thread.sleep(2000);
+				Thread.sleep(50);
 			}
 			catch (InterruptedException e)
 			{

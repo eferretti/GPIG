@@ -18,7 +18,6 @@ import gpigb.sense.ConcreteSensorTwo;
 import gpigb.sense.SNMPSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
-import gpigb.store.FileStore;
 import gpigb.store.JSONFileStore;
 import gpigb.store.MongoStore;
 import gpigb.store.Store;

@@ -70,8 +70,8 @@ public class JSONFileStoreTest
 		}
 		
 		this.toBeTested.write(this.rs);
-		
 		this.toBeTested.read(this.newRs);
+		
 		System.out.println(this.newRs.getRecordCount());
 		assertEquals(this.newRs.getRecordCount(), 30);
 	}
