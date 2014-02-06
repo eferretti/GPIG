@@ -10,7 +10,7 @@ public class ReporterPlotRTSmart implements Reporter {
 	
 	public ReporterPlotRTSmart(String title){
 		this.title = title;
-		grapher = new SmartGrapher(800, 500);
+		grapher = new SmartGrapher(title, 800, 500);
 	}
 	
 	@Override
