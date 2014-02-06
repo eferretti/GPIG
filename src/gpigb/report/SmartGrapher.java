@@ -85,8 +85,8 @@ public class SmartGrapher {
     Random g = new Random();
 
     for (int i = 0; i < 2000; i++) {
-      if (i < 100)
-        data[i] = 300 - g.nextInt(600);
+      if (i < 1000)
+        data[i] = 30 - g.nextInt(50);
       else if (i < 200)
         data[i] = 500 - g.nextInt(1000);
       else if (i < 400)
