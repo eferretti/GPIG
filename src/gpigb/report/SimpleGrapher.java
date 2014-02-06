@@ -86,8 +86,7 @@ public class SimpleGrapher
         this.drawAxis();
         this.drawLegend();
         theDrawSpace.setLineWidth(lineWidth);
-        
-        
+
     }
     
     private void setToDefault(){

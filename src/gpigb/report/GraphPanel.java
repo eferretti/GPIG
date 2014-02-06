@@ -1,3 +1,4 @@
+
 package gpigb.report;
 
 import java.awt.*;
@@ -10,9 +11,11 @@ class GraphPanel extends JComponent {
   // actual display, this image buffer is then copied to screen.
   private BufferedImage graphImage;
 
-  private static final double SCALE_FACTOR = .8;
+  private static final double zoomOut = .8;
+  private static final double zoomIn = 20.;
   private static final double yAxisHeight = .6;
-
+  
+  
   private static final int mAvgSize = 6;
   private static final int axisYgran = 20;
   private static final Color SHADOW = new Color(0, 0, 0, 40);
@@ -25,6 +28,7 @@ class GraphPanel extends JComponent {
   private static final Color M_AVG_COLOR = new Color(0, 51, 102, 200);
   private static final Color BG_COLOR = Color.black;
   private static final Color AXIS_COLOR = DARK_GREEN;
+  
 
   private static final int DistFromRightBoarder = 20;
 
@@ -62,18 +66,19 @@ class GraphPanel extends JComponent {
     moving_avg = new LinkedList<Integer>();
   }
 
-  /* no no really math is really fun... I hate my life */
+  
   private void drawAxis() {
     Graphics g = graphImage.getGraphics();
     int height = graphImage.getHeight();
 
     g.setColor(AXIS_COLOR);
     int set_x = 6;
-    int cur_y = (int) (height * .05);
-    int change_y = (int) ((height * .95 - height * .05) / axisYgran);
-
+    int cur_y = (int) (yMin);
+    int change_y = (int) ((yMax - yMin) / axisYgran);
+    /* really math is really fun boys... I hate my life */
     for (int i = 0; i <= axisYgran; i++) {
-      int toPrint = (int) ((height * yAxisHeight - cur_y) / Math.pow(SCALE_FACTOR, SCALE_TIMES));
+      int toPrint = (int) ((height * yAxisHeight - cur_y) / Math.pow(zoomOut, SCALE_TIMES));
+      toPrint/=zoomIn;
       g.drawString("" + toPrint, set_x, cur_y + 1);
       cur_y += change_y;
     }
@@ -84,7 +89,7 @@ class GraphPanel extends JComponent {
     Graphics g = graphImage.getGraphics();
     int height = graphImage.getHeight();
 
-    g.setColor(BG_COLOR); /* LULZ KELW */
+    g.setColor(BG_COLOR); 
     g.fillRect(0, 0, 40, height);
     g.setColor(SHADOW); /* LULZ KELW */
     g.fillRect(0, 40, 60, height);
@@ -110,6 +115,7 @@ class GraphPanel extends JComponent {
     g.drawString("Moving avg", (int) (width * .87), (int) (height * (.096 + .015)));
 
   }
+  
 
   private void drawLegend() {
     Graphics g = graphImage.getGraphics();
@@ -154,16 +160,21 @@ class GraphPanel extends JComponent {
     int width = graphImage.getWidth();
 
     g.setColor(BG_COLOR);
+    
+    g.fillRect(0, 0, width, (int)(height*0.15));
+    
+    /*
     g.drawString("cur: " + cur, (int) (width * .37), (int) (height * (.05 + .015)));
     g.drawString("min: " + min, (int) (width * .45), (int) (height * (.05 + .015)));
     g.drawString("avg: " + avg, (int) (width * .53), (int) (height * (.05 + .015)));
     g.drawString("max: " + max, (int) (width * .61), (int) (height * (.05 + .015)));
+    */
   }
 
   public Integer sumList(LinkedList<Integer> list) {
     Integer sum = 0;
     for (Integer i : list)
-      sum = sum + i;
+      sum += i;
     return sum;
   }
 
@@ -172,7 +183,7 @@ class GraphPanel extends JComponent {
    */
   public void update(int newData) {
     eraseStats();
-
+    //eraseLegend();
     cur = newData;
     sum += newData;
     count++;
@@ -187,27 +198,28 @@ class GraphPanel extends JComponent {
       m_avg = sumList(moving_avg) / mAvgSize;
       moving_avg.removeFirst();
     }
+    
 
     Graphics g = graphImage.getGraphics();
 
     int height = graphImage.getHeight();
     int width = graphImage.getWidth();
-    eraseLegend();
+    
 
     // move graph one pixel to left
     g.copyArea(1, 0, width - 1, height, -1, 0);
 
     // calculate y for the data point, check whether it's out of screen.
     // scale down if necessary.
-    int y = (int) (height * yAxisHeight - newData * Math.pow(SCALE_FACTOR, SCALE_TIMES));
-    int y_avg = (int) (height * yAxisHeight - avg * Math.pow(SCALE_FACTOR, SCALE_TIMES));
-    int y_m_avg = (int) (height * yAxisHeight - m_avg * Math.pow(SCALE_FACTOR, SCALE_TIMES));
+    int y = (int) (height * yAxisHeight - newData * zoomIn * Math.pow(zoomOut, SCALE_TIMES));
+    int y_avg = (int) (height * yAxisHeight - avg * zoomIn * Math.pow(zoomOut, SCALE_TIMES));
+    int y_m_avg = (int) (height * yAxisHeight - m_avg * zoomIn * Math.pow(zoomOut, SCALE_TIMES));
     while (y < yMin || y > yMax) {
       zoomOut();
       SCALE_TIMES++;
-      y = (int) (height * yAxisHeight - newData * Math.pow(SCALE_FACTOR, SCALE_TIMES));
-      y_avg = (int) (height * yAxisHeight - avg * Math.pow(SCALE_FACTOR, SCALE_TIMES));
-      y_m_avg = (int) (height * yAxisHeight - m_avg * Math.pow(SCALE_FACTOR, SCALE_TIMES));
+      y = (int) (height * yAxisHeight - newData * zoomIn * Math.pow(zoomOut, SCALE_TIMES));
+      y_avg = (int) (height * yAxisHeight - avg * zoomIn * Math.pow(zoomOut, SCALE_TIMES));
+      y_m_avg = (int) (height * yAxisHeight - m_avg * zoomIn * Math.pow(zoomOut, SCALE_TIMES));
     }
     g.setColor(DATA_BAR);
     g.drawLine(width - DistFromRightBoarder, y, width - DistFromRightBoarder,
@@ -234,7 +246,7 @@ class GraphPanel extends JComponent {
 
     drawStats();
     drawLegend();
-    repaint();
+    repaintNow();
   }
 
 
@@ -249,21 +261,21 @@ class GraphPanel extends JComponent {
     int width = graphImage.getWidth();
 
     BufferedImage tmpImage =
-        new BufferedImage(width, (int) (height * SCALE_FACTOR), BufferedImage.TYPE_INT_RGB);
+        new BufferedImage(width, (int) (height * zoomOut), BufferedImage.TYPE_INT_RGB);
     Graphics2D gtmp = (Graphics2D) tmpImage.getGraphics();
-    // scale the Y axis by the SCALE_FACTOR
-    gtmp.scale(1., SCALE_FACTOR);
+    // scale the Y axis by the zoomOut
+    gtmp.scale(1., zoomOut);
     // make exact copy of graphImage but scaled with respect of the Y axis
     gtmp.drawImage(graphImage, 0, 0, null);
     // math is fun... not
-    int YmoveTo = (int) (yAxisHeight * height * (1. - SCALE_FACTOR) + 1);
+    int YmoveTo = (int) (yAxisHeight * height * (1. - zoomOut) + 1);
     // delete the entire image
     g.setColor(BG_COLOR);
     g.fillRect(0, 0, width, height);
 
     /*
      * Draws as much of the specified image as is currently available. The image is drawn with its
-     * top-left corner at (0, oldTop) in the g graphics context's coordinate space.
+     * top-left corner at (0, YmoveTo) in the g graphics context's coordinate space.
      */
     g.drawImage(tmpImage, 0, YmoveTo, null);
     repaint();
@@ -272,7 +284,7 @@ class GraphPanel extends JComponent {
   /**
    * Cause immediate update of the panel.
    */
-  public void repaint() {
+  public void repaintNow() {
     paintImmediately(0, 0, graphImage.getWidth(), graphImage.getHeight());
   }
 
