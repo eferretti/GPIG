@@ -51,7 +51,7 @@ public class RealTimeGraph
 		final Reporter r1 = new Reporter1();
 		final Reporter r2 = new Reporter2();
 		final Reporter r3 = new ReporterPlotRTSmart("Real-time Plot 1");
-		//final Reporter r4 = new ReporterPlot();
+		final Reporter r4 = new ReporterPlotRTSmart("Real-time Plot 1");
 		
 		s2.registerObserver(new SensorObserver<Integer>()
 		{
@@ -61,10 +61,12 @@ public class RealTimeGraph
 				System.out.println("Graphing result");
 				RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
 				rs.addRecord(new SensorRecord<Integer>(1, reading));
+				store.write(rs);
+				
 				List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
 				newList.add(rs);
 				r3.generateReport(newList);
-				store.write(rs);
+				
 				
 				Calendar c = Calendar.getInstance();
 				c.set(Calendar.YEAR, 1980);
@@ -85,6 +87,9 @@ public class RealTimeGraph
 						RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
 						rs.addRecord(new SensorRecord<Integer>(2, reading));
 						store.write(rs);
+						List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
+						newList.add(rs);
+						r4.generateReport(newList);
 					}
 				});
 	}

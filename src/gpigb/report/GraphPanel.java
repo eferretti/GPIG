@@ -207,10 +207,7 @@ class GraphPanel extends JComponent
                 g.drawLine(width - DistFromRightBoarder, y, 
                            width - DistFromRightBoarder, (int)(height*yAxisHeight));
 
-                
-                        
-                
-                
+
                 if(count >= mAvgSize){
                     g.setColor(M_AVG_COLOR);
                     g.drawLine(width - DistFromRightBoarder, y_m_avg, 
@@ -227,6 +224,7 @@ class GraphPanel extends JComponent
                 g.drawLine(width - DistFromRightBoarder, y, 
                            width - DistFromRightBoarder, (int)(y + sign*scaled_length*0.05));
                 
+                
                 eraseAxis();
                 drawAxis();
                 
@@ -235,8 +233,6 @@ class GraphPanel extends JComponent
                 repaintNow();
         }
 
-        
-            
         
         /**
          * Scale the current graph down vertically to make more room at the top or lefty.
