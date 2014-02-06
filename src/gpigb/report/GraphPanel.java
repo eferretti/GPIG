@@ -50,7 +50,6 @@ class GraphPanel extends JComponent {
 
   public void setToDefault() {
     int height = graphImage.getHeight();
-    int width = graphImage.getWidth();
     yMin = (int) (height * .12);
     yMax = (int) (height * .95);
     cur = 0;
@@ -214,8 +213,6 @@ class GraphPanel extends JComponent {
     g.drawLine(width - DistFromRightBoarder, y, width - DistFromRightBoarder,
         (int) (height * yAxisHeight));
 
-
-
     if (count >= mAvgSize) {
       g.setColor(M_AVG_COLOR);
       g.drawLine(width - DistFromRightBoarder, y_m_avg, width - DistFromRightBoarder,
@@ -231,7 +228,7 @@ class GraphPanel extends JComponent {
     g.setColor(DATA_POINT);
     g.drawLine(width - DistFromRightBoarder, y, width - DistFromRightBoarder, (int) (y + sign
         * scaled_length * 0.05));
-
+    
     eraseAxis();
     drawAxis();
 
@@ -243,7 +240,7 @@ class GraphPanel extends JComponent {
 
 
   /**
-   * Scale the current graph down vertically to make more room at the top or lefty. Should have
+   * Scale the current graph down vertically to make more room at the top or bottom. Should have
    * taken Advanced Computer Vision and probably use the Affine transformations provided in Java ..
    */
   private void zoomOut() {

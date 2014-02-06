@@ -1,15 +1,8 @@
 package gpigb.report;
 
-import gpigb.data.RecordSet;
-import gpigb.data.SensorRecord;
-
 import java.awt.*;
-
 import javax.swing.*;
-
 import java.util.Random;
-import java.lang.Math;
-
 
 public class SmartGrapher {
 
