@@ -254,6 +254,7 @@ public class SimpleGrapher
         }
     }
     
+    
      /**
      * Clears the drawing space
      */
