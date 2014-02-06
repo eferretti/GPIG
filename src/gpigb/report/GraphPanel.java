@@ -237,7 +237,7 @@ class GraphPanel extends JComponent {
 
     drawStats();
     drawLegend();
-    repaintNow();
+    repaint();
   }
 
 
@@ -269,13 +269,13 @@ class GraphPanel extends JComponent {
      * top-left corner at (0, oldTop) in the g graphics context's coordinate space.
      */
     g.drawImage(tmpImage, 0, YmoveTo, null);
-    repaintNow();
+    repaint();
   }
 
   /**
    * Cause immediate update of the panel.
    */
-  public void repaintNow() {
+  public void repaint() {
     paintImmediately(0, 0, graphImage.getWidth(), graphImage.getHeight());
   }
 
@@ -287,7 +287,7 @@ class GraphPanel extends JComponent {
     Graphics g = graphImage.getGraphics();
     g.setColor(BG_COLOR);
     g.fillRect(0, 0, graphImage.getWidth(), graphImage.getHeight());
-    repaintNow();
+    repaint();
   }
 
   // The following methods are redefinitions of methods
