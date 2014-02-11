@@ -1,15 +1,15 @@
 package gpigb.store;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import gpigb.classloading.Patchable;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
+import gpigb.sense.SensorObserver;
 
-public class InMemoryStore extends Patchable implements Store
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class InMemoryStore<DataType> extends Patchable implements Store, SensorObserver<DataType>
 {
 	List<SensorRecord<?>> history = Collections.synchronizedList(new ArrayList<SensorRecord<?>>());
 
@@ -25,6 +25,7 @@ public class InMemoryStore extends Patchable implements Store
 		super(oldInstance);
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public boolean read(RecordSet<?> unpopulated)
 	{
@@ -47,6 +48,7 @@ public class InMemoryStore extends Patchable implements Store
 		return true;
 	}
 
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public boolean write(RecordSet<?> data)
 	{
@@ -64,6 +66,7 @@ public class InMemoryStore extends Patchable implements Store
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean delete(RecordSet<?> items)
 	{
@@ -74,6 +77,18 @@ public class InMemoryStore extends Patchable implements Store
 			history.remove(rec);
 		}
 		return true;
+	}
+
+	@Override
+	public void update(int sensorID, DataType reading) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(SensorRecord<DataType> reading) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

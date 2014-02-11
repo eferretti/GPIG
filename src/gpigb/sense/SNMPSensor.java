@@ -1,10 +1,10 @@
 package gpigb.sense;
 
+import gpigb.classloading.Patchable;
+import gpigb.data.SensorRecord;
+
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
@@ -14,13 +14,9 @@ import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.smi.Address;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.OctetString;
-import org.snmp4j.smi.TcpAddress;
 import org.snmp4j.smi.UdpAddress;
-import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
-
-import gpigb.classloading.Patchable;
 
 public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 {
@@ -28,7 +24,7 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	private Float lastReading = null;
 	
 	//JVM Heap Used
-	private String oidString = ".1.3.6.1.4.1.42.2.145.3.163.1.1.2.11.0";
+	private String oidString = "1.3.6.1.4.1.42.2.145.3.163.1.1.2.11.0";
 	
 	// Default SNMP settings
 	private String port = "16500";
@@ -64,7 +60,7 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	@Override
 	public void registerObserver(SensorObserver<Float> obs)
 	{
-		for(WeakReference ref:observers)
+		for(WeakReference<SensorObserver<Float>> ref:observers)
 		{
 			if(ref.get() == obs)
 			{
@@ -78,7 +74,7 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	@Override
 	public void removeObserver(SensorObserver<Float> obs)
 	{
-		for(WeakReference ref : observers)
+		for(WeakReference<SensorObserver<Float>> ref : observers)
 		{
 			if(ref.get() == obs)
 			{
@@ -100,7 +96,7 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 				continue;
 			}
 			
-			ref.get().update(getID(), lastReading);
+			ref.get().update(new SensorRecord<Float>(getID(), lastReading, "Unit", "MB"));
 		}
 	}
 
@@ -119,7 +115,7 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 
 		Address a = new UdpAddress("localhost/"+port);
 		target.setAddress(a);
-		target.setTimeout(500);
+		target.setTimeout(50);
 		target.setRetries(3);
 		target.setCommunity(new OctetString("public"));
 		target.setVersion(SnmpConstants.version2c);
@@ -146,7 +142,7 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	            
 	            notifyObservers();
 	            
-	            Thread.sleep(500);
+	            Thread.sleep(250);
 	        }
 			catch(Exception e) {}
 		}

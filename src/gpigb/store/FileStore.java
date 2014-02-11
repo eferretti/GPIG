@@ -3,8 +3,6 @@ package gpigb.store;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 
-import com.google.gson.Gson;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+
+import com.google.gson.Gson;
 
 public class FileStore implements Store
 {
@@ -36,7 +36,7 @@ public class FileStore implements Store
 					ArrayList<SensorRecord<?>> records = new ArrayList<>();
 					for (String x = br.readLine(); x != null; x = br.readLine())
 					{
-						SensorRecord record = (SensorRecord) gson.fromJson(x, SensorRecord.class);
+						SensorRecord<?> record = (SensorRecord<?>) gson.fromJson(x, SensorRecord.class);
 						
 						if ((record.getTimestamp().before(unpopulated.getToTime()) && record.getTimestamp().after(unpopulated.getFromTime()))
 								|| record.getTimestamp().equals(unpopulated.getToTime())

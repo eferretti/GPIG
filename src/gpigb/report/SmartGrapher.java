@@ -43,9 +43,6 @@ public class SmartGrapher {
     SmartGrapher sg = new SmartGrapher(Default_width, Default_height);
     sg.testRun();
     sg.reset();
-    sg.testRun2();
-    sg.reset();
-    sg.testChunk();
   }
 
   public void plot(int data) {
@@ -59,27 +56,13 @@ public class SmartGrapher {
     }
   }
 
-  public void testRun2() {
-    int[] data = new int[500];
-    Random g = new Random();
-
-    for (int i = 0; i < 500; i++) {
-      data[i] = g.nextInt(1000);
-    }
-
-    for (int i = 0; i < 500; i++) {
-      plot(data[i]);
-      wait(30);
-    }
-  }
-
   public void testRun() {
-    int[] data = new int[2000];
+    int[] data = new int[2500];
     Random g = new Random();
 
-    for (int i = 0; i < 2000; i++) {
+    for (int i = 0; i < 2500; i++) {
       if (i < 100)
-        data[i] = 15 - g.nextInt(20);
+        data[i] = 40 - g.nextInt(50);
       else if (i < 200)
         data[i] = 500 - g.nextInt(1000);
       else if (i < 400)
@@ -88,26 +71,13 @@ public class SmartGrapher {
         data[i] = 1000 - g.nextInt(2000);
       else if (i < 1500)
         data[i] = g.nextInt(3000);
-      else if (i < 2000)
+      else if (i < 2500)
         data[i] = 0 - g.nextInt(5000);
     }
 
-    for (int i = 0; i < 2000; i++) {
+    for (int i = 0; i < 2500; i++) {
       plot(data[i]);
-      wait(15);
-    }
-  }
-
-  public void testChunk() {
-
-    Random g = new Random();
-    for (int j = 0; j < 50; j++) {
-      int[] data = new int[100];
-      for (int i = 0; i < 100; i++) {
-        data[i] = 1000 - g.nextInt(2500);
-      }
-      plot(data);
-      wait(50);
+      wait(1);
     }
   }
 

@@ -1,22 +1,19 @@
 package gpigb.store;
 
-import java.net.UnknownHostException;
+import gpigb.classloading.Patchable;
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
+
 import java.util.ArrayList;
 import java.util.Date;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.QueryBuilder;
-import com.mongodb.WriteResult;
-
-import gpigb.classloading.Patchable;
-import gpigb.data.RecordSet;
-import gpigb.data.SensorRecord;
 
 public class MongoStore extends Patchable implements Store
 {
@@ -40,6 +37,7 @@ public class MongoStore extends Patchable implements Store
 		super(oldInstance);
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean read(RecordSet<?> unpopulated)
 	{

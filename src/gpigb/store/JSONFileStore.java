@@ -3,9 +3,6 @@ package gpigb.store;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class JSONFileStore implements Store
 {

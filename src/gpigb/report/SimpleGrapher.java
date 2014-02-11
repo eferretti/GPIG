@@ -1,7 +1,10 @@
 package gpigb.report;
 
-import gpigb.data.*;
-import java.awt.*;
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
+
+import java.awt.Color;
+import java.awt.Font;
 
 
 /* works only with ConcreteSensorOne atm - need to make the scaling of the space proper (in order to do that need possible max
