@@ -92,7 +92,7 @@ class GraphPanel extends JComponent {
     for (int i = 0; i <= axisYgran; i++) {
       int toPrint = (int) ((height * yAxisHeight - cur_y) / Math.pow(zoomOut, SCALE_TIMES));
       toPrint/=zoomIn;
-      g.drawString("" + toPrint, set_x, cur_y + 3);
+      g.drawString("" + toPrint, set_x, cur_y + 5);
       cur_y += change_y;
     }
   } 
