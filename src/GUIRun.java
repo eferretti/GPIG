@@ -1,4 +1,4 @@
-import gpigb.report.ReporterGUI2;
+import gpigb.report.ReporterGUI;
 import gpigb.store.InMemoryStore;
 
 import java.awt.EventQueue;
@@ -13,7 +13,7 @@ public class GUIRun {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ReporterGUI2 window = new ReporterGUI2();
+					ReporterGUI window = new ReporterGUI();
 					
 					InMemoryStore<Integer> store = new InMemoryStore<>();
 					window.store = store;

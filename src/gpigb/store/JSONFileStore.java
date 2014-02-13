@@ -155,7 +155,6 @@ public class JSONFileStore implements Store
 						if (file.delete())
 						{
 							Collections.sort(records);
-							System.out.println(records.size());
 							RecordSet<?> rs = new RecordSet<>(records.get(0).getTimestamp(),
 									records.get(records.size()-1).getTimestamp(), items.getSensorID());
 							
@@ -164,9 +163,7 @@ public class JSONFileStore implements Store
 								rs.addRecord(record);
 							}
 							
-							if(this.write(rs))
-								return true;
-							else
+							if(this.write(rs) == false)
 								return false;
 						}
 						else
@@ -174,6 +171,11 @@ public class JSONFileStore implements Store
 							System.out.println("Couldnt remove file");
 							return false;
 						}
+					}
+					else
+					{
+						File file = new File(fileLoc + items.getSensorID() + "/" + fileNames.get(i));
+						file.delete();
 					}
 				}
 				catch (IOException e)
@@ -207,6 +209,8 @@ public class JSONFileStore implements Store
 			for (File file : fileList)
 			{
 				String[] times = file.getName().split("\\.")[0].split("-");
+				if(times.length<2)
+					continue;
 				Calendar fTo = Calendar.getInstance();
 				Calendar fFrom = Calendar.getInstance();
 				fTo.setTimeInMillis(Long.parseLong(times[0]));

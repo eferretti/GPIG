@@ -4,13 +4,16 @@ import gpigb.data.RecordSet;
 
 import java.util.List;
 
+/**
+ * A Real Time graoh which can be used to plot sensor data
+ */
 public class ReporterPlotRTSmart implements Reporter {
 	String title;
 	SmartGrapher grapher;
 	
 	public ReporterPlotRTSmart(String title){
 		this.title = title;
-		grapher = new SmartGrapher(title, 800, 500);
+		grapher = new SmartGrapher(title, 900, 500);
 	}
 	
 	@Override

@@ -7,7 +7,6 @@ import java.util.List;
 /**
  * Reports a Sensor that has a value out of range, it reports the Sensor, time
  * and value.
- * 
  */
 public class Reporter1 implements Reporter
 {

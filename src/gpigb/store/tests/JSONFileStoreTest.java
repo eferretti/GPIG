@@ -91,51 +91,132 @@ public class JSONFileStoreTest
 		}
 	}
 	
-	/*@Test
+	@Test
 	public void testRead()
 	{
-		int number = 50;
-		this.cal.setTime(new Date());
+		RecordSet<Integer> rs1 = new RecordSet<>(a, b, 0);
+		RecordSet<Integer> rs2 = new RecordSet<>(b, e, 0);
+		RecordSet<Integer> rs3 = new RecordSet<>(e, f, 0);
 		
-		for (int i = 0; i < number; i++)
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(a);
+		cal.add(Calendar.MINUTE, 3);
+		
+		Date x = cal.getTime();
+		
+		cal.setTime(f);
+		cal.add(Calendar.MINUTE, -2);
+		
+		Date y = cal.getTime();
+		
+		RecordSet<Integer> readin = new RecordSet<>(x, y, 0);
+		RecordSet<Integer> readinCheck = new RecordSet<>(x, y, 0);
+		
+		cal.setTime(a);
+		
+		for (int i = 0; i < 5; i++)
 		{
 			SensorRecord<Integer> newRecord = new SensorRecord<Integer>(0,42);
-			this.cal.add(Calendar.SECOND, 6);
-			newRecord.setDateTime(this.cal.getTime());
-			this.rs.addRecord(newRecord);
+			newRecord.setDateTime(cal.getTime());
+			cal.add(Calendar.MINUTE, 1);
+			rs1.addRecord(newRecord);
+			if (i > 2)
+				readinCheck.addRecord(newRecord);
 		}
 		
-		this.toBeTested.write(this.rs);
-		this.toBeTested.read(this.newRs);
+		for (int i = 0; i < 5; i++)
+		{
+			SensorRecord<Integer> newRecord = new SensorRecord<Integer>(0,42);
+			newRecord.setDateTime(cal.getTime());
+			cal.add(Calendar.MINUTE, 1);
+			rs2.addRecord(newRecord);
+			readinCheck.addRecord(newRecord);
+		}
 		
-		System.out.println(this.newRs.getRecordCount());
-		assertEquals(this.newRs.getRecordCount(), 30);
+		for (int i = 0; i < 5; i++)
+		{
+			SensorRecord<Integer> newRecord = new SensorRecord<Integer>(0,42);
+			newRecord.setDateTime(cal.getTime());
+			cal.add(Calendar.MINUTE, 1);
+			rs3.addRecord(newRecord);
+			if (i < 4)
+				readinCheck.addRecord(newRecord);
+		}
+		
+		this.toBeTested.write(rs1);
+		this.toBeTested.write(rs2);
+		this.toBeTested.write(rs3);
+		
+		this.toBeTested.read(readin);
+
+		assertEquals(readin.getRecordCount(), 11);
+		assertEquals(readin.equals(readinCheck), true);
 	}
 	
 	@Test
 	public void testDelete()
 	{
-		int number = 50;
-		this.cal.setTime(new Date());
+		RecordSet<Integer> rs1 = new RecordSet<>(a, b, 0);
+		RecordSet<Integer> rs2 = new RecordSet<>(b, e, 0);
+		RecordSet<Integer> rs3 = new RecordSet<>(e, f, 0);
+		RecordSet<Integer> rs4 = new RecordSet<>(a, f, 0);
 		
-		for (int i = 0; i < number; i++)
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(a);
+		cal.add(Calendar.MINUTE, 3);
+		
+		Date x = cal.getTime();
+		
+		cal.setTime(f);
+		cal.add(Calendar.MINUTE, -2);
+		
+		Date y = cal.getTime();
+		
+		RecordSet<Integer> readin = new RecordSet<>(x, y, 0);
+		// 1:03, 1:04 1:13
+		RecordSet<Integer> readinCheck = new RecordSet<>(a, f, 0);
+		
+		cal.setTime(a);
+		
+		for (int i = 0; i < 5; i++)
 		{
 			SensorRecord<Integer> newRecord = new SensorRecord<Integer>(0,42);
-			this.cal.add(Calendar.SECOND, 6);
-			newRecord.setDateTime(this.cal.getTime());
-			this.rs.addRecord(newRecord);
+			newRecord.setDateTime(cal.getTime());
+			cal.add(Calendar.MINUTE, 1);
+			rs1.addRecord(newRecord);
+			if (i < 3)
+				readinCheck.addRecord(newRecord);
 		}
 		
-		this.toBeTested.write(this.rs);
-		this.toBeTested.read(this.newRs);
+		for (int i = 0; i < 5; i++)
+		{
+			SensorRecord<Integer> newRecord = new SensorRecord<Integer>(0,42);
+			newRecord.setDateTime(cal.getTime());
+			cal.add(Calendar.MINUTE, 1);
+			rs2.addRecord(newRecord);
+		}
 		
-		boolean success = this.toBeTested.delete(this.newRs);
-		assertEquals(success, true);
+		for (int i = 0; i < 5; i++)
+		{
+			SensorRecord<Integer> newRecord = new SensorRecord<Integer>(0,42);
+			newRecord.setDateTime(cal.getTime());
+			cal.add(Calendar.MINUTE, 1);
+			rs3.addRecord(newRecord);
+			if (i > 3)
+				readinCheck.addRecord(newRecord);
+		}
 		
-		System.out.println(this.toBeTested.read(this.rs2));
+		this.toBeTested.write(rs1);
+		this.toBeTested.write(rs2);
+		this.toBeTested.write(rs3);
 		
-		System.out.println(this.rs2.getRecordCount());
-		assertEquals(this.rs2.getRecordCount(), 50-this.newRs.getRecordCount());
+		assertEquals(this.toBeTested.delete(readin), true);
+		
+		this.toBeTested.read(rs4);
+		
+		assertEquals(rs4.getRecordCount(), 4);		
+		assertEquals(rs4.equals(readinCheck), true);
+		
 	}
 	
 	@After
@@ -148,5 +229,5 @@ public class JSONFileStoreTest
 		{
 			file.delete();
 		}
-	}*/
+	}
 }

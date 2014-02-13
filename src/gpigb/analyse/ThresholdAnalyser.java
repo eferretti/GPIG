@@ -7,6 +7,9 @@ import gpigb.report.Reporter1;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An analyser which takes an upper and lower bound and reports when sensor readings exceed these values
+ */
 public class ThresholdAnalyser implements Analyser{
 	
 	int upperThreshold;

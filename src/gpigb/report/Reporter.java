@@ -7,7 +7,7 @@ import java.util.List;
 public interface Reporter
 {
 	/**
-	 * Function Produces the output report
+	 * Produces the output report
 	 * 
 	 * @param data
 	 *            The information to be formatted and displayed , can contain

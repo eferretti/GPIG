@@ -27,7 +27,7 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	private ArrayList<WeakReference<SensorObserver<Float>>> observers = new ArrayList<>();
 	private Float lastReading = null;
 	
-	//JVM Heap Used
+	//JVM Heap Used OID
 	private String oidString = "1.3.6.1.4.1.42.2.145.3.163.1.1.2.11.0";
 	
 	// Default SNMP settings
@@ -38,6 +38,10 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 		new Thread(this).start();
 	}
 
+	/**
+	 * 
+	 * @param oldInstance
+	 */
 	public SNMPSensor(Object oldInstance)
 	{
 		super(oldInstance);
