@@ -32,7 +32,27 @@ public class RecordSetTests
 		rs = null;
 		System.gc();
 	}
-
+	
+	@Test
+	public void testEquals()
+	{
+		RecordSet<Float> nRs = new RecordSet<>(fromTime, toTime, 0);
+		RecordSet<Float> nRs2 = new RecordSet<>(fromTime, toTime, 0);
+		
+		for (int i = 0; i < 10; i++)
+		{
+			SensorRecord<Float> newRec = new SensorRecord<Float>(0, 2.0f);
+			nRs.addRecord(newRec);
+			rs.addRecord(newRec);
+			
+			if (i%2 == 0)
+				nRs2.addRecord(newRec);
+		}
+		
+		assertEquals(rs.equals(nRs), true);
+		assertEquals(rs.equals(nRs2), false);
+	}
+	
 	@Test
 	public void testAddRecord()
 	{
