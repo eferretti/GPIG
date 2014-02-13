@@ -5,12 +5,13 @@ import javax.swing.*;
 import java.util.Random;
 
 /**
- * @author GPIG B The SmartGrapher provides a view of three populations of values
- *         (the current integer value, the overall average and the moving
- *         average) as a line graph over time. The image is re-scaling if the
- *         data value to be displayed exceeds the current GraphPanel bounds. The
- *         image is initially zoomed in for allowing the display of small
- *         integer values and would zoom out from there if needed
+ * The SmartGrapher provides a view of three populations of values
+ * (the current integer value, the overall average and the moving
+ * average) as a line graph over time. The image is re-scaling if the
+ * data value to be displayed exceeds the current GraphPanel bounds. The
+ * image is initially zoomed in for allowing the display of small
+ * integer values and would zoom out from there if needed
+ * @author GPIG B 
  */
 public class SmartGrapher {
 

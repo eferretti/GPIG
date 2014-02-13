@@ -22,8 +22,6 @@ public class TestImpl
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
-		//ConcreteSensorTwo s2 = new ConcreteSensorTwo();
-		
 		ComponentManager<Sensor<?>> mgr = new JarFileComponentManager<Sensor<?>>((Class<? extends Sensor<?>>) Sensor.class);
 		mgr.addModuleDirectory("./HUMS_Modules/");
 		mgr.refreshModules();

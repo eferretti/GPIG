@@ -1,6 +1,11 @@
+
 gpigb.analyse
 gpigb.classloading
 gpigb.data
+gpigb.data.tests
 gpigb.report
+gpigb.report.tests
 gpigb.sense
+gpigb.sense.tests
 gpigb.store
+gpigb.store.tests

@@ -14,6 +14,9 @@ import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.sense.SensorObserver;
 
+/**
+ * A reporter which presents a small web server to allow web viewing of system performance
+ */
 public class SimpleWebReporter extends NanoHTTPD implements SensorObserver<Float>, Reporter{
 
 	Map<Integer, RecordSet<Float>> latestReadings = Collections.synchronizedMap(new HashMap<Integer, RecordSet<Float>>());

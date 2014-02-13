@@ -6,9 +6,17 @@ import gpigb.data.SensorRecord;
 import gpigb.sense.SensorObserver;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+/**
+ * A record store which maintains all records in memory. This should not be used
+ * as the sole store of a system and should only be used to provide faster access
+ * when only a slow store is available   
+ * @param <DataType>
+ */
 public class InMemoryStore<DataType> extends Patchable implements Store, SensorObserver<DataType>
 {
 	List<SensorRecord<?>> history = Collections.synchronizedList(new ArrayList<SensorRecord<?>>());
@@ -86,14 +94,17 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 
 	@Override
 	public void update(int sensorID, DataType reading) {
-		// TODO Auto-generated method stub
-		
+		Date date = Calendar.getInstance().getTime();
+		RecordSet<DataType> rs = new RecordSet<>(date, date, sensorID);
+		rs.addRecord(new SensorRecord<DataType>(sensorID, reading));
+		write(rs);
 	}
 
 	@Override
 	public void update(SensorRecord<DataType> reading) {
-		// TODO Auto-generated method stub
-		
+		RecordSet<DataType> rs = new RecordSet<>(reading.getTimestamp(), reading.getTimestamp(), reading.getSensorID());
+		rs.addRecord(reading);
+		write(rs);
 	}
 
 }
