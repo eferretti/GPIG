@@ -1,11 +1,11 @@
 package gpigb.data.tests;
 
-import static org.junit.Assert.*;
-
-import java.util.Date;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
+
+import java.util.Date;
 
 import org.junit.After;
 import org.junit.Before;

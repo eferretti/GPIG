@@ -1,9 +1,11 @@
 package gpigb.analyse;
 
-import gpigb.data.*;
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.Reporter1;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThresholdAnalyser implements Analyser{
 	

@@ -1,7 +1,6 @@
 package gpigb.analyse;
 
 import gpigb.data.RecordSet;
-import gpigb.data.SensorRecord;
 import gpigb.store.Store;
 
 import java.util.List;

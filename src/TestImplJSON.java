@@ -1,15 +1,6 @@
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import gpigb.analyse.Analyser;
 import gpigb.analyse.Analyser2;
 import gpigb.analyse.ThresholdAnalyser;
-import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.classloading.ComponentManager.ModuleSummary;
-import gpigb.classloading.JarFileComponentManager;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
@@ -17,10 +8,14 @@ import gpigb.report.Reporter1;
 import gpigb.report.Reporter2;
 import gpigb.sense.ConcreteSensorOne;
 import gpigb.sense.ConcreteSensorTwo;
-import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 import gpigb.store.InMemoryStore;
 import gpigb.store.Store;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class TestImplJSON
 {
@@ -47,6 +42,12 @@ public class TestImplJSON
 				rs.addRecord(new SensorRecord<Integer>(1, reading));
 				store.write(rs);
 			}
+
+			@Override
+			public void update(SensorRecord<Integer> reading) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
 		s2.registerObserver(new SensorObserver<Integer>()
@@ -57,6 +58,12 @@ public class TestImplJSON
 						RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
 						rs.addRecord(new SensorRecord<Integer>(2, reading));
 						store.write(rs);
+					}
+
+					@Override
+					public void update(SensorRecord<Integer> reading) {
+						// TODO Auto-generated method stub
+						
 					}
 				});
 	

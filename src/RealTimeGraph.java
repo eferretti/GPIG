@@ -1,30 +1,29 @@
+import gpigb.analyse.Analyser;
+import gpigb.analyse.Analyser2;
+import gpigb.analyse.ThresholdAnalyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.classloading.JarFileComponentManager;
+import gpigb.classloading.StrongReference;
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.report.Reporter1;
+import gpigb.report.Reporter2;
+import gpigb.report.ReporterPlotRTSmart;
+import gpigb.sense.ConcreteSensorTwo;
+import gpigb.sense.Sensor;
+import gpigb.sense.SensorObserver;
+import gpigb.store.InMemoryStore;
+import gpigb.store.Store;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import gpigb.analyse.Analyser;
-import gpigb.analyse.Analyser2;
-import gpigb.analyse.ThresholdAnalyser;
-import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.classloading.ComponentManager.ModuleSummary;
-import gpigb.classloading.JarFileComponentManager;
-import gpigb.data.RecordSet;
-import gpigb.data.SensorRecord;
-import gpigb.report.*;
-import gpigb.sense.ConcreteSensorOne;
-import gpigb.sense.ConcreteSensorTwo;
-import gpigb.sense.SNMPSensor;
-import gpigb.sense.Sensor;
-import gpigb.sense.SensorObserver;
-import gpigb.store.InMemoryStore;
-import gpigb.store.JSONFileStore;
-import gpigb.store.MongoStore;
-import gpigb.store.Store;
-
 public class RealTimeGraph
 {
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
 		ConcreteSensorTwo s2 = new ConcreteSensorTwo();
@@ -77,6 +76,12 @@ public class RealTimeGraph
 				store.read(tmp);
 				System.out.println("" + tmp.getRecordCount());
 			}
+
+			@Override
+			public void update(SensorRecord<Integer> reading) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
 		s2.registerObserver(new SensorObserver<Integer>()
@@ -90,6 +95,12 @@ public class RealTimeGraph
 						List<RecordSet<?>> newList = new ArrayList<RecordSet<?>>();
 						newList.add(rs);
 						r4.generateReport(newList);
+					}
+
+					@Override
+					public void update(SensorRecord<Integer> reading) {
+						// TODO Auto-generated method stub
+						
 					}
 				});
 	}

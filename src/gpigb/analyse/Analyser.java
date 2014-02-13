@@ -1,7 +1,8 @@
 package gpigb.analyse;
 
 import gpigb.data.RecordSet;
-import java.util.*;
+
+import java.util.List;
 
 public interface Analyser
 {

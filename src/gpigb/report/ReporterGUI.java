@@ -1,34 +1,21 @@
 package gpigb.report;
 
-import gpigb.analyse.Analyser;
-import gpigb.analyse.Analyser2;
 import gpigb.analyse.AnalyserGUI;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.store.InMemoryStore;
 
-import java.awt.EventQueue;
-import java.awt.TextArea;
-
-import javax.swing.JFrame;
-import javax.swing.JButton;
 import java.awt.BorderLayout;
-
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JSplitPane;
-import javax.swing.JPanel;
-import javax.swing.AbstractAction;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import java.awt.Dimension;
 
 public class ReporterGUI {
 

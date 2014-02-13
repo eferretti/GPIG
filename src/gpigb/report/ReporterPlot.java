@@ -1,6 +1,6 @@
 package gpigb.report;
 
-import gpigb.data.*;
+import gpigb.data.RecordSet;
 
 import java.util.List;
 

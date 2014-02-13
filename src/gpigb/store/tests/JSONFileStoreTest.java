@@ -3,12 +3,9 @@ package gpigb.store.tests;
 import static org.junit.Assert.assertEquals;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
-import gpigb.sense.Sensor;
 import gpigb.store.JSONFileStore;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 

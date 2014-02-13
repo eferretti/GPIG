@@ -1,10 +1,11 @@
 package gpigb.analyse;
 
-import java.util.ArrayList;
-import java.util.List;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
-import gpigb.report.*;
+import gpigb.report.Reporter2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Analyser2 implements Analyser{
