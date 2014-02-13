@@ -1,5 +1,6 @@
 package gpigb.report;
 
+import gpigb.analyse.Analyser;
 import gpigb.analyse.NullAnalyser;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
@@ -47,7 +48,9 @@ public class ReporterGUI {
 	private JComboBox cbHoursTo;
 	private JLabel lblFrom;
 	
-	public Store store;
+
+
+	public Analyser analyser; 
 
 	/**
 	 * Create the application.
@@ -280,32 +283,16 @@ public class ReporterGUI {
 			c.set(yrT, mtT, dtT, hrT, mnT, 00);
 			Date d2 = c.getTime();	
 			
-			NullAnalyser a = new NullAnalyser();
-			InMemoryStore store = new InMemoryStore();
-			a.store = store;
-			
-			// Fake data
-			RecordSet<Integer> fRS = new RecordSet<Integer>(d1, d2, 1);
-			SensorRecord<Integer> data = new SensorRecord<Integer>(1,100);
-			c.add(Calendar.MINUTE, -2);
-			data.setDateTime(c.getTime());
-			SensorRecord<Integer> data2 = new SensorRecord<Integer>(1,50);
-			data2.setDateTime(c.getTime());
-			fRS.addRecord((SensorRecord) data);
-			fRS.addRecord((SensorRecord) data2); 
-			fRS.addRecord((SensorRecord) data); 
-			a.store.write(fRS);
 			
 			//Perform analysis and output results
-			RecordSet<Integer> rs = new RecordSet<Integer>(d1, d2, 1);
-			a.Analyse(rs);
+			RecordSet<Integer> rs = new RecordSet<Integer>(d1, d2, 0);
+			analyser.Analyse(rs);
 			textArea.setText("");
 			textArea.append("Analysis between: \n\n"); 
 			textArea.append(d1 + "\n\n");
 			textArea.append("and: \n\n");
 			textArea.append(d2 + "\n\n");
-			textArea.append("Result1: " + rs.getReadingAtPosition(0).getData()+ "\n"); 
-			textArea.append("Result2: " + rs.getReadingAtPosition(1).getData()+ "\n");
+			textArea.append("Retrieved " + rs.getRecordCount() + " records");
 			
 		}
 	}

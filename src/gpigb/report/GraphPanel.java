@@ -266,6 +266,7 @@ class GraphPanel extends JComponent {
 			y = getYforPoint(newData);
 			y_avg = getYforPoint(avg);
 			y_m_avg = getYforPoint(m_avg);
+			System.out.println(SCALE_TIMES);
 		}
 
 		// Plot the current data value as a bar on the screen

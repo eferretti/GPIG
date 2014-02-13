@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class TestImpl
+public class GraphsDemo
 {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args)

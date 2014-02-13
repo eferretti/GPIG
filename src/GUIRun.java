@@ -1,7 +1,13 @@
+import gpigb.analyse.Analyser;
+import gpigb.analyse.NullAnalyser;
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.ReporterGUI;
 import gpigb.store.InMemoryStore;
 
 import java.awt.EventQueue;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class GUIRun {
@@ -10,13 +16,30 @@ public class GUIRun {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		final NullAnalyser analyser = new NullAnalyser();
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					ReporterGUI window = new ReporterGUI();
 					
 					InMemoryStore<Integer> store = new InMemoryStore<>();
-					window.store = store;
+					analyser.store = store;
+					Calendar cal = Calendar.getInstance();
+					cal.set(2016, 01, 01, 01, 0);
+					Date date = cal.getTime();
+					cal.set(2004, 01, 01, 01, 0);
+					RecordSet<Integer> rs = new RecordSet<Integer>(cal.getTime(), date, 0);
+					
+					for (int i = 0; i < 1000; i++)
+					{
+						SensorRecord<Integer> sr = new SensorRecord<Integer>(0, i);
+						sr.setDateTime(cal.getTime());
+						rs.addRecord(sr);
+						cal.add(Calendar.DAY_OF_MONTH, 7);
+					}
+					store.write(rs);
+					
+					window.analyser = analyser;
 					
 					window.show();
 				} catch (Exception e) {

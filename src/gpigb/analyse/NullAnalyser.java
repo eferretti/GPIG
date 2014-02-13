@@ -14,11 +14,16 @@ public class NullAnalyser implements Analyser{
 	
 	@Override
 	public boolean Analyse(List<RecordSet<?>> input) {
+		for(RecordSet data : input)
+		{
+			store.read(data);
+		}
 		return true;
 	}
 
 	@Override
 	public boolean Analyse(RecordSet<?> input) {
+		store.read(input);
 		return true;
 	}
 	
