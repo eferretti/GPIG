@@ -1,5 +1,8 @@
 package gpigb.classloading;
 
+/**
+ * A purely static class which is used to generated system-wide unique IDs
+ */
 public class IDGenerator
 {
 	private static int nextID = 1;

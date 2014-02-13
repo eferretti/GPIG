@@ -69,7 +69,6 @@ public class JSONFileStoreTest
 		this.toBeTested.write(this.rs);
 		this.toBeTested.read(this.newRs);
 		
-		System.out.println(this.newRs.getRecordCount());
 		assertEquals(this.newRs.getRecordCount(), 30);
 	}
 	
@@ -93,10 +92,7 @@ public class JSONFileStoreTest
 		boolean success = this.toBeTested.delete(this.newRs);
 		assertEquals(success, true);
 		
-		System.out.println(this.toBeTested.read(this.rs2));
-		
-		System.out.println(this.rs2.getRecordCount());
-		assertEquals(this.rs2.getRecordCount(), 50-this.newRs.getRecordCount());
+		assertEquals(this.rs.getRecordCount(), number-this.newRs.getRecordCount());
 	}
 	
 	@After
@@ -109,5 +105,7 @@ public class JSONFileStoreTest
 		{
 			file.delete();
 		}
+		directory.delete();
+		directory.getParentFile().delete();
 	}
 }

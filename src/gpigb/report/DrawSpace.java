@@ -16,8 +16,6 @@ import javax.swing.JPanel;
 
 /**
  * Class DrawingBoard - a class creating a drawing space window to draw on..
- * 
- * @author 
  */
 
 public class DrawSpace

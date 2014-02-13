@@ -11,7 +11,7 @@ public abstract class Patchable
 	}
 
 	/**
-	 * Default implementation of a dynamically patchable class Uses reflection
+	 * Default implementation of a dynamically patchable class. Uses reflection
 	 * to extract fields from the old and new objects and assign values based on
 	 * common variable names.
 	 * 

@@ -1,6 +1,6 @@
 package gpigb.report;
 
-import gpigb.analyse.AnalyserGUI;
+import gpigb.analyse.NullAnalyser;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.store.InMemoryStore;
@@ -284,7 +284,7 @@ public class ReporterGUI2 {
 			c.set(yrT, mtT, dtT, hrT, mnT, 00);
 			Date d2 = c.getTime();	
 			
-			AnalyserGUI a = new AnalyserGUI();
+			NullAnalyser a = new NullAnalyser();
 			InMemoryStore store = new InMemoryStore();
 			a.store = store;
 			

@@ -207,6 +207,8 @@ public class JSONFileStore implements Store
 			for (File file : fileList)
 			{
 				String[] times = file.getName().split("\\.")[0].split("-");
+				if(times.length<2)
+					continue;
 				Calendar fTo = Calendar.getInstance();
 				Calendar fFrom = Calendar.getInstance();
 				fTo.setTimeInMillis(Long.parseLong(times[0]));

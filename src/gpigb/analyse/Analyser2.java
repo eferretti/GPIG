@@ -7,57 +7,47 @@ import gpigb.report.Reporter2;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class Analyser2 implements Analyser{
-	
-	//Reporter r = new ReporterPlot("ReporterPlot 1");
+/**
+ * An analyser which reports significant acceleration in a sensor reading 
+ */
+public class Analyser2 implements Analyser
+{
 	/**
-	 * 
-	 * @param data
+	 * Perform analysis on sensor reading histories. If any history has a value
+	 * which changes by more than a given threshold then report only the offending
+	 * histories.
+	 * @param data The set of sensor histories to analyse
 	 */
-
 	public boolean Analyse(List<RecordSet<?>> data)
 	{
 		List<RecordSet<?>> changeRecord = new ArrayList <RecordSet<?>>();
-		/*
-		for(int i = 0; i <data.size(); i++)
-		{
-			//Check that there are at least 2 records
-			if(data.get(i).getRecordCount() < 2)
-				return false;
-			SensorRecord<?> x = data.get(i).getReadingAtPosition(0);
-			SensorRecord<?> y = data.get(i).getReadingAtPosition(1);
-			// Check for sharp increase or decrease (Just simple > at the moment)
-			if ((Integer) x.getData() > (Integer) y.getData())
-			{
-				changeRecord.add(data.get(i));	
-			}
-		}
-		
-		// Send any data with sharp increase to reporter
-		if (!changeRecord.isEmpty())
-			new Reporter2().GenerateReport(changeRecord);
-		*/
-		// Calculate average of every RecordSet
 		List<RecordSet<?>> averageRecord = new ArrayList <RecordSet<?>>();
+		
 		Integer previousReading = 0;
 		Integer difference = 300;
 		for(int j = 0; j < data.size(); j++)
 		{
+			// No data has been provided
 			if(data.get(j).getRecordCount() == 0)
 				return false;
+			
 			Integer average = (Integer) data.get(j).getReadingAtPosition(0).getData();
+			previousReading = average;
 			for(int i = 1; i < data.get(j).getRecordCount(); i++)
 			{
 				Integer currentReading = (Integer) data.get(j).getReadingAtPosition(i).getData();
 				average = average + currentReading;
+				
 				// If there is a difference between readings add the RecordSet where the change occurred
 				if (currentReading > previousReading + difference || currentReading  < previousReading - difference)
 					changeRecord.add(data.get(j));
+				
 				previousReading = (Integer) data.get(j).getReadingAtPosition(i).getData();
 			}
+			
 			// Calculate average
 			average = average / data.get(j).getRecordCount();
+			
 			// Create new record and add to list
 			RecordSet<Integer> av = new RecordSet<Integer>(data.get(j).getFromTime(), data.get(j).getToTime(), data.get(j).getSensorID());
 			SensorRecord<Integer> as = new SensorRecord<Integer>(data.get(j).getSensorID(), average);
@@ -65,20 +55,18 @@ public class Analyser2 implements Analyser{
 			averageRecord.add(av);
 		}
 		
-		// Send to reporter
-		if (!changeRecord.isEmpty())
-			new Reporter2().generateReport(changeRecord);
-		//if (!averageRecord.isEmpty())
-		//	r.GenerateReport(averageRecord);
-		
-		
-		//Reporter3.GenerateReport(averageRecord);
-		
 		return true;
 	}
 	
-	public boolean Analyse(RecordSet<?> input){
-		return false;
+	/**
+	 * Invokes {@link gpigb.analyse.Analyser2#Analyse(List)} with a list containing the argument
+	 * @see gpigb.analyse.Analyser#Analyse(RecordSet)
+	 */
+	public boolean Analyse(RecordSet<?> input)
+	{
+		ArrayList<RecordSet<?>> a = new ArrayList<>();
+		a.add(input);
+		return Analyse(a);
 	}
 	
 
