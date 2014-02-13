@@ -63,6 +63,11 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 		
 		Collections.sort(history);
 
+		for(SensorRecord<?> r : history)
+		{
+			System.out.println(r.getTimestamp());
+		}
+		
 		return true;
 	}
 

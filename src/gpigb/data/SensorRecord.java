@@ -80,6 +80,6 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	@Override
 	public int compareTo(SensorRecord<?> o)
 	{
-		return -this.timestamp.compareTo(o.timestamp);
+		return this.timestamp.compareTo(o.timestamp);
 	}
 }

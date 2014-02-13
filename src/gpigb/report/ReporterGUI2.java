@@ -4,6 +4,7 @@ import gpigb.analyse.AnalyserGUI;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.store.InMemoryStore;
+import gpigb.store.Store;
 
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -42,22 +43,7 @@ public class ReporterGUI2 {
 	private JComboBox cbHoursTo;
 	private JLabel lblFrom;
 	
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ReporterGUI2 window = new ReporterGUI2();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	public Store store;
 
 	/**
 	 * Create the application.
@@ -66,6 +52,12 @@ public class ReporterGUI2 {
 		initialize();
 	}
 
+	public void show()
+	{
+		this.frame.setVisible(true);
+		
+	}
+	
 	/**
 	 * Initialise the contents of the frame.
 	 */
@@ -285,13 +277,15 @@ public class ReporterGUI2 {
 			Date d2 = c.getTime();	
 			
 			AnalyserGUI a = new AnalyserGUI();
-			InMemoryStore store = new InMemoryStore();
-			a.store = store;
+			a.store = ReporterGUI2.this.store;
 			
 			// Fake data
 			RecordSet<Integer> fRS = new RecordSet<Integer>(d1, d2, 1);
 			SensorRecord<Integer> data = new SensorRecord<Integer>(1,100);
+			c.add(Calendar.MINUTE, -2);
+			data.setDateTime(c.getTime());
 			SensorRecord<Integer> data2 = new SensorRecord<Integer>(1,50);
+			data2.setDateTime(c.getTime());
 			fRS.addRecord((SensorRecord) data);
 			fRS.addRecord((SensorRecord) data2); 
 			fRS.addRecord((SensorRecord) data); 
