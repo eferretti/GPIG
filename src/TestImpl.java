@@ -1,11 +1,21 @@
+import gpigb.analyse.RealTimeGraphAnalyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.JarFileComponentManager;
 import gpigb.classloading.StrongReference;
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
+import gpigb.report.ReporterPlotRTSmart;
 import gpigb.report.SimpleWebReporter;
+import gpigb.sense.ConcreteSensorOne;
 import gpigb.sense.SNMPSensor;
 import gpigb.sense.Sensor;
+import gpigb.sense.SensorObserver;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class TestImpl
 {
@@ -29,11 +39,10 @@ public class TestImpl
 		
 		s1.registerObserver(r1);
 		
-		try {
-			System.in.read();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final ReporterPlotRTSmart r2 = new ReporterPlotRTSmart("Title");
+		
+		ConcreteSensorOne sen2 = new ConcreteSensorOne();
+		
+		s1.registerObserver(new RealTimeGraphAnalyser());
 	}
 }

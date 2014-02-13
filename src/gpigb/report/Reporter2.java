@@ -6,8 +6,6 @@ import java.util.List;
 
 /**
  * A reporter which is designed to be used with {@link gpigb.analyse.Analyser2}
- * @author rar500
- *
  */
 public class Reporter2 implements Reporter
 {
