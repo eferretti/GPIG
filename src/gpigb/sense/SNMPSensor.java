@@ -17,7 +17,11 @@ import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.UdpAddress;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
-
+/**
+ * 
+ * Sensor driver which reads JVM usage via an SNMP interface
+ *
+ */
 public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 {
 	private ArrayList<WeakReference<SensorObserver<Float>>> observers = new ArrayList<>();

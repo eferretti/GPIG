@@ -3,7 +3,11 @@ package gpigb.sense;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-
+/**
+ * 
+ *  A simulated sensor which generates random integer values between -5000 and 20000
+ *
+ */
 public class ConcreteSensorOne implements Sensor<Integer>, Runnable
 {
 
@@ -13,7 +17,7 @@ public class ConcreteSensorOne implements Sensor<Integer>, Runnable
 
 	private Integer min = -5000;
 	private Integer max = 20000;
-
+	
 	public ConcreteSensorOne()
 	{
 		observers = new ArrayList<SensorObserver<Integer>>();
@@ -80,7 +84,12 @@ public class ConcreteSensorOne implements Sensor<Integer>, Runnable
 			it.next().update(id, currentReading);
 		}
 	}
-
+	/**
+	 * Generates a random integer in range
+	 * @param min minimum value of generated number 
+	 * @param max maximum value of generated number 
+	 * @return generated number
+	 */
 	private Integer generateRandom(Integer min, Integer max)
 	{
 		Random rand = new Random();

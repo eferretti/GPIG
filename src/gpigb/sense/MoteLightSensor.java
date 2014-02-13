@@ -17,7 +17,11 @@ import com.ibm.saguaro.system.Timer;
 import com.ibm.saguaro.system.TimerEvent;
 import com.ibm.saguaro.system.Util;
 import com.ibm.saguaro.system.csr;
-
+/**
+ * 
+ * Sensor driver which reads data from a light sensor via the Mote Runner infrastructure  platform 
+ *
+ */
 public class MoteLightSensor {
 	 private static byte[] frame;
 	    
