@@ -58,27 +58,7 @@ public class ReporterTest {
 	@Test
 	public void testReporter2()
 	{
-		List<RecordSet<?>> errorData = new ArrayList<>();
-		Reporter report = new Reporter2();
-
-		int id = 1;
-		Integer reading = 12;
-		
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.YEAR, 1980);
-		Date f = c.getTime();
-		c.set(Calendar.YEAR, 5000);
-		Date t = c.getTime();
-		
-		SensorRecord<Integer> sr = new SensorRecord<Integer>(id, reading);
-		Date timestamp = sr.getTimestamp();
-		
-		RecordSet<Integer> rs = new RecordSet<Integer>(f, t, 1);
-		rs.addRecord(sr);
-		errorData.add(rs);
-		report.generateReport(errorData);
-		
-	    assertEquals("SensorID: " + Integer.toString(id) + " Time: " + String.valueOf(timestamp) + " Reading: "+ Integer.toString(reading) + "\n", outContent.toString());
+		//TODO
 	}
 
 	
