@@ -1,3 +1,4 @@
 /bin
 /.settings
 /Storage
+/src/gpigb/store/FileStore.java
