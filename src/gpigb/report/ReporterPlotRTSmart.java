@@ -5,7 +5,7 @@ import gpigb.data.RecordSet;
 import java.util.List;
 
 /**
- * A Real Time graoh which can be used to plot sensor data
+ * A Real Time graph which can be used to plot sensor data
  */
 public class ReporterPlotRTSmart implements Reporter {
 	String title;

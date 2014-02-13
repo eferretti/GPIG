@@ -293,7 +293,7 @@ class GraphPanel extends JComponent {
 		drawLegend();
 		
 		// Paint the internal image with the changes made on the screen
-		repaintNow();
+		repaint();
 	}
 
 	/**
@@ -357,7 +357,7 @@ class GraphPanel extends JComponent {
 	 * become visible)
 	 */
 	public void repaintNow() {
-		paintImmediately(0, 0, graphImage.getWidth(), graphImage.getHeight());
+		//paintImmediately(0, 0, graphImage.getWidth(), graphImage.getHeight());
 	}
 
 	/**

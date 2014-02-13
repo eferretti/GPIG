@@ -17,6 +17,9 @@ import java.util.Date;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * A store implementation which stores objects as JSON files on the local file system.
+ */
 public class JSONFileStore implements Store
 {
 	private final static String fileLoc = "./Storage/";

@@ -15,6 +15,10 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.QueryBuilder;
 
+/**
+ * A file store which connects to a locally running Mongo
+ * NoSQL store on the default port.
+ */
 public class MongoStore extends Patchable implements Store
 {
 	Mongo client;
