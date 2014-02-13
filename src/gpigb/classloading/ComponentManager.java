@@ -73,8 +73,7 @@ public interface ComponentManager<Interface>
 		@Override
 		public String toString()
 		{
-			return "Module " + moduleID + ": " + this.displayName + "(version "
-					+ this.moduleVersion + ")";
+			return "Module " + moduleID + ": " + this.displayName + "(version " + this.moduleVersion + ")";
 		}
 	}
 

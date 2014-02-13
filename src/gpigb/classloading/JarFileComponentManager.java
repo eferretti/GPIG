@@ -19,14 +19,11 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JarFileComponentManager<Interface> implements
-		ComponentManager<Interface>
+public class JarFileComponentManager<Interface> implements ComponentManager<Interface>
 {
 	// Maintain a record of available plugins and searchable directories
-	Set<File> moduleDirectories = Collections
-			.synchronizedSet(new HashSet<File>());
-	Map<Integer, ClassRecord> modules = Collections
-			.synchronizedMap(new HashMap<Integer, ClassRecord>());
+	Set<File> moduleDirectories = Collections.synchronizedSet(new HashSet<File>());
+	Map<Integer, ClassRecord> modules = Collections.synchronizedMap(new HashMap<Integer, ClassRecord>());
 
 	// And references to instantiated objects
 	Map<InstanceSummary, StrongReference<Interface>> instances = Collections
@@ -63,11 +60,10 @@ public class JarFileComponentManager<Interface> implements
 	@Override
 	public boolean addModuleDirectory(String path)
 	{
-		path = path.replace("~",System.getProperty("user.home"));
+		path = path.replace("~", System.getProperty("user.home"));
 		File newDir = new File(path);
 
-		if (newDir.exists() && newDir.isDirectory())
-		{
+		if (newDir.exists() && newDir.isDirectory()) {
 			moduleDirectories.add(newDir);
 			return true;
 		}
@@ -88,83 +84,64 @@ public class JarFileComponentManager<Interface> implements
 		// Subdirectories are not scanned
 		List<File> jarFiles = new ArrayList<>();
 
-		for (File dir : moduleDirectories)
-		{
-			for (File jarFile : dir.listFiles(jarFileFilter))
-			{
+		for (File dir : moduleDirectories) {
+			for (File jarFile : dir.listFiles(jarFileFilter)) {
 				jarFiles.add(jarFile);
 			}
 		}
 
 		// Create a new class loader to ensure there are no class name clashes.
 		loader = new GPIGClassLoader(jarFiles);
-		for (String className : loader.moduleVersions.keySet())
-		{
-			try
-			{
+		for (String className : loader.moduleVersions.keySet()) {
+			try {
 				// Update the record of each class
-				Class<? extends Interface> clz = (Class<? extends Interface>) loader
-						.loadClass(className);
+				Class<? extends Interface> clz = (Class<? extends Interface>) loader.loadClass(className);
 				ClassRecord rec = null;
-				for (ClassRecord searchRec : modules.values())
-				{
-					if (searchRec.clz.getName().equals(className))
-					{
+				for (ClassRecord searchRec : modules.values()) {
+					if (searchRec.clz.getName().equals(className)) {
 						rec = searchRec;
 						break;
 					}
 				}
 
-				if (rec != null)
-				{
+				if (rec != null) {
 					// This is not an upgrade, ignore it
-					if (rec.summary.moduleVersion >= loader.moduleVersions
-							.get(className)) continue;
+					if (rec.summary.moduleVersion >= loader.moduleVersions.get(className)) continue;
 
 					// Otherwise update the version number stored
-					rec.summary.moduleVersion = loader.moduleVersions
-							.get(className);
+					rec.summary.moduleVersion = loader.moduleVersions.get(className);
 				}
-				else
-				{
+				else {
 					rec = new ClassRecord();
-					rec.summary = new ModuleSummary(IDGenerator.getNextID(),
-							loader.moduleVersions.get(className), className);
+					rec.summary = new ModuleSummary(IDGenerator.getNextID(), loader.moduleVersions.get(className),
+							className);
 					modules.put(rec.summary.moduleID, rec);
 				}
 				rec.clz = clz;
 
 				// Update references to existing objects
-				for (StrongReference<Interface> ref : instances.values())
-				{
-					if (ref.get().getClass().getName().equals(className))
-					{
-						Constructor<? extends Interface> ctor = clz
-								.getConstructor(Object.class);
+				for (StrongReference<Interface> ref : instances.values()) {
+					if (ref.get().getClass().getName().equals(className)) {
+						Constructor<? extends Interface> ctor = clz.getConstructor(Object.class);
 						ref.object = ctor.newInstance(ref.get());
 					}
 				}
 			}
-			catch (NoSuchMethodException e)
-			{
+			catch (NoSuchMethodException e) {
 				// Thrown when trying to find a suitable constructor
-				System.err
-						.println("Discovered class which has no available upgrade constructor: "
-								+ className + "\n\t" + e.getLocalizedMessage());
+				System.err.println("Discovered class which has no available upgrade constructor: " + className + "\n\t"
+						+ e.getLocalizedMessage());
 			}
-			catch (InstantiationException | IllegalAccessException
-					| IllegalArgumentException | InvocationTargetException e)
-			{
+			catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
 				// All thrown by the instantiate call
-				System.err.println("Unable to create new instance of class: "
-						+ className + "\n\t" + e.getLocalizedMessage());
+				System.err.println("Unable to create new instance of class: " + className + "\n\t"
+						+ e.getLocalizedMessage());
 			}
-			catch (ClassNotFoundException e)
-			{
+			catch (ClassNotFoundException e) {
 				// Should never occur but required to stop the compiler moaning
-				System.err
-						.println("Discovered class which has no available upgrade constructor: "
-								+ className + "\n\t" + e.getLocalizedMessage());
+				System.err.println("Discovered class which has no available upgrade constructor: " + className + "\n\t"
+						+ e.getLocalizedMessage());
 			}
 		}
 	}
@@ -180,8 +157,7 @@ public class JarFileComponentManager<Interface> implements
 	public List<ModuleSummary> getAvailableModules()
 	{
 		List<ModuleSummary> ret = new ArrayList<>();
-		for (ClassRecord rec : modules.values())
-		{
+		for (ClassRecord rec : modules.values()) {
 			ret.add(rec.summary);
 		}
 		return ret;
@@ -200,18 +176,14 @@ public class JarFileComponentManager<Interface> implements
 	public int createObjectOfModule(int moduleID)
 	{
 		int ret = -1;
-		try
-		{
+		try {
 			// Lookup the required module and create a new instance and record
 			Interface instance = modules.get(moduleID).clz.newInstance();
 			ret = IDGenerator.getNextID();
-			instances.put(new InstanceSummary(ret, moduleID, ""),
-					new StrongReference<Interface>(instance));
+			instances.put(new InstanceSummary(ret, moduleID, ""), new StrongReference<Interface>(instance));
 		}
-		catch (Exception e)
-		{
-			System.err.println("Failed to instantiate object of type "
-					+ moduleID + "\n\t" + e.getLocalizedMessage());
+		catch (Exception e) {
+			System.err.println("Failed to instantiate object of type " + moduleID + "\n\t" + e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 
@@ -242,10 +214,8 @@ public class JarFileComponentManager<Interface> implements
 	@Override
 	public StrongReference<Interface> getObjectByID(int instanceID)
 	{
-		for (InstanceSummary summary : instances.keySet())
-		{
-			if (summary.instanceID == instanceID) { return instances
-					.get(summary); }
+		for (InstanceSummary summary : instances.keySet()) {
+			if (summary.instanceID == instanceID) { return instances.get(summary); }
 		}
 		return null;
 	}
@@ -264,30 +234,25 @@ public class JarFileComponentManager<Interface> implements
 			super();
 			this.moduleVersions = new HashMap<>();
 
-			for (File file : jarFiles)
-			{
+			for (File file : jarFiles) {
 				JarFile jarFile = null;
-				try
-				{
+				try {
 					// Open the JAR file and read its contents
 					jarFile = new JarFile(file);
 					Enumeration<JarEntry> e = jarFile.entries();
 					JarEntry entry;
-					while (e.hasMoreElements())
-					{
+					while (e.hasMoreElements()) {
 						entry = e.nextElement();
 
 						// For each class file found
-						if (entry.getName().endsWith(".class"))
-						{
+						if (entry.getName().endsWith(".class")) {
 							// Read it into memory
 							byte[] buffer = new byte[1024];
 							InputStream is = jarFile.getInputStream(entry);
 							ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 							int bytesRead;
-							do
-							{
+							do {
 								bytesRead = is.read(buffer, 0, 1024);
 								if (bytesRead <= 0) break;
 
@@ -299,16 +264,12 @@ public class JarFileComponentManager<Interface> implements
 							// Determine its name from its path within the JAR
 							// file
 							String className = entry.getName();
-							className = className.substring(0,
-									className.length() - ".class".length());
-							className = className.replace('/',
-									'.');
-							className = className.replace('\\',
-									'.');
-							
+							className = className.substring(0, className.length() - ".class".length());
+							className = className.replace('/', '.');
+							className = className.replace('\\', '.');
+
 							// And load it into the JVM
-							Class<?> clz = defineClass(className,
-									baos.toByteArray(), 0, baos.size());
+							Class<?> clz = defineClass(className, baos.toByteArray(), 0, baos.size());
 
 							// If the class is not one of interest the do no
 							// more
@@ -316,10 +277,8 @@ public class JarFileComponentManager<Interface> implements
 
 							// Otherwise extract its version number (if present)
 							int version = -1;
-							for (Field f : clz.getFields())
-							{
-								if (f.getName().equals(versionNumberFieldName))
-								{
+							for (Field f : clz.getFields()) {
+								if (f.getName().equals(versionNumberFieldName)) {
 									version = f.getInt(clz);
 								}
 							}
@@ -329,17 +288,13 @@ public class JarFileComponentManager<Interface> implements
 						}
 					}
 				}
-				catch (Exception e)
-				{
+				catch (Exception e) {
 				}
-				finally
-				{
-					if (jarFile != null) try
-					{
+				finally {
+					if (jarFile != null) try {
 						jarFile.close();
 					}
-					catch (IOException e)
-					{
+					catch (IOException e) {
 					}
 				}
 			}

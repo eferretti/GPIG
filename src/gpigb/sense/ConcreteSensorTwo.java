@@ -23,17 +23,14 @@ public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
 	@Override
 	public void run()
 	{
-		while (true)
-		{
+		while (true) {
 			currentReading = this.generateRandom(min, max);
 			notifyObservers();
-			try
-			{
+			try {
 				// sleep for 2 seconds
 				Thread.sleep(50);
 			}
-			catch (InterruptedException e)
-			{
+			catch (InterruptedException e) {
 				e.printStackTrace();
 				// Consider calling Thread.currentThread().interrupt(); here.
 			}
@@ -75,8 +72,7 @@ public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
 	public void notifyObservers()
 	{
 		Iterator<SensorObserver<Integer>> it = observers.iterator();
-		while (it.hasNext())
-		{
+		while (it.hasNext()) {
 			it.next().update(id, currentReading);
 		}
 	}

@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
+public class DataRecord<ReadingType> implements Comparable<DataRecord<?>>
 {
 	private Date timestamp;
 	private ReadingType data;
@@ -22,13 +22,12 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	 *            An array (or variable length list) of key, value pairs to be
 	 *            stored as meta data
 	 */
-	public SensorRecord(int sensorID, ReadingType data, String... metaArgs)
+	public DataRecord(int sensorID, ReadingType data, String... metaArgs)
 	{
 		this.sensorID = sensorID;
 		this.data = data;
 		this.meta = new Hashtable<>();
-		for (int i = 0; i + 1 < metaArgs.length; i += 2)
-		{
+		for (int i = 0; i + 1 < metaArgs.length; i += 2) {
 			this.meta.put(metaArgs[i], metaArgs[i + 1]);
 		}
 		this.timestamp = new Date();
@@ -78,7 +77,7 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	}
 
 	@Override
-	public int compareTo(SensorRecord<?> o)
+	public int compareTo(DataRecord<?> o)
 	{
 		return this.timestamp.compareTo(o.timestamp);
 	}

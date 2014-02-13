@@ -1,6 +1,6 @@
 package gpigb.store;
 
-import gpigb.data.RecordSet;
+import gpigb.data.DataSet;
 
 /**
  * Common methods between all store implementations
@@ -11,11 +11,11 @@ public interface Store
 	 * Fills a provided record set with values from the store
 	 * 
 	 * @param unpopulated
-	 *            A {@link gpigb.data.RecordSet} object with the Date and sensor
+	 *            A {@link gpigb.data.DataSet} object with the Date and sensor
 	 *            IDs set
 	 * @return true iff the record set has been populated without error
 	 */
-	public boolean read(RecordSet<?> unpopulated);
+	public boolean read(DataSet<?> unpopulated);
 
 	/**
 	 * Persists a set of records to the store
@@ -24,7 +24,7 @@ public interface Store
 	 *            The data to store
 	 * @return true iff all data item are saved without error
 	 */
-	public boolean write(RecordSet<?> data);
+	public boolean write(DataSet<?> data);
 
 	/**
 	 * Delete all records in the set
@@ -33,5 +33,5 @@ public interface Store
 	 *            The list of items to be removed
 	 * @return true iff all items are removed successfully
 	 */
-	public boolean delete(RecordSet<?> items);
+	public boolean delete(DataSet<?> items);
 }

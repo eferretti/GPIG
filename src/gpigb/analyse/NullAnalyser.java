@@ -1,25 +1,29 @@
 package gpigb.analyse;
 
-import gpigb.data.RecordSet;
+import gpigb.data.DataSet;
 import gpigb.store.Store;
 
 import java.util.List;
 
 /**
- * An analyser which is used solely to acquire raw data from the store by reporter modules
+ * An analyser which is used solely to acquire raw data from the store by
+ * reporter modules
  */
-public class NullAnalyser implements Analyser{
-	
+public class NullAnalyser implements Analyser
+{
+
 	public Store store;
-	
+
 	@Override
-	public boolean Analyse(List<RecordSet<?>> input) {
+	public boolean analyse(List<DataSet<?>> input)
+	{
 		return true;
 	}
 
 	@Override
-	public boolean Analyse(RecordSet<?> input) {
+	public boolean analyse(DataSet<?> input)
+	{
 		return true;
 	}
-	
+
 }

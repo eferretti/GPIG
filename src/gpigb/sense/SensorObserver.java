@@ -1,6 +1,6 @@
 package gpigb.sense;
 
-import gpigb.data.SensorRecord;
+import gpigb.data.DataRecord;
 
 public interface SensorObserver<DataType>
 {
@@ -13,5 +13,6 @@ public interface SensorObserver<DataType>
 	 *            the new data
 	 */
 	public void update(int sensorID, DataType reading);
-	public void update(SensorRecord<DataType> reading);
+
+	public void update(DataRecord<DataType> reading);
 }
