@@ -147,6 +147,8 @@ public class JSONFileStore implements Store
 						}
 					}
 					
+					br.close();
+					
 					if (records.size() > 0)
 					{
 						File file = new File(fileLoc + items.getSensorID() + "/" + fileNames.get(i));
@@ -173,8 +175,6 @@ public class JSONFileStore implements Store
 							return false;
 						}
 					}
-					
-					br.close();
 				}
 				catch (IOException e)
 				{
