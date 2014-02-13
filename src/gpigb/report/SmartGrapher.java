@@ -1,15 +1,8 @@
 package gpigb.report;
 
-import gpigb.data.RecordSet;
-import gpigb.data.SensorRecord;
-
 import java.awt.*;
-
 import javax.swing.*;
-
 import java.util.Random;
-import java.lang.Math;
-
 
 public class SmartGrapher {
 
@@ -49,10 +42,7 @@ public class SmartGrapher {
   public static void main(String[] args) {
     SmartGrapher sg = new SmartGrapher(Default_width, Default_height);
     sg.testRun();
-    sg.clear();
-    sg.testRun2();
-    sg.clear();
-    sg.testChunk();
+    sg.reset();
   }
 
   public void plot(int data) {
@@ -66,27 +56,13 @@ public class SmartGrapher {
     }
   }
 
-  public void testRun2() {
-    int[] data = new int[500];
-    Random g = new Random();
-
-    for (int i = 0; i < 500; i++) {
-      data[i] = g.nextInt(1000);
-    }
-
-    for (int i = 0; i < 500; i++) {
-      plot(data[i]);
-      wait(30);
-    }
-  }
-
   public void testRun() {
-    int[] data = new int[2000];
+    int[] data = new int[2500];
     Random g = new Random();
 
-    for (int i = 0; i < 2000; i++) {
-      if (i < 1000)
-        data[i] = 30 - g.nextInt(50);
+    for (int i = 0; i < 2500; i++) {
+      if (i < 100)
+        data[i] = 40 - g.nextInt(50);
       else if (i < 200)
         data[i] = 500 - g.nextInt(1000);
       else if (i < 400)
@@ -95,26 +71,13 @@ public class SmartGrapher {
         data[i] = 1000 - g.nextInt(2000);
       else if (i < 1500)
         data[i] = g.nextInt(3000);
-      else if (i < 2000)
+      else if (i < 2500)
         data[i] = 0 - g.nextInt(5000);
     }
 
-    for (int i = 0; i < 2000; i++) {
+    for (int i = 0; i < 2500; i++) {
       plot(data[i]);
-      wait(15);
-    }
-  }
-
-  public void testChunk() {
-
-    Random g = new Random();
-    for (int j = 0; j < 50; j++) {
-      int[] data = new int[100];
-      for (int i = 0; i < 100; i++) {
-        data[i] = 1000 - g.nextInt(2500);
-      }
-      plot(data);
-      wait(50);
+      wait(1);
     }
   }
 
@@ -147,7 +110,7 @@ public class SmartGrapher {
     frame.setVisible(true);
   }
 
-  public void clear() {
-    graph.clear();
+  public void reset() {
+    graph.reset();
   }
 }
