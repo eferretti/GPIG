@@ -26,35 +26,28 @@ public abstract class Patchable
 		Field[] oldFields = oldInstance.getClass().getDeclaredFields();
 		Field[] newFields = this.getClass().getDeclaredFields();
 
-		for (Field newField : newFields)
-		{
+		for (Field newField : newFields) {
 			// Skip static fields
 			if (Modifier.isStatic(newField.getModifiers())) continue;
 
 			// Scan for a match
 			Field matchingField = null;
-			for (Field oldField : oldFields)
-			{
-				if (oldField.getName() == newField.getName())
-				{
+			for (Field oldField : oldFields) {
+				if (oldField.getName() == newField.getName()) {
 					matchingField = oldField;
 					break;
 				}
 			}
 
-			if (matchingField != null)
-			{
+			if (matchingField != null) {
 				// If we find one then update the value of this instance to that
 				// of the old one
-				try
-				{
+				try {
 					newField.set(this, matchingField.get(oldInstance));
 				}
-				catch (IllegalArgumentException e)
-				{
+				catch (IllegalArgumentException e) {
 				}
-				catch (IllegalAccessException e)
-				{
+				catch (IllegalAccessException e) {
 				}
 			}
 		}
@@ -68,16 +61,12 @@ public abstract class Patchable
 	 */
 	public final int getVersionNumber()
 	{
-		try
-		{
-			for (Field f : getClass().getFields())
-			{
-				if (f.getName() == ComponentManager.versionNumberFieldName)
-					return f.getInt(this);
+		try {
+			for (Field f : getClass().getFields()) {
+				if (f.getName() == ComponentManager.versionNumberFieldName) return f.getInt(this);
 			}
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 
 		}
 

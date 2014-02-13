@@ -1,26 +1,26 @@
 package gpigb.analyse;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
+import gpigb.data.RecordSet;
 import gpigb.report.ReporterPlotRTSmart;
 import gpigb.sense.SensorObserver;
 
-public class RealTimeGraphAnalyser implements SensorObserver<Float> 
+import java.util.ArrayList;
+import java.util.Calendar;
+
+public class RealTimeGraphAnalyser implements SensorObserver<Float>
 {
 	ReporterPlotRTSmart plotter = new ReporterPlotRTSmart("");
 
 	ArrayList<RecordSet<?>> al = new ArrayList<>();
 	RecordSet<Integer> rs;
-	
-	public RealTimeGraphAnalyser() 
+
+	public RealTimeGraphAnalyser()
 	{
 	}
-	
+
 	@Override
-	public void update(int sensorID, Float reading) 
+	public void update(int sensorID, Float reading)
 	{
 		al.clear();
 		rs = new RecordSet<>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), 0);
@@ -30,7 +30,7 @@ public class RealTimeGraphAnalyser implements SensorObserver<Float>
 	}
 
 	@Override
-	public void update(SensorRecord<Float> reading) 
+	public void update(SensorRecord<Float> reading)
 	{
 		al.clear();
 		rs = new RecordSet<>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), 0);

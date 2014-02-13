@@ -286,7 +286,7 @@ public class ReporterGUI {
 			
 			//Perform analysis and output results
 			RecordSet<Integer> rs = new RecordSet<Integer>(d1, d2, 0);
-			analyser.Analyse(rs);
+			analyser.analyse(rs);
 			textArea.setText("");
 			textArea.append("Analysis between: \n\n"); 
 			textArea.append(d1 + "\n\n");

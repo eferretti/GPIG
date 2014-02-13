@@ -28,18 +28,11 @@ public class GraphsDemo
 		
 		System.out.println(mgr.getAvailableModules());
 		
-		int id = mgr.createObjectOfModule(mgr.getAvailableModules().get(0).moduleID);
-
-		StrongReference<Sensor<?>> ref1 = mgr.getObjectByID(id);
 		Sensor<Float> s1 = new SNMPSensor();
 		
 		SimpleWebReporter r1 = new SimpleWebReporter(8080);
 		
 		s1.registerObserver(r1);
-		
-		final ReporterPlotRTSmart r2 = new ReporterPlotRTSmart("Title");
-		
-		ConcreteSensorOne sen2 = new ConcreteSensorOne();
 		
 		s1.registerObserver(new RealTimeGraphAnalyser());
 	}

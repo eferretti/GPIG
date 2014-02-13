@@ -13,7 +13,7 @@ public class NullAnalyser implements Analyser{
 	public Store store;
 	
 	@Override
-	public boolean Analyse(List<RecordSet<?>> input) {
+	public boolean analyse(List<RecordSet<?>> input) {
 		for(RecordSet data : input)
 		{
 			store.read(data);
@@ -22,7 +22,7 @@ public class NullAnalyser implements Analyser{
 	}
 
 	@Override
-	public boolean Analyse(RecordSet<?> input) {
+	public boolean analyse(RecordSet<?> input) {
 		store.read(input);
 		return true;
 	}
