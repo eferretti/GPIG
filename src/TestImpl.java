@@ -15,7 +15,7 @@ public class TestImpl
 		//ConcreteSensorTwo s2 = new ConcreteSensorTwo();
 		
 		ComponentManager<Sensor<?>> mgr = new JarFileComponentManager<Sensor<?>>((Class<? extends Sensor<?>>) Sensor.class);
-		mgr.addModuleDirectory("~/HUMS_Modules/");
+		mgr.addModuleDirectory("./HUMS_Modules/");
 		mgr.refreshModules();
 		
 		System.out.println(mgr.getAvailableModules());

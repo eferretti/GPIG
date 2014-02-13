@@ -61,6 +61,8 @@ public class JSONFileStore implements Store
 								t.printStackTrace();
 							}
 						}
+						
+						br.close();
 					}
 					else
 					{
@@ -130,24 +132,22 @@ public class JSONFileStore implements Store
 					
 					ArrayList<SensorRecord<?>> records = new ArrayList<>();
 					Type dataType = new TypeToken<SensorRecord<?>>(){}.getType();
-					int countDelete = 0;
-					int countNon = 0;
 					for (String x = br.readLine(); x != null; x = br.readLine())
 					{
 						SensorRecord<?> record = gson.fromJson(x, dataType);
 						
 						if (record.getTimestamp().getTime() <= items.getToTime().getTime() && record.getTimestamp().getTime() >= items.getFromTime().getTime())
 						{
-							countDelete++;
 							// "delete"
 							// basically just dont write back to file
 						}
 						else
 						{
-							countNon++;
 							records.add(record);
 						}
 					}
+					
+					br.close();
 					
 					if (records.size() > 0)
 					{
@@ -223,7 +223,6 @@ public class JSONFileStore implements Store
 							fileNames.add(file.getName());
 				}
 			}
-		
 			return fileNames;
 		}
 	}
