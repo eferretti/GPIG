@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 /**
  * GraphPanel is a component to display the graph.
  */
+@SuppressWarnings("serial")
 class GraphPanel extends JComponent
 {
 

@@ -1,6 +1,8 @@
 package gpigb.sense;
 
-public interface Sensor<DataType>
+import gpigb.base.Configurable;
+
+public interface Sensor<DataType> extends Configurable
 {
 	/**
 	 * Return the sensor unique ID

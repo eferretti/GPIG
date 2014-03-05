@@ -1,10 +1,11 @@
 package gpigb.report;
 
+import gpigb.base.Configurable;
 import gpigb.data.DataSet;
 
 import java.util.List;
 
-public interface Reporter
+public interface Reporter extends Configurable
 {
 	/**
 	 * Produces the output report

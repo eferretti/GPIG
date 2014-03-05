@@ -1,9 +1,11 @@
 package gpigb.analyse;
 
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -11,6 +13,8 @@ import java.util.List;
  */
 public class AccelerationAnalyser implements Analyser
 {
+	Integer threshold = Integer.MAX_VALUE;
+	
 	/**
 	 * Perform analysis on sensor reading histories. If any history has a value
 	 * which changes by more than a given threshold then report only the
@@ -19,13 +23,12 @@ public class AccelerationAnalyser implements Analyser
 	 * @param data
 	 *            The set of sensor histories to analyse
 	 */
-	public boolean analyse(List<DataSet<?>> data)
+	public synchronized boolean analyse(List<DataSet<?>> data)
 	{
 		List<DataSet<?>> changeRecord = new ArrayList<DataSet<?>>();
 		List<DataSet<?>> averageRecord = new ArrayList<DataSet<?>>();
 
 		Integer previousReading = 0;
-		Integer difference = 300;
 		for (int j = 0; j < data.size(); j++) {
 			// No data has been provided
 			if (data.get(j).getRecordCount() == 0) return false;
@@ -38,7 +41,7 @@ public class AccelerationAnalyser implements Analyser
 
 				// If there is a difference between readings add the RecordSet
 				// where the change occurred
-				if (currentReading > previousReading + difference || currentReading < previousReading - difference)
+				if (currentReading > previousReading + threshold || currentReading < previousReading - threshold)
 					changeRecord.add(data.get(j));
 
 				previousReading = (Integer) data.get(j).getDataAtPosition(i).getData();
@@ -69,6 +72,15 @@ public class AccelerationAnalyser implements Analyser
 		ArrayList<DataSet<?>> a = new ArrayList<>();
 		a.add(input);
 		return analyse(a);
+	}
+
+	@Override
+	public synchronized void configure(ConfigurationHandler handler)
+	{
+		HashMap<String, Object> configSpec = new HashMap<>();
+		configSpec.put("Threshold", threshold);
+		handler.getConfiguration(configSpec);
+		this.threshold = (Integer) configSpec.get("Threshold");
 	}
 
 }

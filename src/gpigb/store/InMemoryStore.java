@@ -1,6 +1,7 @@
 package gpigb.store;
 
 import gpigb.classloading.Patchable;
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.sense.SensorObserver;
@@ -65,13 +66,13 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 			history.add(rec);
 		}
 
-		System.out.println("Added " + pos + " new objects");
+//		System.out.println("Added " + pos + " new objects");
 
 		Collections.sort(history);
 
-		for (DataRecord<?> r : history) {
-			System.out.println(r.getTimestamp());
-		}
+//		for (DataRecord<?> r : history) {
+//			System.out.println(r.getTimestamp());
+//		}
 
 		return true;
 	}
@@ -103,6 +104,13 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 		DataSet<DataType> rs = new DataSet<>(reading.getTimestamp(), reading.getTimestamp(), reading.getSensorID());
 		rs.addRecord(reading);
 		write(rs);
+	}
+
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

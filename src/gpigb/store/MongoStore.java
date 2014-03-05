@@ -1,6 +1,7 @@
 package gpigb.store;
 
 import gpigb.classloading.Patchable;
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 
@@ -53,7 +54,7 @@ public class MongoStore extends Patchable implements Store
 
 		DBCursor cursor = readings.find(query);
 		for (DBObject o : cursor) {
-			Integer id = Integer.valueOf((String) o.get("SensorID"));
+			Integer id = (Integer)o.get("SensorID");
 			Object data = o.get("SensorID");
 			Date timestamp = (Date) o.get("Timestamp");
 			DataRecord r = new DataRecord<>(id, data);
@@ -90,6 +91,13 @@ public class MongoStore extends Patchable implements Store
 	{
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

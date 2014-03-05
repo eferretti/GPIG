@@ -1,7 +1,10 @@
 package gpigb.report;
 
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataSet;
 
+import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -10,7 +13,8 @@ import java.util.List;
  */
 public class OutOfRangeReporter implements Reporter
 {
-
+	PrintStream outputStream;
+	
 	public void generateReport(List<DataSet<?>> EroniousData)
 	{
 		if (EroniousData.isEmpty()) return;
@@ -18,7 +22,18 @@ public class OutOfRangeReporter implements Reporter
 		String ErrorMessage = "SensorID: " + EroniousData.get(0).getSensorID() + " Time: "
 				+ EroniousData.get(0).getDataAtPosition(0).getTimestamp() + " Reading: "
 				+ EroniousData.get(0).getDataAtPosition(0).getData() + "\n";
-		System.out.print(ErrorMessage);
+		outputStream.print(ErrorMessage);
+	}
+
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		HashMap<String, Object> config = new HashMap<>();
+		config.put("PrintStream", null);
+		
+		handler.getConfiguration(config);
+		
+		outputStream = (PrintStream) (config.containsKey("PrintStream") ? config.get("PrintStream") : System.out);
 	}
 
 }

@@ -1,6 +1,9 @@
 package gpigb.report;
 
+import gpigb.analyse.Analyser;
 import gpigb.analyse.NullAnalyser;
+import gpigb.classloading.StrongReference;
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.store.InMemoryStore;
@@ -14,6 +17,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.AbstractAction;
@@ -29,24 +34,25 @@ import javax.swing.JTextArea;
  * Invokes an analyser from a reporter interface to provide analysis over the
  * provided date range.
  */
-public class ReporterGUI
+public class ReporterGUI implements Reporter
 {
-
 	private JFrame frame;
 	private final Action action = new SwingAction();
 	private JTextArea textArea;
-	private JComboBox cbMonthsFrom;
-	private JComboBox cbMonthsTo;
-	private JComboBox cbYearFrom;
-	private JComboBox cbYearTo;
-	private JComboBox cbDateFrom;
-	private JComboBox cbDateTo;
-	private JComboBox cbMinFrom;
-	private JComboBox cbHoursFrom;
-	private JComboBox cbMinTo;
-	private JComboBox cbHoursTo;
+	private JComboBox<String> cbMonthsFrom;
+	private JComboBox<String> cbMonthsTo;
+	private JComboBox<String> cbYearFrom;
+	private JComboBox<String> cbYearTo;
+	private JComboBox<String> cbDateFrom;
+	private JComboBox<String> cbDateTo;
+	private JComboBox<String> cbMinFrom;
+	private JComboBox<String> cbHoursFrom;
+	private JComboBox<String> cbMinTo;
+	private JComboBox<String> cbHoursTo;
 	private JLabel lblFrom;
 
+	private StrongReference<Analyser> analyser;
+	
 	public Store store;
 
 	/**
@@ -124,7 +130,7 @@ public class ReporterGUI
 		gbc_lblFrom.gridy = 1;
 		frame.getContentPane().add(lblFrom, gbc_lblFrom);
 
-		cbHoursFrom = new JComboBox(hours);
+		cbHoursFrom = new JComboBox<>(hours);
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.anchor = GridBagConstraints.EAST;
 		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
@@ -149,7 +155,7 @@ public class ReporterGUI
 		gbc_lblc.gridy = 4;
 		frame.getContentPane().add(lblc, gbc_lblc);
 
-		cbMinFrom = new JComboBox(minutes);
+		cbMinFrom = new JComboBox<>(minutes);
 		GridBagConstraints gbc_comboBox_8 = new GridBagConstraints();
 		gbc_comboBox_8.anchor = GridBagConstraints.WEST;
 		gbc_comboBox_8.insets = new Insets(0, 0, 5, 5);
@@ -157,7 +163,7 @@ public class ReporterGUI
 		gbc_comboBox_8.gridy = 2;
 		frame.getContentPane().add(cbMinFrom, gbc_comboBox_8);
 
-		cbDateFrom = new JComboBox(days);
+		cbDateFrom = new JComboBox<>(days);
 		GridBagConstraints gbc_comboBox_2 = new GridBagConstraints();
 		gbc_comboBox_2.anchor = GridBagConstraints.EAST;
 		gbc_comboBox_2.insets = new Insets(0, 0, 5, 5);
@@ -165,14 +171,14 @@ public class ReporterGUI
 		gbc_comboBox_2.gridy = 2;
 		frame.getContentPane().add(cbDateFrom, gbc_comboBox_2);
 
-		cbMonthsFrom = new JComboBox(months);
+		cbMonthsFrom = new JComboBox<>(months);
 		GridBagConstraints gbc_comboBox_7 = new GridBagConstraints();
 		gbc_comboBox_7.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox_7.gridx = 5;
 		gbc_comboBox_7.gridy = 2;
 		frame.getContentPane().add(cbMonthsFrom, gbc_comboBox_7);
 
-		cbYearFrom = new JComboBox(years);
+		cbYearFrom = new JComboBox<>(years);
 		GridBagConstraints gbc_comboBox_1 = new GridBagConstraints();
 		gbc_comboBox_1.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox_1.gridx = 6;
@@ -186,7 +192,7 @@ public class ReporterGUI
 		gbc_lblTo.gridy = 3;
 		frame.getContentPane().add(lblTo, gbc_lblTo);
 
-		cbHoursTo = new JComboBox(hours);
+		cbHoursTo = new JComboBox<>(hours);
 		GridBagConstraints gbc_comboBox_10 = new GridBagConstraints();
 		gbc_comboBox_10.anchor = GridBagConstraints.EAST;
 		gbc_comboBox_10.insets = new Insets(0, 0, 5, 5);
@@ -194,7 +200,7 @@ public class ReporterGUI
 		gbc_comboBox_10.gridy = 4;
 		frame.getContentPane().add(cbHoursTo, gbc_comboBox_10);
 
-		cbMinTo = new JComboBox(minutes);
+		cbMinTo = new JComboBox<>(minutes);
 		GridBagConstraints gbc_comboBox_9 = new GridBagConstraints();
 		gbc_comboBox_9.anchor = GridBagConstraints.WEST;
 		gbc_comboBox_9.insets = new Insets(0, 0, 5, 5);
@@ -202,7 +208,7 @@ public class ReporterGUI
 		gbc_comboBox_9.gridy = 4;
 		frame.getContentPane().add(cbMinTo, gbc_comboBox_9);
 
-		cbDateTo = new JComboBox(days);
+		cbDateTo = new JComboBox<>(days);
 		GridBagConstraints gbc_comboBox_3 = new GridBagConstraints();
 		gbc_comboBox_3.anchor = GridBagConstraints.EAST;
 		gbc_comboBox_3.insets = new Insets(0, 0, 5, 5);
@@ -210,14 +216,14 @@ public class ReporterGUI
 		gbc_comboBox_3.gridy = 4;
 		frame.getContentPane().add(cbDateTo, gbc_comboBox_3);
 
-		cbMonthsTo = new JComboBox(months);
+		cbMonthsTo = new JComboBox<>(months);
 		GridBagConstraints gbc_comboBox_4 = new GridBagConstraints();
 		gbc_comboBox_4.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox_4.gridx = 5;
 		gbc_comboBox_4.gridy = 4;
 		frame.getContentPane().add(cbMonthsTo, gbc_comboBox_4);
 
-		cbYearTo = new JComboBox(years);
+		cbYearTo = new JComboBox<>(years);
 		GridBagConstraints gbc_comboBox_5 = new GridBagConstraints();
 		gbc_comboBox_5.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox_5.gridx = 6;
@@ -237,6 +243,7 @@ public class ReporterGUI
 		scrollPane.setViewportView(textArea);
 	}
 
+	@SuppressWarnings("serial")
 	private class SwingAction extends AbstractAction
 	{
 		public SwingAction()
@@ -254,7 +261,6 @@ public class ReporterGUI
 				date = new SimpleDateFormat("MMM", Locale.ENGLISH).parse(month);
 			}
 			catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			c.setTime(date);
@@ -266,6 +272,12 @@ public class ReporterGUI
 		 */
 		public void actionPerformed(ActionEvent e)
 		{
+			if(analyser == null)
+			{
+				textArea.setText("No analyser configured");
+				return;
+			}
+			
 			Calendar c = Calendar.getInstance();
 
 			// Retrieve date and time from and to values
@@ -279,7 +291,7 @@ public class ReporterGUI
 			int mnT = Integer.parseInt((String) cbMinTo.getSelectedItem());
 			int mtF = getMonth((String) cbMonthsFrom.getSelectedItem());
 			int mtT = getMonth((String) cbMonthsTo.getSelectedItem());
-
+			
 			// Set the from date
 			c.set(yrF, mtF, dtF, hrF, mnF, 00);
 			Date d1 = c.getTime();
@@ -288,25 +300,9 @@ public class ReporterGUI
 			c.set(yrT, mtT, dtT, hrT, mnT, 00);
 			Date d2 = c.getTime();
 
-			NullAnalyser a = new NullAnalyser();
-			InMemoryStore store = new InMemoryStore();
-			a.store = store;
-
-			// Fake data
-			DataSet<Integer> fRS = new DataSet<Integer>(d1, d2, 1);
-			DataRecord<Integer> data = new DataRecord<Integer>(1, 100);
-			c.add(Calendar.MINUTE, -2);
-			data.setDateTime(c.getTime());
-			DataRecord<Integer> data2 = new DataRecord<Integer>(1, 50);
-			data2.setDateTime(c.getTime());
-			fRS.addRecord((DataRecord) data);
-			fRS.addRecord((DataRecord) data2);
-			fRS.addRecord((DataRecord) data);
-			a.store.write(fRS);
-
 			// Perform analysis and output results
 			DataSet<Integer> rs = new DataSet<Integer>(d1, d2, 1);
-			a.analyse(rs);
+			analyser.get().analyse(rs);
 			textArea.setText("");
 			textArea.append("Analysis between: \n\n");
 			textArea.append(d1 + "\n\n");
@@ -314,8 +310,42 @@ public class ReporterGUI
 			textArea.append(d2 + "\n\n");
 			textArea.append("Result1: " + rs.getDataAtPosition(0).getData() + "\n");
 			textArea.append("Result2: " + rs.getDataAtPosition(1).getData() + "\n");
-
 		}
 	}
+	
+	@Override
+	public void generateReport(List<DataSet<?>> data)
+	{
+		Date fromTime = data.get(0).getFromTime();
+		Calendar cal = Calendar.getInstance();
+		
+		cal.setTime(fromTime);
+		cbYearFrom.setSelectedItem(cal.get(Calendar.YEAR));
+		cbMonthsFrom.setSelectedItem(cal.get(Calendar.MONTH));
+		cbDateFrom.setSelectedItem(cal.get(Calendar.DATE));
+		cbHoursFrom.setSelectedItem(cal.get(Calendar.HOUR_OF_DAY));
+		cbMinFrom.setSelectedItem(cal.get(Calendar.MINUTE));
+		
+		Date toTime = data.get(0).getToTime();
+		cal.setTime(toTime);
+		cbYearTo.setSelectedItem(cal.get(Calendar.YEAR));
+		cbMonthsTo.setSelectedItem(cal.get(Calendar.MONTH));
+		cbDateTo.setSelectedItem(cal.get(Calendar.DATE));
+		cbHoursTo.setSelectedItem(cal.get(Calendar.HOUR_OF_DAY));
+		cbMinTo.setSelectedItem(cal.get(Calendar.MINUTE));
+		
+		action.actionPerformed(new ActionEvent(null, 0, null));
+	}
 
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		HashMap<String, Object> map = new HashMap<>();
+		
+		map.put("AnalyserReference", null);
+		
+		handler.getConfiguration(map);
+		
+		this.analyser = (StrongReference<Analyser>) map.get("AnalyserReference");
+	}
 }

@@ -1,5 +1,6 @@
 package gpigb.analyse;
 
+import gpigb.base.Configurable;
 import gpigb.data.DataSet;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * An Interface which must be implemented by any HUMS analyser modules.
  */
-public interface Analyser
+public interface Analyser extends Configurable
 {
 	/**
 	 * A method which allows input of a number of sensor readings. To be used

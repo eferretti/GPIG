@@ -1,5 +1,6 @@
 package gpigb.store;
 
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 
@@ -13,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mongodb.util.Hash;
 
 /**
  * A store implementation which stores objects as JSON files on the local file
@@ -23,8 +26,9 @@ import com.google.gson.reflect.TypeToken;
  */
 public class JSONFileStore implements Store
 {
-	private final static String fileLoc = "./Storage/";
+	private String fileLoc = "./Storage/";
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public boolean read(DataSet<?> unpopulated)
 	{
@@ -111,6 +115,7 @@ public class JSONFileStore implements Store
 		return true;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean delete(DataSet<?> items)
 	{
@@ -206,5 +211,16 @@ public class JSONFileStore implements Store
 			}
 			return fileNames;
 		}
+	}
+
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		HashMap<String, Object> configSpec = new HashMap<>();
+		configSpec.put("StorePath", fileLoc);
+		
+		handler.getConfiguration(configSpec);
+		
+		this.fileLoc = (String) configSpec.get("StorePath");
 	}
 }

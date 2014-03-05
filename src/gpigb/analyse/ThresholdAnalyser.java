@@ -1,10 +1,12 @@
 package gpigb.analyse;
 
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.report.OutOfRangeReporter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,18 +15,14 @@ import java.util.List;
  */
 public class ThresholdAnalyser implements Analyser
 {
-
 	int upperThreshold;
 	int lowerThreshold;
 
-	public ThresholdAnalyser(int u, int l)
+	public ThresholdAnalyser()
 	{
-
-		upperThreshold = u;
-		lowerThreshold = l;
-
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean analyse(DataSet<?> input)
 	{
 		DataSet<Integer> inputs = (DataSet<Integer>) input;
@@ -56,6 +54,19 @@ public class ThresholdAnalyser implements Analyser
 	public boolean analyse(List<DataSet<?>> input)
 	{
 		return false;
+	}
+
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		HashMap<String, Object> configSpec = new HashMap<>();
+		configSpec.put("Min", Integer.MIN_VALUE);
+		configSpec.put("Max", Integer.MAX_VALUE);
+		
+		handler.getConfiguration(configSpec);
+		
+		this.lowerThreshold = ((Integer)configSpec.get("Min")).intValue();
+		this.upperThreshold = ((Integer)configSpec.get("Max")).intValue();
 	}
 
 }

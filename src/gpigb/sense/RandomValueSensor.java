@@ -1,6 +1,9 @@
 package gpigb.sense;
 
+import gpigb.configuration.ConfigurationHandler;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 /**
@@ -8,7 +11,7 @@ import java.util.Random;
  *  A simulated sensor which generates random integer values between 0 and 15000
  *
  */
-public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
+public class RandomValueSensor implements Sensor<Integer>, Runnable
 {
 
 	private ArrayList<SensorObserver<Integer>> observers;
@@ -18,7 +21,7 @@ public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
 	private Integer min = 0;
 	private Integer max = 15000;
 
-	public ConcreteSensorTwo()
+	public RandomValueSensor()
 	{
 		observers = new ArrayList<SensorObserver<Integer>>();
 		new Thread(this).start();
@@ -32,7 +35,7 @@ public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
 			notifyObservers();
 			try {
 				// sleep for 2 seconds
-				Thread.sleep(50);
+				Thread.sleep(2000);
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
@@ -86,11 +89,25 @@ public class ConcreteSensorTwo implements Sensor<Integer>, Runnable
 	 * @param max maximum value of generated number 
 	 * @return generated number
 	 */
-	private Integer generateRandom(Integer min, Integer max)
+	private synchronized Integer generateRandom(Integer min, Integer max)
 	{
 		Random rand = new Random();
 		int value = rand.nextInt((max - min) + 1) + min;
 		return value;
+	}
+
+	@Override
+	public synchronized void configure(ConfigurationHandler handler)
+	{ 
+		HashMap<String, Object> configSpec = new HashMap<>();
+		
+		configSpec.put("Min", Integer.MIN_VALUE);
+		configSpec.put("Max", Integer.MAX_VALUE);
+		
+		handler.getConfiguration(configSpec);
+		
+		this.min = (Integer) configSpec.get("Min");
+		this.max = (Integer) configSpec.get("Max");
 	}
 
 }

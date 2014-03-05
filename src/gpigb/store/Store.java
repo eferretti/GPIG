@@ -1,11 +1,12 @@
 package gpigb.store;
 
+import gpigb.base.Configurable;
 import gpigb.data.DataSet;
 
 /**
  * Common methods between all store implementations
  */
-public interface Store
+public interface Store extends Configurable
 {
 	/**
 	 * Fills a provided record set with values from the store

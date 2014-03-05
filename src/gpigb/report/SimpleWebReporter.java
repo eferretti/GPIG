@@ -2,30 +2,34 @@ package gpigb.report;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
+import gpigb.classloading.StrongReference;
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.sense.SensorObserver;
+import gpigb.store.Store;
 
 /**
  * A reporter which presents a small web server to allow web viewing of system
  * performance
  */
-public class SimpleWebReporter extends NanoHTTPD implements SensorObserver<Float>, Reporter
+public class SimpleWebReporter extends NanoHTTPD implements Reporter
 {
+	StrongReference<Store> store;
 
-	Map<Integer, DataSet<Float>> latestReadings = Collections.synchronizedMap(new HashMap<Integer, DataSet<Float>>());
-
-	public SimpleWebReporter(int port)
+	public SimpleWebReporter()
 	{
-		super(port);
+		super(8080);
 		try {
 			this.start();
 		}
@@ -52,98 +56,95 @@ public class SimpleWebReporter extends NanoHTTPD implements SensorObserver<Float
 				+ "<h2>Latest Sensor Readings</h2>" + "\n" + "<table>" + "\n"
 				+ "<tr><th>Sensor ID</th><th>Latest Reading</th></tr>" + "\n";
 
-		for (Integer id : latestReadings.keySet()) {
-			DataSet<Float> rec = latestReadings.get(id);
-			int len = rec.getRecordCount();
-			String unit = rec.getDataAtPosition(len - 1).getMeta().get("Unit");
-			ret += "<tr><td>" + id + "</td><td>" + rec.getDataAtPosition(len - 1).getData()
-					+ (unit == null ? "" : " " + unit) + "</td></tr>" + "\n";
+		Calendar cal = Calendar.getInstance();
+		Date endDate = cal.getTime();
+		cal.add(Calendar.MINUTE, -5);
+		Date startDate = cal.getTime();
+
+		DataSet<Float> data = new DataSet<>(startDate, endDate, 0);
+		
+		store.get().read(data);
+
+		int len = data.getRecordCount();
+		Dictionary<String, String> meta = data.getDataAtPosition(len-1).getMeta();
+		String unit = "";
+		try
+		{
+			unit = meta.get("Unit");
 		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		ret += "<tr><td>Latest Reading</td><td>" + data.getDataAtPosition(len - 1).getData()
+				+ (unit == null ? "" : " " + unit) + "</td></tr>" + "\n";
 
 		ret += "</table>" + "\n";
-		for (Integer id : latestReadings.keySet()) {
-			String dataString = "[";
-			String labelString = "[";
-			int start = Math.max(0, latestReadings.get(id).getRecordCount() - 100);
-			Float minReading = Float.POSITIVE_INFINITY;
-			Float maxReading = Float.NEGATIVE_INFINITY;
-			for (int i = start; i < latestReadings.get(id).getRecordCount(); ++i) {
-				Float reading = latestReadings.get(id).getDataAtPosition(i).getData();
-				minReading = Math.min(minReading, reading);
-				maxReading = Math.max(maxReading, reading);
-				labelString += (i % 50 == 0) ? (("\"" + latestReadings.get(id).getDataAtPosition(i).getTimestamp()) + "\"")
-						: "\"\"";
-				dataString += ("" + latestReadings.get(id).getDataAtPosition(i).getData());
-				if (i != latestReadings.get(id).getRecordCount() - 1) {
-					dataString += ",";
-					labelString += ",";
-				}
+		String dataString = "[";
+		String labelString = "[";
+		int start = 0;
+		Float minReading = Float.POSITIVE_INFINITY;
+		Float maxReading = Float.NEGATIVE_INFINITY;
+		for (int i = start; i < data.getRecordCount(); i+=50) {
+			Float reading = new Float(data.getDataAtPosition(i).getData());
+			minReading = Math.min(minReading, reading);
+			maxReading = Math.max(maxReading, reading);
+			labelString += (i % 200 == 0) ? (("\"" + data.getDataAtPosition(i).getTimestamp()) + "\"") : "\"\"";
+			dataString += ("" + data.getDataAtPosition(i).getData());
+			if (i != data.getRecordCount() - 1) {
+				dataString += ",";
+				labelString += ",";
 			}
-
-			minReading = minReading - (maxReading * 0.001f);
-			maxReading = maxReading + (maxReading * 0.001f);
-
-			int steps = 10;
-			float stepSize = maxReading - minReading;
-			stepSize /= steps;
-
-			dataString += "],";
-			labelString += "],";
-			ret += "<canvas id=\"graph_"
-					+ id
-					+ "\" width=1000 height=400></canvas>"
-					+ "\n"
-					+ "<script>"
-					+ "\n"
-					+ "ctx = $(\"#graph_"
-					+ id
-					+ "\").get(0).getContext(\"2d\");"
-					+ "\n"
-					+ "data = {"
-					+ "\n"
-					+ "labels : "
-					+ labelString
-					+ "\n"
-					+ "datasets : ["
-					+ "\n"
-					+ "{"
-					+ "\n"
-					+ "	fillColor : \"rgba(220,220,220,0.5)\","
-					+ "\n"
-					+ "	strokeColor : \"rgba(220,220,220,1)\","
-					+ "\n"
-					+ "	pointColor : \"rgba(220,220,220,1)\","
-					+ "\n"
-					+ "	pointStrokeColor : \"#fff\","
-					+ "	data : "
-					+ dataString
-					+ "\n"
-					+ "}"
-					+ "\n"
-					+ "]"
-					+ "\n"
-					+ "}"
-					+ "\n"
-					+ "opts = {bezierCurve:true, pointDot:false, animation:false, scaleShowGridLines:false, scaleOverride:true, scaleStartValue: "
-					+ minReading + ", scaleSteps: " + steps + ", scaleStepWidth:" + stepSize + "};"
-					+ "new Chart(ctx).Line(data, opts);setTimeout(function(){location.reload()}, 5000);" + "\n"
-					+ "</script>" + "\n";
 		}
+
+		minReading = minReading - (maxReading * 0.001f);
+		maxReading = maxReading + (maxReading * 0.001f);
+
+		int steps = 10;
+		float stepSize = maxReading - minReading;
+		stepSize /= steps;
+
+		dataString += "],";
+		labelString += "],";
+		ret += "<canvas id=\"graph" + "\" width=1000 height=600></canvas>" + "\n" + "<script>" + "\n"
+				+ "ctx = $(\"#graph" + "\").get(0).getContext(\"2d\");" + "\n" + "data = {" + "\n" + "labels : "
+				+ labelString
+				+ "\n"
+				+ "datasets : ["
+				+ "\n"
+				+ "{"
+				+ "\n"
+				+ "	fillColor : \"rgba(220,220,220,0.5)\","
+				+ "\n"
+				+ "	strokeColor : \"rgba(220,220,220,1)\","
+				+ "\n"
+				+ "	pointColor : \"rgba(220,220,220,1)\","
+				+ "\n"
+				+ "	pointStrokeColor : \"#fff\","
+				+ "	data : "
+				+ dataString
+				+ "\n"
+				+ "}"
+				+ "\n"
+				+ "]"
+				+ "\n"
+				+ "}"
+				+ "\n"
+				+ "opts = {bezierCurve:true, pointDot:false, animation:false, scaleShowGridLines:false, scaleOverride:true, scaleStartValue: "
+				+ minReading
+				+ ", scaleSteps: "
+				+ steps
+				+ ", scaleStepWidth:"
+				+ stepSize
+				+ "};"
+				+ "new Chart(ctx).Line(data, opts);setTimeout(function(){location.reload()}, 2000);"
+				+ "\n"
+				+ "</script>" + "\n";
+
 		ret += "</body>" + "\n" + "</html>";
 
 		return new Response(NanoHTTPD.Response.Status.ACCEPTED, MIME_HTML, ret);
-	}
-
-	@Override
-	public void update(int sensorID, Float reading)
-	{
-		DataSet<Float> rs = latestReadings.get(sensorID);
-		if (rs == null) {
-			Date d = Calendar.getInstance().getTime();
-			rs = new DataSet<>(d, d, sensorID);
-			latestReadings.put(sensorID, rs);
-		}
-		rs.addRecord(new DataRecord<Float>(sensorID, reading));
 	}
 
 	@Override
@@ -153,15 +154,13 @@ public class SimpleWebReporter extends NanoHTTPD implements SensorObserver<Float
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void update(DataRecord<Float> reading)
+	public void configure(ConfigurationHandler handler)
 	{
-		DataSet<Float> rs = latestReadings.get(reading.getSensorID());
-		if (rs == null) {
-			Date d = Calendar.getInstance().getTime();
-			rs = new DataSet<>(d, d, reading.getSensorID());
-			latestReadings.put(reading.getSensorID(), rs);
-		}
-		rs.addRecord(reading);
+		HashMap<String, Object> configSpec = new HashMap<>();
+		configSpec.put("Store", null);
+		handler.getConfiguration(configSpec);
+		store = (StrongReference<Store>) configSpec.get("Store");
 	}
 }

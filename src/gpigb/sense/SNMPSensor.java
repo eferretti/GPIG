@@ -1,6 +1,7 @@
 package gpigb.sense;
 
 import gpigb.classloading.Patchable;
+import gpigb.configuration.ConfigurationHandler;
 import gpigb.data.DataRecord;
 
 import java.lang.ref.WeakReference;
@@ -38,10 +39,6 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 		new Thread(this).start();
 	}
 
-	/**
-	 * 
-	 * @param oldInstance
-	 */
 	public SNMPSensor(Object oldInstance)
 	{
 		super(oldInstance);
@@ -138,11 +135,18 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 
 				notifyObservers();
 
-				Thread.sleep(250);
+				Thread.sleep(50);
 			}
 			catch (Exception e) {
 			}
 		}
+	}
+
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }
