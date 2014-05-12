@@ -4,6 +4,8 @@ import gpigb.analyse.Analyser;
 import gpigb.analyse.NullAnalyser;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.store.InMemoryStore;
@@ -337,15 +339,16 @@ public class ReporterGUI implements Reporter
 		action.actionPerformed(new ActionEvent(null, 0, null));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> map = new HashMap<>();
+		HashMap<String, ConfigurationValue> map = new HashMap<>();
 		
-		map.put("AnalyserReference", null);
+		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, null));
 		
 		handler.getConfiguration(map);
 		
-		this.analyser = (StrongReference<Analyser>) map.get("AnalyserReference");
+		this.analyser = (StrongReference<Analyser>) map.get("AnalyserReference").value;
 	}
 }

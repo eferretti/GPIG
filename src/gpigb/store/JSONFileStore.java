@@ -1,6 +1,8 @@
 package gpigb.store;
 
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 
@@ -216,11 +218,11 @@ public class JSONFileStore implements Store
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> configSpec = new HashMap<>();
-		configSpec.put("StorePath", fileLoc);
+		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
+		configSpec.put("StorePath", new ConfigurationValue(ValueType.String, fileLoc));
 		
 		handler.getConfiguration(configSpec);
 		
-		this.fileLoc = (String) configSpec.get("StorePath");
+		this.fileLoc = (String) configSpec.get("StorePath").value;
 	}
 }

@@ -2,6 +2,8 @@ package gpigb.analyse;
 
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.report.Reporter;
@@ -45,10 +47,12 @@ public class RealTimeGraphAnalyser implements Analyser
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> configSpec = new HashMap<>();
-		configSpec.put("Plotter", null);
+		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
+		configSpec.put("Plotter", new ConfigurationValue(ValueType.Reporter, null));
+		configSpec.put("Title", new ConfigurationValue(ValueType.String, null));
 		handler.getConfiguration(configSpec);
-		this.plotter = (StrongReference<Reporter>) configSpec.get("Plotter");
+		this.plotter = (StrongReference<Reporter>) configSpec.get("Plotter").value;
+		System.out.println("New title: " + configSpec.get("Title").value);
 	}
 
 	@Override

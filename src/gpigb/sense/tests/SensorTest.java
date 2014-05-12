@@ -1,6 +1,8 @@
 package gpigb.sense.tests;
 
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.sense.RandomValueSensor;
@@ -24,10 +26,10 @@ public class SensorTest
 		{
 			
 			@Override
-			public void getConfiguration(Map<String, Object> configSpec)
+			public void getConfiguration(Map<String, ConfigurationValue> configSpec)
 			{
-				configSpec.put("Min", -5000);
-				configSpec.put("Max", 20000);
+				configSpec.put("Min", new ConfigurationValue(ValueType.Integer, -5000));
+				configSpec.put("Max", new ConfigurationValue(ValueType.Integer, 20000));
 			}
 		});
 		

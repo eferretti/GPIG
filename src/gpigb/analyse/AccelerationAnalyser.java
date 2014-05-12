@@ -1,6 +1,8 @@
 package gpigb.analyse;
 
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 
@@ -77,10 +79,10 @@ public class AccelerationAnalyser implements Analyser
 	@Override
 	public synchronized void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> configSpec = new HashMap<>();
-		configSpec.put("Threshold", threshold);
+		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
+		configSpec.put("Threshold", new ConfigurationValue(ValueType.Integer, threshold));
 		handler.getConfiguration(configSpec);
-		this.threshold = (Integer) configSpec.get("Threshold");
+		this.threshold = (Integer) configSpec.get("Threshold").value;
 	}
 
 }

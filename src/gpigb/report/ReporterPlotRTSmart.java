@@ -1,6 +1,8 @@
 package gpigb.report;
 
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataSet;
 
 import java.util.HashMap;
@@ -31,14 +33,19 @@ public class ReporterPlotRTSmart implements Reporter
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> configMap = new HashMap<>();
-		configMap.put("Title", "Real Time Graph");
-		configMap.put("Width", new Integer(900));
-		configMap.put("Height", new Integer(500));
+		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
+		configMap.put("Title", new ConfigurationValue(ValueType.String, "Real Time Graph"));
+		configMap.put("Width", new ConfigurationValue(ValueType.Integer, new Integer(900)));
+		configMap.put("Height", new ConfigurationValue(ValueType.Integer, new Integer(500)));
 		
 		handler.getConfiguration(configMap);
 		
-		this.title = (String) configMap.get("Title");
-		grapher = new SmartGrapher(title, ((Integer)configMap.get("Width")).intValue(), ((Integer)configMap.get("Height")).intValue());
+		this.title = (String) configMap.get("Title").value;
+		grapher = new SmartGrapher(title, ((Integer)configMap.get("Width").value).intValue(), ((Integer)configMap.get("Height").value).intValue());
+	}
+	
+	public String toString()
+	{
+		return "Smart Plotter: " + title;
 	}
 }

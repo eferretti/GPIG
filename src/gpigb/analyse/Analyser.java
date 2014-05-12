@@ -1,6 +1,6 @@
 package gpigb.analyse;
 
-import gpigb.base.Configurable;
+import gpigb.configuration.Configurable;
 import gpigb.data.DataSet;
 
 import java.util.List;

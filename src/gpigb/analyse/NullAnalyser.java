@@ -2,6 +2,8 @@ package gpigb.analyse;
 
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataSet;
 import gpigb.store.Store;
 
@@ -44,10 +46,10 @@ public class NullAnalyser implements Analyser
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> configMap = new HashMap<>();
-		configMap.put("Store", null);
+		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
+		configMap.put("Store", new ConfigurationValue(ValueType.Store, null));
 		handler.getConfiguration(configMap);
-		store = (StrongReference<Store>) configMap.get("Store");
+		store = (StrongReference<Store>) configMap.get("Store").value;
 	}
 
 }

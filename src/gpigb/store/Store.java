@@ -1,6 +1,6 @@
 package gpigb.store;
 
-import gpigb.base.Configurable;
+import gpigb.configuration.Configurable;
 import gpigb.data.DataSet;
 
 /**

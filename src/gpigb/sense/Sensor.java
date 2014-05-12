@@ -1,6 +1,6 @@
 package gpigb.sense;
 
-import gpigb.base.Configurable;
+import gpigb.configuration.Configurable;
 
 public interface Sensor<DataType> extends Configurable
 {

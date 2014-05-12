@@ -14,6 +14,8 @@ import java.util.Map;
 import fi.iki.elonen.NanoHTTPD;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.sense.SensorObserver;
@@ -158,9 +160,9 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> configSpec = new HashMap<>();
-		configSpec.put("Store", null);
+		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
+		configSpec.put("Store", new ConfigurationValue(ValueType.Store, null));
 		handler.getConfiguration(configSpec);
-		store = (StrongReference<Store>) configSpec.get("Store");
+		store = (StrongReference<Store>) configSpec.get("Store").value;
 	}
 }

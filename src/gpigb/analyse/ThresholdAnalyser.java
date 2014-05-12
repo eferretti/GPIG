@@ -1,6 +1,8 @@
 package gpigb.analyse;
 
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataRecord;
 import gpigb.data.DataSet;
 import gpigb.report.OutOfRangeReporter;
@@ -59,14 +61,14 @@ public class ThresholdAnalyser implements Analyser
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> configSpec = new HashMap<>();
-		configSpec.put("Min", Integer.MIN_VALUE);
-		configSpec.put("Max", Integer.MAX_VALUE);
+		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
+		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, Integer.MIN_VALUE));
+		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, Integer.MAX_VALUE));
 		
 		handler.getConfiguration(configSpec);
 		
-		this.lowerThreshold = ((Integer)configSpec.get("Min")).intValue();
-		this.upperThreshold = ((Integer)configSpec.get("Max")).intValue();
+		this.lowerThreshold = ((Integer)configSpec.get("Min").value).intValue();
+		this.upperThreshold = ((Integer)configSpec.get("Max").value).intValue();
 	}
 
 }

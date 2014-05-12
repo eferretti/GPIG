@@ -1,6 +1,8 @@
 package gpigb.report;
 
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.DataSet;
 
 import java.io.PrintStream;
@@ -37,11 +39,11 @@ public class UnexpectedAccelerationReporter implements Reporter
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		HashMap<String, Object> config = new HashMap<>();
-		config.put("PrintStream", null);
+		HashMap<String, ConfigurationValue> config = new HashMap<>();
+		config.put("PrintStream", new ConfigurationValue(ValueType.OutStream, null));
 		
 		handler.getConfiguration(config);
 		
-		outputStream = (PrintStream) (config.containsKey("PrintStream") ? config.get("PrintStream") : System.out);
+		outputStream = (PrintStream) (config.get("PrintStream") != null ? config.get("PrintStream").value : System.out);
 	}
 }

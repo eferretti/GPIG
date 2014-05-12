@@ -1,6 +1,5 @@
-package gpigb.base;
+package gpigb.configuration;
 
-import gpigb.configuration.ConfigurationHandler;
 
 public interface Configurable
 {

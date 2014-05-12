@@ -9,5 +9,5 @@ import java.util.Map;
  */
 public interface ConfigurationHandler
 {
-	public void getConfiguration(Map<String, Object> configSpec);
+	public void getConfiguration(Map<String, ConfigurationValue> configSpec);
 }
