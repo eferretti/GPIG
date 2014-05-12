@@ -31,4 +31,9 @@ public class StrongReference<Interface>
 	{
 		return this.object;
 	}
+	
+	public String toString()
+	{
+		return this.object == null ? "NULL" : this.object.toString();
+	}
 }

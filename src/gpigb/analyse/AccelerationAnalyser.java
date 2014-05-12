@@ -1,9 +1,18 @@
 package gpigb.analyse;
 
+<<<<<<< HEAD
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+=======
+import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.data.DataRecord;
+import gpigb.data.DataSet;
+>>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -11,6 +20,8 @@ import java.util.List;
  */
 public class AccelerationAnalyser implements Analyser
 {
+	Integer threshold = Integer.MAX_VALUE;
+	
 	/**
 	 * Perform analysis on sensor reading histories. If any history has a value
 	 * which changes by more than a given threshold then report only the
@@ -19,13 +30,16 @@ public class AccelerationAnalyser implements Analyser
 	 * @param data
 	 *            The set of sensor histories to analyse
 	 */
+<<<<<<< HEAD
 	public boolean analyse(List<RecordSet<?>> data)
+=======
+	public synchronized boolean analyse(List<DataSet<?>> data)
+>>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 	{
 		List<RecordSet<?>> changeRecord = new ArrayList<RecordSet<?>>();
 		List<RecordSet<?>> averageRecord = new ArrayList<RecordSet<?>>();
 
 		Integer previousReading = 0;
-		Integer difference = 300;
 		for (int j = 0; j < data.size(); j++) {
 			// No data has been provided
 			if (data.get(j).getRecordCount() == 0) return false;
@@ -38,7 +52,7 @@ public class AccelerationAnalyser implements Analyser
 
 				// If there is a difference between readings add the RecordSet
 				// where the change occurred
-				if (currentReading > previousReading + difference || currentReading < previousReading - difference)
+				if (currentReading > previousReading + threshold || currentReading < previousReading - threshold)
 					changeRecord.add(data.get(j));
 
 				previousReading = (Integer) data.get(j).getDataAtPosition(i).getData();
@@ -69,6 +83,15 @@ public class AccelerationAnalyser implements Analyser
 		ArrayList<RecordSet<?>> a = new ArrayList<>();
 		a.add(input);
 		return analyse(a);
+	}
+
+	@Override
+	public synchronized void configure(ConfigurationHandler handler)
+	{
+		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
+		configSpec.put("Threshold", new ConfigurationValue(ValueType.Integer, threshold));
+		handler.getConfiguration(configSpec);
+		this.threshold = (Integer) configSpec.get("Threshold").value;
 	}
 
 }

@@ -1,7 +1,15 @@
 package gpigb.store;
 
+<<<<<<< HEAD
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+=======
+import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.data.DataRecord;
+import gpigb.data.DataSet;
+>>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,9 +21,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mongodb.util.Hash;
 
 /**
  * A store implementation which stores objects as JSON files on the local file
@@ -23,8 +33,9 @@ import com.google.gson.reflect.TypeToken;
  */
 public class JSONFileStore implements Store
 {
-	private final static String fileLoc = "./Storage/";
+	private String fileLoc = "./Storage/";
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public boolean read(RecordSet<?> unpopulated)
 	{
@@ -111,6 +122,7 @@ public class JSONFileStore implements Store
 		return true;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean delete(RecordSet<?> items)
 	{
@@ -206,5 +218,16 @@ public class JSONFileStore implements Store
 			}
 			return fileNames;
 		}
+	}
+
+	@Override
+	public void configure(ConfigurationHandler handler)
+	{
+		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
+		configSpec.put("StorePath", new ConfigurationValue(ValueType.String, fileLoc));
+		
+		handler.getConfiguration(configSpec);
+		
+		this.fileLoc = (String) configSpec.get("StorePath").value;
 	}
 }
