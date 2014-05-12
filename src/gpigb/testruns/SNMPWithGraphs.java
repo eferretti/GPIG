@@ -29,8 +29,8 @@ import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.configuration.handlers.GUIConfigHandler;
-import gpigb.data.DataRecord;
-import gpigb.data.DataSet;
+import gpigb.data.SensorRecord;
+import gpigb.data.RecordSet;
 
 public class SNMPWithGraphs
 {
@@ -62,9 +62,9 @@ public class SNMPWithGraphs
 //		snmpSensor.registerObserver(new SensorObserver<Float>()
 //		{
 //			@Override
-//			public void update(DataRecord<Float> reading)
+//			public void update(SensorRecord<Float> reading)
 //			{
-//				DataSet<Float> ds = new DataSet<>(reading.getTimestamp(), reading.getTimestamp(), reading.getSensorID());
+//				RecordSet<Float> ds = new RecordSet<>(reading.getTimestamp(), reading.getTimestamp(), reading.getSensorID());
 //				ds.addRecord(reading);
 //				inMemoryStore.write(ds);
 //			}
@@ -74,8 +74,8 @@ public class SNMPWithGraphs
 //			{
 //				Calendar cal = Calendar.getInstance();
 //				Date time = cal.getTime();
-//				DataSet<Float> ds = new DataSet<>(time, time, sensorID);
-//				ds.addRecord(new DataRecord<Float>(sensorID, reading));
+//				RecordSet<Float> ds = new RecordSet<>(time, time, sensorID);
+//				ds.addRecord(new SensorRecord<Float>(sensorID, reading));
 //				inMemoryStore.write(ds);
 //			}
 //		});

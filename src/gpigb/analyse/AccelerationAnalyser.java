@@ -1,15 +1,10 @@
 package gpigb.analyse;
 
-<<<<<<< HEAD
-import gpigb.data.SensorRecord;
-import gpigb.data.RecordSet;
-=======
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.DataRecord;
-import gpigb.data.DataSet;
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +25,7 @@ public class AccelerationAnalyser implements Analyser
 	 * @param data
 	 *            The set of sensor histories to analyse
 	 */
-<<<<<<< HEAD
-	public boolean analyse(List<RecordSet<?>> data)
-=======
-	public synchronized boolean analyse(List<DataSet<?>> data)
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
+	public synchronized boolean analyse(List<RecordSet<?>> data)
 	{
 		List<RecordSet<?>> changeRecord = new ArrayList<RecordSet<?>>();
 		List<RecordSet<?>> averageRecord = new ArrayList<RecordSet<?>>();
@@ -72,19 +63,6 @@ public class AccelerationAnalyser implements Analyser
 		return true;
 	}
 
-	/**
-	 * Invokes {@link gpigb.analyse.AccelerationAnalyser#analyse(List)} with a
-	 * list containing the argument
-	 * 
-	 * @see gpigb.analyse.Analyser#analyse(RecordSet)
-	 */
-	public boolean analyse(RecordSet<?> input)
-	{
-		ArrayList<RecordSet<?>> a = new ArrayList<>();
-		a.add(input);
-		return analyse(a);
-	}
-
 	@Override
 	public synchronized void configure(ConfigurationHandler handler)
 	{
@@ -92,6 +70,13 @@ public class AccelerationAnalyser implements Analyser
 		configSpec.put("Threshold", new ConfigurationValue(ValueType.Integer, threshold));
 		handler.getConfiguration(configSpec);
 		this.threshold = (Integer) configSpec.get("Threshold").value;
+	}
+
+	@Override
+	public boolean analyse(RecordSet<?> input)
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -2682,7 +2682,7 @@
     <tags>View</tags>
     <tags>categoryTag:Test</tags>
   </descriptors>
-  <descriptors xmi:id="_12Up0YzZEeOFON1PesPinA" elementId="org.eclipse.jubula.client.ui.rcp.views.DataSetView" label="Data Sets" iconURI="platform:/plugin/org.eclipse.jubula.client.ui.rcp/icons/dataSetView.gif" category="org.eclipse.e4.secondaryDataStack" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+  <descriptors xmi:id="_12Up0YzZEeOFON1PesPinA" elementId="org.eclipse.jubula.client.ui.rcp.views.RecordSetView" label="Data Sets" iconURI="platform:/plugin/org.eclipse.jubula.client.ui.rcp/icons/RecordSetView.gif" category="org.eclipse.e4.secondaryDataStack" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
     <tags>View</tags>
     <tags>categoryTag:Test</tags>
   </descriptors>
@@ -4575,7 +4575,7 @@
     <parameters xmi:id="_1uDepozZEeOFON1PesPinA" elementId="elementRef" name="JavaScript element reference" typeId="org.eclipse.wst.jsdt.ui.commands.javaElementReference" optional="false"/>
   </commands>
   <commands xmi:id="_1uDep4zZEeOFON1PesPinA" elementId="org.eclipse.xtext.xbase.ui.organizeImports" commandName="Organize Imports" description="Organize Imports" category="_hUzvmozDEeOXOfeE___WsQ"/>
-  <commands xmi:id="_1uDeqIzZEeOFON1PesPinA" elementId="org.eclipse.linuxtools.systemtap.ui.graphing.commands.ImportDataSet" commandName="Import Data Set" description="Import data set from file" category="_1tnZxYzZEeOFON1PesPinA"/>
+  <commands xmi:id="_1uDeqIzZEeOFON1PesPinA" elementId="org.eclipse.linuxtools.systemtap.ui.graphing.commands.ImportRecordSet" commandName="Import Data Set" description="Import data set from file" category="_1tnZxYzZEeOFON1PesPinA"/>
   <commands xmi:id="_1uDeqYzZEeOFON1PesPinA" elementId="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences" commandName="Toggle Mark Occurrences" description="Toggles mark occurrences in C/C++ editors" category="_1trrP4zZEeOFON1PesPinA"/>
   <commands xmi:id="_1uDeqozZEeOFON1PesPinA" elementId="org.eclipse.egit.ui.RepositoriesViewRemoveRemote" commandName="Delete Remote" category="_1trEIozZEeOFON1PesPinA"/>
   <commands xmi:id="_1uDeq4zZEeOFON1PesPinA" elementId="org.eclipse.egit.ui.team.stash.create" commandName="Stash Changes" category="_1trEIozZEeOFON1PesPinA"/>
@@ -4912,7 +4912,7 @@
     <parameters xmi:id="_1uTWRIzZEeOFON1PesPinA" elementId="publicGist" name="Public Gist"/>
   </commands>
   <commands xmi:id="_1uTWRYzZEeOFON1PesPinA" elementId="com.mountainminds.eclemma.ui.importSession" commandName="Import Session..." category="_1ton4IzZEeOFON1PesPinA"/>
-  <commands xmi:id="_1uTWRozZEeOFON1PesPinA" elementId="org.eclipse.jubula.client.ui.rcp.commands.SwitchToDataSetViewCommand" commandName="Switch to Data Set View" category="_1tqdG4zZEeOFON1PesPinA"/>
+  <commands xmi:id="_1uTWRozZEeOFON1PesPinA" elementId="org.eclipse.jubula.client.ui.rcp.commands.SwitchToRecordSetViewCommand" commandName="Switch to Data Set View" category="_1tqdG4zZEeOFON1PesPinA"/>
   <commands xmi:id="_1uTWR4zZEeOFON1PesPinA" elementId="org.eclipse.cdt.ui.edit.text.c.goto.next.bookmark" commandName="Next Bookmark" description="Goto next bookmark of the selected file" category="_1trrP4zZEeOFON1PesPinA"/>
   <commands xmi:id="_1uTWSIzZEeOFON1PesPinA" elementId="org.eclipse.wst.jsdt.ui.edit.text.java.organize.imports" commandName="Organize Imports" description="Evaluate all required imports and replace the current imports" category="_1tqdGYzZEeOFON1PesPinA"/>
   <commands xmi:id="_1uT9UIzZEeOFON1PesPinA" elementId="org.eclipse.jubula.client.ui.rcp.commands.ChooseAutCommand" commandName="&amp;Start AUT" category="_1tqdG4zZEeOFON1PesPinA">
@@ -4980,7 +4980,7 @@
   <commands xmi:id="_1uWZnIzZEeOFON1PesPinA" elementId="org.eclipse.birt.report.designer.ui.command.deleteCommand" commandName="deleteCommand" category="_hUzvmozDEeOXOfeE___WsQ"/>
   <commands xmi:id="_1uWZnYzZEeOFON1PesPinA" elementId="org.eclipse.birt.report.designer.ui.command.insertRowCommand" commandName="insertRowCommand" category="_hUzvmozDEeOXOfeE___WsQ"/>
   <commands xmi:id="_1uWZnozZEeOFON1PesPinA" elementId="org.eclipse.papyrus.uml.modelexplorer.StructuredActivityNodeCreateCommand" commandName="Create a new StructuredActivityNode" description="Create a new StructuredActivityNode" category="_1tp2CozZEeOFON1PesPinA"/>
-  <commands xmi:id="_1uXAoIzZEeOFON1PesPinA" elementId="org.eclipse.linuxtools.systemtap.ui.graphing.commands.ExportDataSet" commandName="Export Data Set" description="Export data set to file" category="_1tnZxYzZEeOFON1PesPinA"/>
+  <commands xmi:id="_1uXAoIzZEeOFON1PesPinA" elementId="org.eclipse.linuxtools.systemtap.ui.graphing.commands.ExportRecordSet" commandName="Export Data Set" description="Export data set to file" category="_1tnZxYzZEeOFON1PesPinA"/>
   <commands xmi:id="_1uXAoYzZEeOFON1PesPinA" elementId="org.eclipse.papyrus.uml.modelexplorer.MergeNodeCreateCommand" commandName="Create a new MergeNode" description="Create a new MergeNode" category="_1tp2CozZEeOFON1PesPinA"/>
   <commands xmi:id="_1uXAoozZEeOFON1PesPinA" elementId="org.eclipse.wst.sse.ui.open.file.from.source" commandName="Open Selection" description="Open an editor on the selected link" category="_hUzvl4zDEeOXOfeE___WsQ"/>
   <commands xmi:id="_1uXAo4zZEeOFON1PesPinA" elementId="mobius.escjava2.ui.commands.GoToDeclaration" commandName="Go to associated declaration" description="Highlights the declaration being violated by a given problem marker" category="_1tmytYzZEeOFON1PesPinA"/>

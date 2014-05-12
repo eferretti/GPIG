@@ -1,13 +1,9 @@
 package gpigb.report;
 
-<<<<<<< HEAD
-import gpigb.data.RecordSet;
-=======
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.DataSet;
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
+import gpigb.data.RecordSet;
 
 import java.io.PrintStream;
 import java.util.HashMap;

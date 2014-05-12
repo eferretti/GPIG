@@ -1,13 +1,9 @@
 package gpigb.report;
 
-<<<<<<< HEAD
-import gpigb.data.RecordSet;
-=======
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.DataSet;
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
+import gpigb.data.RecordSet;
 
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -19,14 +15,9 @@ import java.util.List;
  */
 public class OutOfRangeReporter implements Reporter
 {
-<<<<<<< HEAD
-
-	public void generateReport(List<RecordSet<?>> EroniousData)
-=======
 	PrintStream outputStream;
 	
-	public void generateReport(List<DataSet<?>> EroniousData)
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
+	public void generateReport(List<RecordSet<?>> EroniousData)
 	{
 		if (EroniousData.isEmpty()) return;
 

@@ -1,12 +1,8 @@
 package gpigb.sense;
 
 import gpigb.classloading.Patchable;
-<<<<<<< HEAD
-import gpigb.data.SensorRecord;
-=======
 import gpigb.configuration.ConfigurationHandler;
-import gpigb.data.DataRecord;
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
+import gpigb.data.SensorRecord;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

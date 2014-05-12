@@ -1,18 +1,12 @@
 package gpigb.analyse;
 
-<<<<<<< HEAD
-import gpigb.data.SensorRecord;
-import gpigb.data.RecordSet;
-import gpigb.report.ReporterPlotRTSmart;
-=======
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.DataRecord;
-import gpigb.data.DataSet;
+import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 import gpigb.sense.SensorObserver;
 
 import java.util.ArrayList;
@@ -40,12 +34,7 @@ public class RealTimeGraphAnalyser implements Analyser
 		plotter.get().generateReport(al);
 	}
 
-<<<<<<< HEAD
-	@Override
 	public void update(SensorRecord<Float> reading)
-=======
-	public void update(DataRecord<Float> reading)
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 	{
 		al.clear();
 		rs = new RecordSet<>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), 0);
@@ -67,7 +56,7 @@ public class RealTimeGraphAnalyser implements Analyser
 	}
 
 	@Override
-	public boolean analyse(List<DataSet<?>> input)
+	public boolean analyse(List<RecordSet<?>> input)
 	{
 		al.clear();
 		al.add(input.get(0));
@@ -76,7 +65,7 @@ public class RealTimeGraphAnalyser implements Analyser
 	}
 
 	@Override
-	public boolean analyse(DataSet<?> input)
+	public boolean analyse(RecordSet<?> input)
 	{
 		al.clear();
 		al.add(input);

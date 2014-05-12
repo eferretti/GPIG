@@ -144,11 +144,5 @@ public class JSONFileStoreTest
 		{
 			file.delete();
 		}
-<<<<<<< HEAD
-		directory.delete();
-		directory.getParentFile().delete();
-	}
-=======
 	}*/
->>>>>>> branch 'master' of https://github.com/eferretti/GPIG.git
 }

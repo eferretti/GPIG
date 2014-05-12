@@ -12,17 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
-<<<<<<< HEAD
-import gpigb.data.SensorRecord;
-import gpigb.data.RecordSet;
-=======
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.DataRecord;
-import gpigb.data.DataSet;
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
+import gpigb.data.SensorRecord;
+import gpigb.data.RecordSet;
 import gpigb.sense.SensorObserver;
 import gpigb.store.Store;
 
@@ -34,13 +29,7 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 {
 	StrongReference<Store> store;
 
-<<<<<<< HEAD
-	Map<Integer, RecordSet<Float>> latestReadings = Collections.synchronizedMap(new HashMap<Integer, RecordSet<Float>>());
-
-	public SimpleWebReporter(int port)
-=======
 	public SimpleWebReporter()
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 	{
 		super(8080);
 		try {
@@ -69,20 +58,12 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 				+ "<h2>Latest Sensor Readings</h2>" + "\n" + "<table>" + "\n"
 				+ "<tr><th>Sensor ID</th><th>Latest Reading</th></tr>" + "\n";
 
-<<<<<<< HEAD
-		for (Integer id : latestReadings.keySet()) {
-			RecordSet<Float> rec = latestReadings.get(id);
-			int len = rec.getRecordCount();
-			String unit = rec.getDataAtPosition(len - 1).getMeta().get("Unit");
-			ret += "<tr><td>" + id + "</td><td>" + rec.getDataAtPosition(len - 1).getData()
-					+ (unit == null ? "" : " " + unit) + "</td></tr>" + "\n";
-=======
 		Calendar cal = Calendar.getInstance();
 		Date endDate = cal.getTime();
 		cal.add(Calendar.MINUTE, -5);
 		Date startDate = cal.getTime();
 
-		DataSet<Float> data = new DataSet<>(startDate, endDate, 0);
+		RecordSet<Float> data = new RecordSet<>(startDate, endDate, 0);
 		
 		store.get().read(data);
 
@@ -96,7 +77,6 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 		catch(Exception e)
 		{
 			
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 		}
 		
 		ret += "<tr><td>Latest Reading</td><td>" + data.getDataAtPosition(len - 1).getData()
@@ -133,7 +113,7 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 				+ "ctx = $(\"#graph" + "\").get(0).getContext(\"2d\");" + "\n" + "data = {" + "\n" + "labels : "
 				+ labelString
 				+ "\n"
-				+ "datasets : ["
+				+ "RecordSets : ["
 				+ "\n"
 				+ "{"
 				+ "\n"
@@ -170,23 +150,7 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 	}
 
 	@Override
-<<<<<<< HEAD
-	public void update(int sensorID, Float reading)
-	{
-		RecordSet<Float> rs = latestReadings.get(sensorID);
-		if (rs == null) {
-			Date d = Calendar.getInstance().getTime();
-			rs = new RecordSet<>(d, d, sensorID);
-			latestReadings.put(sensorID, rs);
-		}
-		rs.addRecord(new SensorRecord<Float>(sensorID, reading));
-	}
-
-	@Override
 	public void generateReport(List<RecordSet<?>> data)
-=======
-	public void generateReport(List<DataSet<?>> data)
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 	{
 		// TODO Auto-generated method stub
 
@@ -194,23 +158,11 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 
 	@SuppressWarnings("unchecked")
 	@Override
-<<<<<<< HEAD
-	public void update(SensorRecord<Float> reading)
-	{
-		RecordSet<Float> rs = latestReadings.get(reading.getSensorID());
-		if (rs == null) {
-			Date d = Calendar.getInstance().getTime();
-			rs = new RecordSet<>(d, d, reading.getSensorID());
-			latestReadings.put(reading.getSensorID(), rs);
-		}
-		rs.addRecord(reading);
-=======
 	public void configure(ConfigurationHandler handler)
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("Store", new ConfigurationValue(ValueType.Store, null));
 		handler.getConfiguration(configSpec);
 		store = (StrongReference<Store>) configSpec.get("Store").value;
->>>>>>> d912525ba8ae6d017e0972ac8d0d661ccc716a89
 	}
 }
