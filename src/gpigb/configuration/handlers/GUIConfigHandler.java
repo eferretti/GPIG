@@ -1,36 +1,26 @@
 package gpigb.configuration.handlers;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.naming.StringRefAddr;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeListener;
 
 import third_party.SpringUtilities;
 
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.ComponentManager.InstanceSummary;
-import gpigb.classloading.JarFileComponentManager;
 import gpigb.classloading.StrongReference;
-import gpigb.classloading.ComponentManager.ModuleSummary;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.report.Reporter;
