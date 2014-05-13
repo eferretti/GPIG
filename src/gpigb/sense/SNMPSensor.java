@@ -2,10 +2,13 @@ package gpigb.sense;
 
 import gpigb.classloading.Patchable;
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
@@ -100,32 +103,33 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	@Override
 	public void run()
 	{
-		Snmp snmp = null;
-
-		PDU req = new PDU();
-		req.setType(PDU.GET);
-
-		OID oid = new OID(oidString);
-		req.add(new VariableBinding(oid));
-
-		CommunityTarget target = new CommunityTarget();
-
-		Address a = new UdpAddress("localhost/" + port);
-		target.setAddress(a);
-		target.setTimeout(50);
-		target.setRetries(3);
-		target.setCommunity(new OctetString("public"));
-		target.setVersion(SnmpConstants.version2c);
-
-		try {
-			snmp = new Snmp(new DefaultUdpTransportMapping());
-			snmp.listen();
-		}
-		catch (Exception e) {
-		}
-
 		while (true) {
 			try {
+				Snmp snmp = null;
+
+				PDU req = new PDU();
+				req.setType(PDU.GET);
+
+				CommunityTarget target = new CommunityTarget();
+				synchronized(this)
+				{
+					OID oid = new OID(oidString);
+					req.add(new VariableBinding(oid));
+					Address a = new UdpAddress("localhost/" + port);
+					target.setAddress(a);
+				}
+				target.setTimeout(50);
+				target.setRetries(3);
+				target.setCommunity(new OctetString("public"));
+				target.setVersion(SnmpConstants.version2c);
+
+				try {
+					snmp = new Snmp(new DefaultUdpTransportMapping());
+					snmp.listen();
+				}
+				catch (Exception e) {
+				}
+
 				ResponseEvent responseEvent = snmp.send(req, target);
 
 				PDU responsePDU = responseEvent.getResponse();
@@ -145,8 +149,15 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	@Override
 	public void configure(ConfigurationHandler handler)
 	{
-		// TODO Auto-generated method stub
-		
+		HashMap<String, ConfigurationValue> spec = new HashMap<>();
+		spec.put("OID", new ConfigurationValue(ValueType.String, oidString));
+		spec.put("Port", new ConfigurationValue(ValueType.Integer, port));
+		handler.getConfiguration(spec);
+		synchronized(this)
+		{
+			oidString = (String) spec.get("OID").value;
+			port = ((Integer)spec.get("Port").value).toString();
+		}
 	}
 
 }

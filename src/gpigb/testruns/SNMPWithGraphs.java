@@ -1,5 +1,9 @@
 package gpigb.testruns;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,33 +35,40 @@ import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.configuration.handlers.GUIConfigHandler;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.external.HUMSSystem;
+import gpigb.external.HUMSSystemImpl;
 
 public class SNMPWithGraphs
 {
-	public static void main(String[] args) throws InterruptedException
+	public static void main(String[] args) throws InterruptedException, FileNotFoundException, IOException
 	{
-		JarFileComponentManager<Analyser> aMgr = new JarFileComponentManager<>(Analyser.class);
-		JarFileComponentManager<Reporter> rMgr = new JarFileComponentManager<>(Reporter.class);
-		JarFileComponentManager<Sensor> seMgr = new JarFileComponentManager<>(Sensor.class);
-		JarFileComponentManager<Store> stMgr = new JarFileComponentManager<>(Store.class);
 		
-		aMgr.addModuleDirectory("~/HUMS_Modules");
-		rMgr.addModuleDirectory("~/HUMS_Modules");
-		seMgr.addModuleDirectory("~/HUMS_Modules");
-		stMgr.addModuleDirectory("~/HUMS_Modules");
+		HUMSSystem sys = new HUMSSystemImpl();
+		File f = new File("./HUMS_Modules/test.jar");
+		sys.uploadJarFile(new FileInputStream(f));
 		
-		aMgr.refreshModules();
-		rMgr.refreshModules();
-		seMgr.refreshModules();
-		stMgr.refreshModules();
-		
-		Sensor<Float> snmpSensor = new SNMPSensor();
-		final Store inMemoryStore = new MongoStore();
-		Analyser thresholdAnalyser = new ThresholdAnalyser();
-		Analyser realTimeGraphAnalyser = new RealTimeGraphAnalyser();
-		
-		ModuleSummary s = rMgr.getAvailableModules().get(0);
-		rMgr.createObjectOfModule(s.moduleID);
+//		JarFileComponentManager<Analyser> aMgr = new JarFileComponentManager<>(Analyser.class);
+//		JarFileComponentManager<Reporter> rMgr = new JarFileComponentManager<>(Reporter.class);
+//		JarFileComponentManager<Sensor> seMgr = new JarFileComponentManager<>(Sensor.class);
+//		JarFileComponentManager<Store> stMgr = new JarFileComponentManager<>(Store.class);
+//		
+//		aMgr.addModuleDirectory("~/HUMS_Modules");
+//		rMgr.addModuleDirectory("~/HUMS_Modules");
+//		seMgr.addModuleDirectory("~/HUMS_Modules");
+//		stMgr.addModuleDirectory("~/HUMS_Modules");
+//		
+//		aMgr.refreshModules();
+//		rMgr.refreshModules();
+//		seMgr.refreshModules();
+//		stMgr.refreshModules();
+//		
+//		Sensor<Float> snmpSensor = new SNMPSensor();
+//		final Store inMemoryStore = new MongoStore();
+//		Analyser thresholdAnalyser = new ThresholdAnalyser();
+//		Analyser realTimeGraphAnalyser = new RealTimeGraphAnalyser();
+//		
+//		ModuleSummary s = rMgr.getAvailableModules().get(0);
+//		rMgr.createObjectOfModule(s.moduleID);
 		
 //		snmpSensor.registerObserver(new SensorObserver<Float>()
 //		{
@@ -80,7 +91,7 @@ public class SNMPWithGraphs
 //			}
 //		});
 		
-		thresholdAnalyser.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr)); 
+//		thresholdAnalyser.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr)); 
 //		ConfigurationHandler()
 //		{
 //			@Override
@@ -91,7 +102,7 @@ public class SNMPWithGraphs
 //			}
 //		});
 		
-		realTimeGraphAnalyser.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
+//		realTimeGraphAnalyser.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
 		
 //		Reporter webReporter = new SimpleWebReporter();
 //		webReporter.configure(new ConfigurationHandler()
