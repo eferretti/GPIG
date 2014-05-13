@@ -5,6 +5,8 @@ import java.lang.reflect.Modifier;
 
 public abstract class Patchable
 {
+	private int id;
+	
 	public Patchable()
 	{
 
@@ -71,5 +73,15 @@ public abstract class Patchable
 		}
 
 		return -1;
+	}
+	
+	public int getID()
+	{
+		return id;
+	}
+	
+	public void setID(int newID)
+	{
+		this.id = newID;
 	}
 }

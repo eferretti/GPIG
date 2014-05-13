@@ -180,6 +180,8 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 			// Lookup the required module and create a new instance and record
 			Interface instance = modules.get(moduleID).clz.newInstance();
 			ret = IDGenerator.getNextID();
+			if(instance instanceof Patchable)
+				((Patchable)instance).setID(ret);
 			instances.put(new InstanceSummary(ret, moduleID, ""), new StrongReference<Interface>(instance));
 		}
 		catch (Exception e) {

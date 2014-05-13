@@ -48,4 +48,15 @@ public class ReporterPlotRTSmart implements Reporter
 	{
 		return "Smart Plotter: " + title;
 	}
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

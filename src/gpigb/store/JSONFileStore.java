@@ -225,4 +225,15 @@ public class JSONFileStore implements Store
 		
 		this.fileLoc = (String) configSpec.get("StorePath").value;
 	}
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

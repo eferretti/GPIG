@@ -46,4 +46,15 @@ public class UnexpectedAccelerationReporter implements Reporter
 		
 		outputStream = (PrintStream) (config.get("PrintStream") != null ? config.get("PrintStream").value : System.out);
 	}
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

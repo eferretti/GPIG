@@ -347,4 +347,15 @@ public class ReporterGUI implements Reporter
 		
 		this.analyser = (StrongReference<Analyser>) map.get("AnalyserReference").value;
 	}
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

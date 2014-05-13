@@ -18,7 +18,6 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 
 	private ArrayList<SensorObserver<Integer>> observers;
 	private Integer currentReading;
-	private int id = 1;
 
 	private Integer min = 0;
 	private Integer max = 15000;
@@ -44,12 +43,6 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 				// Consider calling Thread.currentThread().interrupt(); here.
 			}
 		}
-	}
-
-	@Override
-	public int getID()
-	{
-		return id;
 	}
 
 	@Override
@@ -112,4 +105,15 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 		this.max = (Integer) configSpec.get("Max").value;
 	}
 
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

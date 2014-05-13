@@ -79,4 +79,14 @@ public class AccelerationAnalyser implements Analyser
 		return false;
 	}
 
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

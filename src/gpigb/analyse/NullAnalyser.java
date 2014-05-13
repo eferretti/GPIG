@@ -50,4 +50,15 @@ public class NullAnalyser implements Analyser
 		handler.getConfiguration(configMap);
 		store = (StrongReference<Store>) configMap.get("Store").value;
 	}
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

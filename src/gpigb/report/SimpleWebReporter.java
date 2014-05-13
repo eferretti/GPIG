@@ -165,4 +165,15 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 		handler.getConfiguration(configSpec);
 		store = (StrongReference<Store>) configSpec.get("Store").value;
 	}
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

@@ -71,4 +71,15 @@ public class ThresholdAnalyser implements Analyser
 		this.upperThreshold = ((Integer)configSpec.get("Max").value).intValue();
 	}
 
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }

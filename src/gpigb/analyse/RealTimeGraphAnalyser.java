@@ -72,4 +72,15 @@ public class RealTimeGraphAnalyser implements Analyser
 		plotter.get().generateReport(al);
 		return true;
 	}
+
+	private int id;
+	public void setID(int newID)
+	{
+		this.id = newID;
+	}
+	
+	public int getID()
+	{
+		return this.id;
+	}
 }
