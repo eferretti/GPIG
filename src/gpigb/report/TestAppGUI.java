@@ -35,6 +35,10 @@ public class TestAppGUI implements Reporter{
 	private JTextArea textArea;
 	private final Action action = new SwingAction();
 	
+	private int period;
+	private int upperThreshold;
+	private int midThreshold;
+	
 	private StrongReference<Analyser> analyser;
 
 	/**
@@ -58,6 +62,10 @@ public class TestAppGUI implements Reporter{
 	 */
 	public TestAppGUI() {
 		initialize();
+		
+		period = 3;
+		upperThreshold = 10;
+		midThreshold = 5;
 	}
 
 	/**
@@ -147,26 +155,25 @@ public class TestAppGUI implements Reporter{
 		public void actionPerformed(ActionEvent e) {
 			
 			Calendar c = Calendar.getInstance();
-			
+			//Set from and to dates.
 			Date d2 = c.getTime();
-			System.out.println(d2);
-			
 			Date d1 = c.getTime();
-			System.out.println(d1);
+			d1.setMinutes(d2.getMinutes() - period);
 			
-			d1.setMinutes(d2.getMinutes()-3);
-			System.out.println(d1);
-			
+			//For each sensor set average and check for mode change
 			int sensors = 2;
 			for(int i = 1; i < sensors + 1; i++){
 				
-				RecordSet<Integer> rs = new RecordSet<Integer>(d1, d2, i);
+				//Get average from analyser
+				RecordSet<Double> rs = new RecordSet<Double>(d1, d2, i);
 				//analyser.get().analyse(rs);
+				//double average = rs.getDataAtPosition(0).getData();
+				double average = 11;
+				
 				
 				//Set mode depending on average
-				int average = getAverage(rs);
-				if (average > 5){
-					if (average > 10){
+				if (average > midThreshold){
+					if (average > upperThreshold){
 						changeMode(i, 3);
 					} else {
 						changeMode(i, 2);
@@ -174,18 +181,13 @@ public class TestAppGUI implements Reporter{
 				} else {
 					changeMode(i, 1);
 				}
-				avrg2.setText("" + average);
-			}
-			
-			///////
-			
-			//mode1.setBackground(Color.ORANGE);
-			//textArea.append("Sensor 1: Mode change detected.\n");
-			
-			//avrg1.setText("7");
-			
-			textArea.append("Sensor 1: Fault Detected.");
-			
+				
+				if (i == 1){
+					avrg1.setText("" + average);
+				} else {
+					avrg2.setText("" + average);
+				}
+			}		
 		}
 	}
 	@Override
@@ -226,12 +228,6 @@ public class TestAppGUI implements Reporter{
 			textArea.append("Sensor 2: Mode change detected.\n");
 		}
 		
-	}
-	
-
-	public int getAverage(RecordSet<Integer> rs) {
-		
-		return 11;
 	}
 
 	@Override
