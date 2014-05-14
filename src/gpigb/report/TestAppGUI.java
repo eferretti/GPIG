@@ -33,11 +33,10 @@ public class TestAppGUI implements Reporter{
 	private Canvas mode1;
 	private Canvas mode2;
 	private JTextArea textArea;
-	private final Action action = new SwingAction();
 	
-	private int period;
-	private int upperThreshold;
-	private int midThreshold;
+	int period;
+	int upperThreshold;
+	int midThreshold;
 	
 	private StrongReference<Analyser> analyser;
 
@@ -67,9 +66,15 @@ public class TestAppGUI implements Reporter{
 		upperThreshold = 10;
 		midThreshold = 5;
 	}
+	
+	public void show()
+	{
+		this.frame.setVisible(true);
+		
+	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -114,11 +119,6 @@ public class TestAppGUI implements Reporter{
 		avrg2.setHorizontalAlignment(JTextField.CENTER);
 		avrg2.setText("0");
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.setAction(action);
-		btnNewButton.setBounds(12, 12, 117, 25);
-		frame.getContentPane().add(btnNewButton);
-		
 		mode1 = new Canvas();
 		mode1.setBackground(Color.GREEN);
 		mode1.setBounds(183, 65, 39, 25);
@@ -144,58 +144,50 @@ public class TestAppGUI implements Reporter{
 
 	@Override
 	public void generateReport(List<RecordSet<?>> data) {
-		// TODO Auto-generated method stub
 		
-	}
-	private class SwingAction extends AbstractAction {
-		public SwingAction() {
-			putValue(NAME, "SwingAction");
-			putValue(SHORT_DESCRIPTION, "Some short description");
-		}
-		public void actionPerformed(ActionEvent e) {
-			
-			Calendar c = Calendar.getInstance();
-			//Set from and to dates.
-			Date d2 = c.getTime();
-			Date d1 = c.getTime();
-			d1.setMinutes(d2.getMinutes() - period);
-			
-			//For each sensor set average and check for mode change
-			int sensors = 2;
-			for(int i = 1; i < sensors + 1; i++){
-				
-				//Get average from analyser
-				RecordSet<Double> rs = new RecordSet<Double>(d1, d2, i);
-				//analyser.get().analyse(rs);
-				//double average = rs.getDataAtPosition(0).getData();
-				double average = 11;
-				
-				
-				//Set mode depending on average
-				if (average > midThreshold){
-					if (average > upperThreshold){
-						changeMode(i, 3);
-					} else {
-						changeMode(i, 2);
-					}
-				} else {
-					changeMode(i, 1);
-				}
-				
-				if (i == 1){
-					avrg1.setText("" + average);
-				} else {
-					avrg2.setText("" + average);
-				}
-			}		
-		}
-	}
-	@Override
-	public void setID(int newID) {
 		// TODO Auto-generated method stub
+		Calendar c = Calendar.getInstance();
+		//Set from and to dates.
+		Date d2 = c.getTime();
+		Date d1 = c.getTime();
+		d1.setMinutes(d2.getMinutes() - period);
+		
+		//For each sensor set average and check for mode change
+		int sensors = 2;
+		for(int i = 1; i < sensors + 1; i++){
+			
+			//Get average from analyser
+			RecordSet<Double> rs = new RecordSet<Double>(d1, d2, i);
+			//analyser.get().analyse(rs);
+			//double average = rs.getDataAtPosition(0).getData();
+			double average = 11;
+			
+			
+			//Set mode depending on average
+			if (average > midThreshold){
+				if (average > upperThreshold){
+					changeMode(i, 3);
+				} else {
+					changeMode(i, 2);
+				}
+			} else {
+				changeMode(i, 1);
+			}
+			
+			if (i == 1){
+				avrg1.setText("" + average);
+			} else {
+				avrg2.setText("" + average);
+			}
+		}
 		
 	}
 	
+	private int id;
+	@Override
+	public void setID(int newID) {
+		this.id = newID;
+	}
 	
 	public void changeMode(int sensor, int mode){
 		if (sensor == 1){
@@ -232,7 +224,6 @@ public class TestAppGUI implements Reporter{
 
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.id;
 	}
 }
