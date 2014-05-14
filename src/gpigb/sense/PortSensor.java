@@ -26,7 +26,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	private String hostName;
 	private Integer portNumber;
 	
-	public void PortSensor()
+	public PortSensor()
 	{
 		hostName = "localhost";
 		portNumber = 4444;
@@ -37,25 +37,30 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	public void run()
 	{
 		Double reading;
-		try {
-				clientSocket = new Socket(hostName, portNumber);
-		        outSocketStream = new PrintWriter(clientSocket.getOutputStream(), true);
-		        inSocketStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		        	        
-		        while ((reading = Double.parseDouble(inSocketStream.readLine())) != null) {
-		        	lastReading = reading;
-		        	System.out.println("echo: " + reading);
-//		        	this.notifyObservers();
-		        }
-	        
-	        } catch (UnknownHostException e) {
-	            System.err.println("Don't know about host " + hostName);
-	            System.exit(1); 	
-	        } catch (IOException e) {
-	        	System.err.println("Error. Port Stream IO " + hostName);
-				e.printStackTrace();
-			}
-		
+		while(true )
+		{
+			try {
+					clientSocket = new Socket(hostName, portNumber);
+			        outSocketStream = new PrintWriter(clientSocket.getOutputStream(), true);
+			        inSocketStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			        	        
+			        while ((reading = Double.parseDouble(inSocketStream.readLine())) != null) {
+			        	lastReading = reading;
+			        	System.out.println("echo: " + reading);
+	//		        	this.notifyObservers();
+			        }
+			        Thread.sleep(100);
+		        } catch (UnknownHostException e) {
+		            System.err.println("Don't know about host " + hostName);
+		            	
+		        } catch (IOException e) {
+		        	System.err.println("Error. Port Stream IO " + hostName);
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					System.err.println("Error. Insomnia" + hostName);
+					e.printStackTrace();
+				}
+		}
 		
 	}
 	
@@ -71,6 +76,18 @@ public class PortSensor implements Sensor<Double>, Runnable {
 		
 		this.hostName = (String) configSpec.get("HostName").value;
 		this.portNumber = (Integer) configSpec.get("Port").value;
+		
+		try {
+			clientSocket = new Socket(hostName, portNumber);
+			outSocketStream = new PrintWriter(clientSocket.getOutputStream(), true);
+		    inSocketStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		} catch (UnknownHostException e) {
+            System.err.println("Don't know about host " + hostName);
+        } catch (IOException e) {
+        	System.err.println("Error. Port Stream IO " + hostName);
+			e.printStackTrace();
+		}
+       
 	}
 
 	@Override

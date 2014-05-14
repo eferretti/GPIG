@@ -1,5 +1,7 @@
 package gpigb.classloading;
 
+import gpigb.classloading.ComponentManager.ModuleSummary;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -13,6 +15,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +38,7 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 	// A new class loader is created on each refresh to allow reloading of
 	// classes
 	private GPIGClassLoader loader;
+	
 
 	/**
 	 * Maintains a list of plugin directories which will be scanned for JAR
@@ -50,6 +54,24 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 		this.classAncestor = superClass;
 	}
 
+	public Integer getModuleIDByName(String searchName)
+	{
+		List<ModuleSummary> aLoaded = this.getAvailableModules();
+		Iterator<ModuleSummary> li = aLoaded.iterator();
+		Integer moduleID = null;
+		while(li.hasNext())
+		{
+			ModuleSummary loadedModule = li.next();
+			System.out.println(loadedModule.displayName);
+			if(loadedModule.displayName.equals(searchName) )
+			{
+				moduleID = loadedModule.moduleID;
+			}
+		}
+		
+		return moduleID;
+	}
+	
 	/**
 	 * Adds a new directory to the list of searchable directories.
 	 * 
