@@ -19,7 +19,7 @@ import java.util.List;
  * 
  * @param <DataType>
  */
-public class InMemoryStore<DataType> extends Patchable implements Store, SensorObserver<DataType>
+public class InMemoryStore extends Patchable implements Store
 {
 	List<SensorRecord<?>> history = Collections.synchronizedList(new ArrayList<SensorRecord<?>>());
 
@@ -65,8 +65,7 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 		while ((rec = data.getDataAtPosition(pos++)) != null) {
 			history.add(rec);
 		}
-
-//		System.out.println("Added " + pos + " new objects");
+		System.out.println("Added " + pos + " new objects");
 
 		Collections.sort(history);
 
@@ -90,20 +89,28 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 	}
 
 	@Override
-	public void update(int sensorID, DataType reading)
+	public boolean update(int sensorID, Integer reading)
 	{
 		Date date = Calendar.getInstance().getTime();
-		RecordSet<DataType> rs = new RecordSet<>(date, date, sensorID);
-		rs.addRecord(new SensorRecord<DataType>(sensorID, reading));
-		write(rs);
+		RecordSet<Integer> rs = new RecordSet<>(date, date, sensorID);
+		try
+		{
+		rs.addRecord((SensorRecord<Integer>) new SensorRecord<Integer>(sensorID, reading));
+		}catch(ClassCastException e)
+		{
+			return false;
+		}
+		
+		return write(rs);
 	}
 
 	@Override
-	public void update(SensorRecord<DataType> reading)
+	public boolean update(SensorRecord<?> reading)
 	{
-		RecordSet<DataType> rs = new RecordSet<>(reading.getTimestamp(), reading.getTimestamp(), reading.getSensorID());
-		rs.addRecord(reading);
+		RecordSet<Object> rs = new RecordSet<>(reading.getTimestamp(), reading.getTimestamp(), reading.getSensorID());
+		rs.addRecord((SensorRecord<Object>)reading);
 		write(rs);
+		return true;
 	}
 
 	@Override
@@ -111,6 +118,29 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean update(int sensorID, Double reading) {
+		
+		Date date = Calendar.getInstance().getTime();
+		RecordSet<Double> rs = new RecordSet<Double>(date, date, sensorID);
+		try
+		{
+		rs.addRecord((SensorRecord<Double>) new SensorRecord<Double>(sensorID, reading));
+		}catch(ClassCastException e)
+		{
+			System.out.println("Cast Exception caught");
+			return false;
+		}
+		
+		return write(rs);
+	}
+
+	@Override
+	public boolean update(int sensorID, String reading) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -31,7 +31,7 @@ public interface Sensor<DataType> extends Configurable
 	 * @param obs
 	 *            the observer
 	 */
-	public void registerObserver(SensorObserver<DataType> obs);
+	public void registerObserver(SensorObserver obs);
 
 	/**
 	 * Remove an observer from the sensor
@@ -39,7 +39,7 @@ public interface Sensor<DataType> extends Configurable
 	 * @param obs
 	 *            the observer
 	 */
-	public void removeObserver(SensorObserver<DataType> obs);
+	public void removeObserver(SensorObserver obs);
 
 	/**
 	 * Notify all observers that new data is available

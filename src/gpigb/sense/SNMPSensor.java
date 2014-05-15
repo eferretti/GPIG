@@ -28,7 +28,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  */
 public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 {
-	private ArrayList<WeakReference<SensorObserver<Float>>> observers = new ArrayList<>();
+	private ArrayList<WeakReference<SensorObserver>> observers = new ArrayList<>();
 	private Float lastReading = null;
 
 	// JVM Heap Used OID
@@ -66,19 +66,19 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	}
 
 	@Override
-	public void registerObserver(SensorObserver<Float> obs)
+	public void registerObserver(SensorObserver obs)
 	{
-		for (WeakReference<SensorObserver<Float>> ref : observers) {
+		for (WeakReference<SensorObserver> ref : observers) {
 			if (ref.get() == obs) { return; }
 		}
 
-		observers.add(new WeakReference<SensorObserver<Float>>(obs));
+		observers.add(new WeakReference<SensorObserver>(obs));
 	}
 
 	@Override
-	public void removeObserver(SensorObserver<Float> obs)
+	public void removeObserver(SensorObserver obs)
 	{
-		for (WeakReference<SensorObserver<Float>> ref : observers) {
+		for (WeakReference<SensorObserver> ref : observers) {
 			if (ref.get() == obs) {
 				observers.remove(ref);
 			}
@@ -88,9 +88,9 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	@Override
 	public void notifyObservers()
 	{
-		ArrayList<WeakReference<SensorObserver<Float>>> toRemove = new ArrayList<>();
+		ArrayList<WeakReference<SensorObserver>> toRemove = new ArrayList<>();
 
-		for (WeakReference<SensorObserver<Float>> ref : observers) {
+		for (WeakReference<SensorObserver> ref : observers) {
 			if (ref.get() == null) {
 				toRemove.add(ref);
 				continue;

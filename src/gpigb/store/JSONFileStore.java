@@ -236,4 +236,28 @@ public class JSONFileStore implements Store
 	{
 		return this.id;
 	}
+
+	@Override
+	public boolean update(int sensorID, Integer reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, Double reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, String reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(SensorRecord<?> reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

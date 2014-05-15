@@ -2,7 +2,7 @@ package gpigb.sense;
 
 import gpigb.data.SensorRecord;
 
-public interface SensorObserver<DataType>
+public interface SensorObserver
 {
 	/**
 	 * Returns the new data to the observers after they have been notified
@@ -12,7 +12,9 @@ public interface SensorObserver<DataType>
 	 * @param reading
 	 *            the new data
 	 */
-	public void update(int sensorID, DataType reading);
-
-	public void update(SensorRecord<DataType> reading);
+	public boolean update(int sensorID, Integer reading);
+	public boolean update(int sensorID, Double reading);
+	public boolean update(int sensorID, String reading);
+	
+	public boolean update(SensorRecord<?> reading);
 }

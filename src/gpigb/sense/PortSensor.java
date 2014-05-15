@@ -17,7 +17,7 @@ import gpigb.configuration.ConfigurationValue.ValueType;
 
 public class PortSensor implements Sensor<Double>, Runnable {
 	
-	private ArrayList<SensorObserver<Double>> observers;
+	private ArrayList<SensorObserver> observers;
 	private Double lastReading;
 	private boolean active;
 	private Socket clientSocket;
@@ -30,7 +30,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	{
 		hostName = "localhost";
 		portNumber = 4444;
-		observers = new ArrayList<SensorObserver<Double>>();
+		observers = new ArrayList<SensorObserver>();
 		new Thread(this).start();
 	}
 	
@@ -47,7 +47,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 			        while ((reading = Double.parseDouble(inSocketStream.readLine())) != null) {
 			        	lastReading = reading;
 			        	System.out.println("echo: " + reading);
-	//		        	this.notifyObservers();
+			        	this.notifyObservers();
 			        }
 			        Thread.sleep(100);
 		        } catch (UnknownHostException e) {
@@ -103,12 +103,12 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	}
 
 	@Override
-	public void registerObserver(SensorObserver<Double> obs) {
+	public void registerObserver(SensorObserver obs) {
 		observers.add(obs);
 	}
 
 	@Override
-	public void removeObserver(SensorObserver<Double> obs) {
+	public void removeObserver(SensorObserver obs) {
 		observers.remove(obs);
 		
 	}
@@ -116,9 +116,12 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	@Override
 	public void notifyObservers() {
 		
-		Iterator<SensorObserver<Double>> it = observers.iterator();
+		Iterator<SensorObserver> it = observers.iterator();
 		while (it.hasNext()) {
-			it.next().update(id, lastReading);
+			if(!it.next().update(id, lastReading))
+			{
+				System.out.println("Error Sensor Reading not stored.");
+			}
 		}
 		
 	}

@@ -43,10 +43,10 @@ public class PortSensorHumsLocal {
 		seMgr.refreshModules();
 		stMgr.refreshModules();
 			
-//		Sensor<Double> s1 = new PortSensor();
-//		final Store st = new InMemoryStore();
+		Sensor<Double> s1 = new PortSensor();
+//		final InMemoryStore st = new InMemoryStore();
 //		Analyser aMean = new MeanAnalyser();
-		Reporter rState = new TestAppGUI();
+		TestAppGUI rState = new TestAppGUI();
 		
 		
 	
@@ -57,11 +57,11 @@ public class PortSensorHumsLocal {
 		
 		Analyser aMean = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
 		
-		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.PortSensor");
-		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
+//		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.PortSensor");
+//		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
 		
 		Integer stInMemID = stMgr.getModuleIDByName("gpigb.store.InMemoryStore");
-		final Store st = (Store) stMgr.getObjectByID(stMgr.createObjectOfModule(stInMemID)).get();
+		final Store st = stMgr.getObjectByID(stMgr.createObjectOfModule(stInMemID)).get();
 		
 //		Integer rStateID = rMgr.getModuleIDByName("gpigb.report.TestAppGUI");
 //		Reporter rState = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
@@ -69,10 +69,21 @@ public class PortSensorHumsLocal {
 		
 		st.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
 		aMean.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
-		s1.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));		
+		s1.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));	
+		s1.registerObserver((Store) st);
+		s1.setID(1);
 		rState.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
+		rState.show();
+		
+		
+		
+		
 		while (true)
-		{}
+		{	
+			Thread.sleep(1000);
+			rState.generateReport(null);
+			
+		}
 	}
 
 }
