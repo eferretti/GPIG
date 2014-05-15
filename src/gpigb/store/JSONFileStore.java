@@ -1,5 +1,6 @@
 package gpigb.store;
 
+import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
@@ -17,6 +18,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -216,14 +218,27 @@ public class JSONFileStore implements Store
 	}
 
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("StorePath", new ConfigurationValue(ValueType.String, fileLoc));
-		
-		handler.getConfiguration(configSpec);
-		
-		this.fileLoc = (String) configSpec.get("StorePath").value;
+		return configSpec;
+//		handler.getConfiguration(configSpec);
+//		
+//		this.fileLoc = (String) configSpec.get("StorePath").value;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
+		{
+			this.fileLoc = (String) newSpec.get("StorePath").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	private int id;

@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -337,15 +338,25 @@ public class ReporterGUI implements Reporter
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> map = new HashMap<>();
 		
 		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, null));
-		
-		handler.getConfiguration(map);
-		
-		this.analyser = (StrongReference<Analyser>) map.get("AnalyserReference").value;
+		return map;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
+		{
+			this.analyser = (StrongReference<Analyser>) newSpec.get("AnalsyerReference").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	private int id;

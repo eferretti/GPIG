@@ -9,6 +9,7 @@ import gpigb.data.SensorRecord;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An analyser which reports significant acceleration in a sensor reading
@@ -64,12 +65,24 @@ public class AccelerationAnalyser implements Analyser
 	}
 
 	@Override
-	public synchronized void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("Threshold", new ConfigurationValue(ValueType.Integer, threshold));
-		handler.getConfiguration(configSpec);
-		this.threshold = (Integer) configSpec.get("Threshold").value;
+		return configSpec;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
+		{
+			this.threshold = (Integer) newSpec.get("Threshold").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	@Override

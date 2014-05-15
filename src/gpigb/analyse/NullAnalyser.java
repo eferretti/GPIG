@@ -9,6 +9,7 @@ import gpigb.store.Store;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An analyser which is used solely to acquire raw data from the store by reporter modules
@@ -43,12 +44,24 @@ public class NullAnalyser implements Analyser
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
 		configMap.put("Store", new ConfigurationValue(ValueType.Store, null));
-		handler.getConfiguration(configMap);
-		store = (StrongReference<Store>) configMap.get("Store").value;
+		return configMap;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
+		{
+			this.store = (StrongReference<Store>) newSpec.get("Store").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	private int id;
