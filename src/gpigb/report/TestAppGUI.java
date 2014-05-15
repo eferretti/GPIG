@@ -1,11 +1,17 @@
 package gpigb.report;
 
 import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.awt.EventQueue;
 import java.util.Calendar;
@@ -158,15 +164,15 @@ public class TestAppGUI implements Reporter{
 	@Override
 	public Map<String, ConfigurationValue> getConfigSpec() {
 		HashMap<String, ConfigurationValue> map = new HashMap<>();
-		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, null));
+		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, 0));
 		return map;
 	}
 	
-	public boolean setConfig(Map<String, ConfigurationValue> newConfig)
+	public boolean setConfig(Map<String, ConfigurationValue> newConfig, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.analyser = (StrongReference<Analyser>) newConfig.get("AnalyserReference").value;
+			this.analyser = aMgr.getObjectByID(newConfig.get("AnalyserReference").intValue);
 			return true;
 		}
 		catch(Exception e)

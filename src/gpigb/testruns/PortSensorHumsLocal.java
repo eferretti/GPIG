@@ -68,25 +68,25 @@ public class PortSensorHumsLocal {
 //		Integer rStateID = rMgr.getModuleIDByName("gpigb.report.TestAppGUI");
 //		Reporter rState = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
 		
-		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr);
+		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr.getAvailableObjects(), rMgr.getAvailableObjects(), stMgr.getAvailableObjects(), seMgr.getAvailableObjects());
 		
 		Map<String, ConfigurationValue> config;
 		
 		config = st.getConfigSpec();
 		configHandler.getConfiguration(config);
-		st.setConfig(config);
+		st.setConfig(config, null, null, null, null);
 		
 		config = aMean.getConfigSpec();
 		configHandler.getConfiguration(config);
-		aMean.setConfig(config);
+		aMean.setConfig(config, null, null, null, null);
 		
 		config = s1.getConfigSpec();
 		configHandler.getConfiguration(config);
-		s1.setConfig(config);
+		s1.setConfig(config, null, null, null, null);
 		
 		config = rState.getConfigSpec();
 		configHandler.getConfiguration(config);
-		rState.setConfig(config);
+		rState.setConfig(config, null, null, null, null);
 		while (true)
 		{}
 	}

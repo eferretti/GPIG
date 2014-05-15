@@ -1,10 +1,13 @@
 package gpigb.report;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
 import java.io.PrintStream;
@@ -43,17 +46,17 @@ public class UnexpectedAccelerationReporter implements Reporter
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> config = new HashMap<>();
-		config.put("PrintStream", new ConfigurationValue(ValueType.OutStream, null));
+//		config.put("PrintStream", new ConfigurationValue(ValueType.OutStream, null));
 		return config;
 		
 //		outputStream = (PrintStream) (config.get("PrintStream") != null ? config.get("PrintStream").value : System.out);
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.outputStream = (PrintStream) newSpec.get("PrintStream").value;
+			this.outputStream = System.out;//(PrintStream) newSpec.get("PrintStream").value;
 			return true;
 		}
 		catch(Exception e)

@@ -1,5 +1,6 @@
 package gpigb.classloading;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface ComponentManager<Interface>
@@ -57,7 +58,7 @@ public interface ComponentManager<Interface>
 	 */
 	public StrongReference<Interface> getObjectByID(int instanceID);
 
-	public class ModuleSummary
+	public class ModuleSummary implements Serializable
 	{
 		public final String displayName;
 		public final int moduleID;
@@ -77,7 +78,7 @@ public interface ComponentManager<Interface>
 		}
 	}
 
-	public class InstanceSummary
+	public class InstanceSummary implements Serializable
 	{
 		public final String displayName;
 		public final int instanceID;

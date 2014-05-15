@@ -26,7 +26,7 @@ public class SensorTest
 		Map<String, ConfigurationValue> configSpec = s1.getConfigSpec();
 		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, -5000));
 		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, 20000));
-		s1.setConfig(configSpec);
+		s1.setConfig(configSpec, null, null, null, null);
 		
 		s1.registerObserver(new SensorObserver<Integer>()
 		{

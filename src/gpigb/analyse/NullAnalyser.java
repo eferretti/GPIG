@@ -1,10 +1,13 @@
 package gpigb.analyse;
 
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
 import java.util.HashMap;
@@ -47,15 +50,15 @@ public class NullAnalyser implements Analyser
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
-		configMap.put("Store", new ConfigurationValue(ValueType.Store, null));
+		configMap.put("Store", new ConfigurationValue(ValueType.Store, 0));
 		return configMap;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.store = (StrongReference<Store>) newSpec.get("Store").value;
+			this.store = stMgr.getObjectByID(newSpec.get("Store").intValue);
 			return true;
 		}
 		catch(Exception e)

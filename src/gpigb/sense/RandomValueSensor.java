@@ -1,9 +1,12 @@
 package gpigb.sense;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.report.Reporter;
 import gpigb.store.Store;
 
 import java.util.ArrayList;
@@ -105,12 +108,12 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 		return configSpec;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.min = (Integer) newSpec.get("Min").value;
-			this.max = (Integer) newSpec.get("Max").value;
+			this.min = (Integer) newSpec.get("Min").intValue;
+			this.max = (Integer) newSpec.get("Max").intValue;
 			return true;
 		}
 		catch(Exception e)

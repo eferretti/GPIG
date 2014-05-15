@@ -1,10 +1,17 @@
 package gpigb.sense;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.Patchable;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
@@ -163,12 +170,12 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 //		}
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.oidString = (String) newSpec.get("OID").value;
-			this.port = (String) newSpec.get("Port").value;
+			this.oidString = (String) newSpec.get("OID").strValue;
+			this.port = (String) newSpec.get("Port").strValue;
 			return true;
 		}
 		catch(Exception e)

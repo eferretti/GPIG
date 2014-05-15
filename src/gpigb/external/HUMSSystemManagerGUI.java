@@ -2,6 +2,8 @@ package gpigb.external;
 
 import gpigb.classloading.ComponentManager.InstanceSummary;
 import gpigb.classloading.ComponentManager.ModuleSummary;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.handlers.GUIConfigHandler;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -35,6 +37,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 {
@@ -48,6 +51,7 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 	
 	private HUMSSystem system = null;
 	private JComboBox<InstanceSummary> cboSensorInstances;
+	private JButton btnConfigureSensor;
 
 	/**
 	 * Launch the application.
@@ -142,7 +146,7 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 		sl_panel.putConstraint(SpringLayout.WEST, lblInstances, 0, SpringLayout.WEST, lblModules);
 		panel.add(lblInstances);
 		
-		JButton btnConfigureSensor = new JButton("Configure");
+		btnConfigureSensor = new JButton("Configure");
 		btnConfigureSensor.addActionListener(this);
 		sl_panel.putConstraint(SpringLayout.NORTH, btnConfigureSensor, 0, SpringLayout.NORTH, cboSensorInstances);
 		sl_panel.putConstraint(SpringLayout.WEST, btnConfigureSensor, 0, SpringLayout.WEST, btnNewSensor);
@@ -180,7 +184,6 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 		
 		if(event.getSource() == this.btnUploadJar)
 		{
-			System.out.println("Shwoing file chooser");
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			
@@ -203,6 +206,35 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 			}
 			
 			refresh();
+		}
+		
+		if(event.getSource() == this.btnNewSensor)
+		{
+			try
+			{
+				this.system.createSensor(((ModuleSummary)this.cboSensorModules.getSelectedItem()).moduleID);
+				refresh();
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+		
+		if(event.getSource() == this.btnConfigureSensor)
+		{
+			try
+			{
+				int id = ((InstanceSummary)this.cboSensorInstances.getSelectedItem()).instanceID;
+				Map<String, ConfigurationValue> config = this.system.getSensorConfig(id);
+				new GUIConfigHandler(this.system.listAnalysers(), this.system.listReporters(), this.system.listStores(), this.system.listSensors()).getConfiguration(config);
+				this.system.setSensorConfig(id, config);
+				refresh();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -239,7 +271,7 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 			}
 			catch(Exception e)
 			{
-				
+				e.printStackTrace();
 			}
 			
 			try

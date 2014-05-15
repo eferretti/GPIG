@@ -1,9 +1,16 @@
 package gpigb.report;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,12 +49,12 @@ public class ReporterPlotRTSmart implements Reporter
 		return configMap;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.title = (String) newSpec.get("Title").value;
-			this.grapher = new SmartGrapher(title, ((Integer)newSpec.get("Width").value).intValue(), ((Integer)newSpec.get("Height").value).intValue());
+			this.title = (String) newSpec.get("Title").strValue;
+			this.grapher = new SmartGrapher(title, ((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
 			return true;
 		}
 		catch(Exception e)

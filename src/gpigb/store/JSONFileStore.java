@@ -1,11 +1,15 @@
 package gpigb.store;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -228,11 +232,11 @@ public class JSONFileStore implements Store
 //		this.fileLoc = (String) configSpec.get("StorePath").value;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.fileLoc = (String) newSpec.get("StorePath").value;
+			this.fileLoc = (String) newSpec.get("StorePath").strValue;
 			return true;
 		}
 		catch(Exception e)
