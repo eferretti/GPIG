@@ -1,11 +1,18 @@
 package gpigb.analyse;
 
+import gpigb.classloading.ComponentManager;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
 import gpigb.report.OutOfRangeReporter;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,12 +75,12 @@ public class ThresholdAnalyser implements Analyser
 		return configSpec;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.lowerThreshold = (Integer) newSpec.get("Min").value;
-			this.upperThreshold = (Integer) newSpec.get("Max").value;
+			this.lowerThreshold = (Integer) newSpec.get("Min").intValue;
+			this.upperThreshold = (Integer) newSpec.get("Max").intValue;
 			return true;
 		}
 		catch(Exception e)

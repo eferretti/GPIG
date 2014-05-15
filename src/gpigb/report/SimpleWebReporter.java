@@ -12,12 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 import gpigb.store.Store;
 
@@ -161,15 +164,15 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
-		configSpec.put("Store", new ConfigurationValue(ValueType.Store, null));
+		configSpec.put("Store", new ConfigurationValue(ValueType.Store, 0));
 		return configSpec;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			store = (StrongReference<Store>) newSpec.get("Store").value;
+			store = stMgr.getObjectByID(newSpec.get("Store").intValue);
 			return true;
 		}
 		catch(Exception e)

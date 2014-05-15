@@ -1,11 +1,14 @@
 package gpigb.analyse;
 
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
 import java.util.HashMap;
@@ -31,15 +34,15 @@ public class StandDevAnalyser implements Analyser{
 	public Map<String, ConfigurationValue> getConfigSpec() {
 		
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
-		configMap.put("Store", new ConfigurationValue(ValueType.Store, null));
+		configMap.put("Store", new ConfigurationValue(ValueType.Store, 0));
 		return configMap;
 	}
 	
-	public boolean setConfig(Map<String, ConfigurationValue> newConfig)
+	public boolean setConfig(Map<String, ConfigurationValue> newConfig, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.store = (StrongReference<Store>)newConfig.get("Store").value;
+			this.store = stMgr.getObjectByID(newConfig.get("Store").intValue);
 			return true;
 		}
 		catch(Exception e)

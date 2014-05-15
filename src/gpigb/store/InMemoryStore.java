@@ -1,11 +1,15 @@
 package gpigb.store;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.Patchable;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 
 import java.util.ArrayList;
@@ -115,7 +119,7 @@ public class InMemoryStore<DataType> extends Patchable implements Store, SensorO
 		return null;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		return true;
 	}

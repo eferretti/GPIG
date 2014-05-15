@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
 import gpigb.store.Store;
 
 public class LinuxProcessCPUSensor implements Sensor<Float>
@@ -49,11 +52,11 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 //		}
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			pid = (Integer)newSpec.get("Process ID").value;
+			pid = (Integer)newSpec.get("Process ID").intValue;
 			statFile = new File("/proc/" + pid + "/stat");
 			return true;
 		}

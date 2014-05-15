@@ -1,5 +1,6 @@
 package gpigb.analyse;
 
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
@@ -7,7 +8,12 @@ import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,16 +55,17 @@ public class RealTimeGraphAnalyser implements Analyser
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
-		configSpec.put("Plotter", new ConfigurationValue(ValueType.Reporter, null));
-		configSpec.put("Title", new ConfigurationValue(ValueType.String, null));
+		configSpec.put("Plotter", new ConfigurationValue(ValueType.Reporter, 0));
+		configSpec.put("Title", new ConfigurationValue(ValueType.String, ""));
 		return configSpec;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	@Override
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.plotter = (StrongReference<Reporter>) newSpec.get("Plotter").value;
+			this.plotter = rMgr.getObjectByID(newSpec.get("Plotter").intValue);
 			return true;
 		}
 		catch(Exception e)

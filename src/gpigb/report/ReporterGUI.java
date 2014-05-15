@@ -2,12 +2,14 @@ package gpigb.report;
 
 import gpigb.analyse.Analyser;
 import gpigb.analyse.NullAnalyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
 import gpigb.store.InMemoryStore;
 import gpigb.store.Store;
 
@@ -342,15 +344,15 @@ public class ReporterGUI implements Reporter
 	{
 		HashMap<String, ConfigurationValue> map = new HashMap<>();
 		
-		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, null));
+		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, 0));
 		return map;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.analyser = (StrongReference<Analyser>) newSpec.get("AnalsyerReference").value;
+			this.analyser = aMgr.getObjectByID(newSpec.get("AnalsyerReference").intValue);
 			return true;
 		}
 		catch(Exception e)

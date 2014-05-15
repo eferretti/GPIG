@@ -1,10 +1,15 @@
 package gpigb.analyse;
 
+import gpigb.classloading.ComponentManager;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,11 +77,12 @@ public class AccelerationAnalyser implements Analyser
 		return configSpec;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	@Override
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.threshold = (Integer) newSpec.get("Threshold").value;
+			this.threshold = newSpec.get("Threshold").intValue;
 			return true;
 		}
 		catch(Exception e)

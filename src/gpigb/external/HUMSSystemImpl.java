@@ -30,6 +30,10 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	public HUMSSystemImpl() throws RemoteException
 	{
 		super(0);
+		aMgr.addModuleDirectory("./Modules/");
+		rMgr.addModuleDirectory("./Modules/");
+		seMgr.addModuleDirectory("./Modules/");
+		stMgr.addModuleDirectory("./Modules/");
 	}
 	
 	@Override
@@ -83,6 +87,7 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	@Override
 	public List<ModuleSummary> listSensorModules() throws RemoteException
 	{
+		seMgr.refreshModules();
 		return seMgr.getAvailableModules();
 	}
 
@@ -107,7 +112,7 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	@Override
 	public boolean setSensorConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException
 	{
-		return seMgr.getObjectByID(id).get().setConfig(newConfig);
+		return seMgr.getObjectByID(id).get().setConfig(newConfig, null, null, null, null);
 	}
 
 	@Override
