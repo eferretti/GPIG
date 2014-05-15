@@ -1,12 +1,18 @@
 package gpigb.sense;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.report.Reporter;
+import gpigb.store.Store;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 /**
  * 
@@ -92,17 +98,28 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 	}
 
 	@Override
-	public synchronized void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{ 
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		
 		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, Integer.MIN_VALUE));
 		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, Integer.MAX_VALUE));
 		
-		handler.getConfiguration(configSpec);
-		
-		this.min = (Integer) configSpec.get("Min").value;
-		this.max = (Integer) configSpec.get("Max").value;
+		return configSpec;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
+		try
+		{
+			this.min = (Integer) newSpec.get("Min").intValue;
+			this.max = (Integer) newSpec.get("Max").intValue;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 

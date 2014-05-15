@@ -6,12 +6,18 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.store.Store;
 
 public class LinuxProcessCPUSensor implements Sensor<Float>
 {
@@ -23,26 +29,40 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	List<SensorObserver> observers = new ArrayList<>();
 	
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> spec = new HashMap<>();
 		spec.put("Process ID", new ConfigurationValue(ValueType.Integer, 0));
-		handler.getConfiguration(spec);
-		pid = (Integer)spec.get("Process ID").value;
-		statFile = new File("/proc/" + pid + "/stat");
-		
+		return spec;
+//		pid = (Integer)spec.get("Process ID").value;
+//		statFile = new File("/proc/" + pid + "/stat");
+//		
+//		try
+//		{
+//			Scanner s = new Scanner(statFile);
+//			String[] contents = s.nextLine().split("\\s");
+//			s.close();
+//			cpuID = Integer.parseInt(contents[38]);
+//			oldStime = Long.parseLong(contents[14]);
+//			oldUtime = Long.parseLong(contents[13]);
+//		}
+//		catch(Exception e)
+//		{
+//			
+//		}
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
 		try
 		{
-			Scanner s = new Scanner(statFile);
-			String[] contents = s.nextLine().split("\\s");
-			s.close();
-			cpuID = Integer.parseInt(contents[38]);
-			oldStime = Long.parseLong(contents[14]);
-			oldUtime = Long.parseLong(contents[13]);
+			pid = (Integer)newSpec.get("Process ID").intValue;
+			statFile = new File("/proc/" + pid + "/stat");
+			return true;
 		}
 		catch(Exception e)
 		{
-			
+			return false;
 		}
 	}
 

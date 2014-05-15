@@ -3,6 +3,7 @@ package gpigb.configuration.handlers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.ComboBoxModel;
@@ -29,23 +30,23 @@ import gpigb.store.Store;
 
 public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 {
-	private final ComponentManager<Analyser> aMgr;
-	private final ComponentManager<Reporter> rMgr;
-	private final ComponentManager<Store> stMgr;
-	private final ComponentManager<Sensor> seMgr;
+	private final List<InstanceSummary> analysers;
+	private final List<InstanceSummary> reporters;
+	private final List<InstanceSummary> stores;
+	private final List<InstanceSummary> sensors;
 	
-	public GUIConfigHandler(ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Store> stMgr, ComponentManager<Sensor> seMgr)
+	public GUIConfigHandler(List<InstanceSummary> analysers, List<InstanceSummary> reporters, List<InstanceSummary> stores, List<InstanceSummary> sensors)
 	{
-		this.aMgr = aMgr;
-		this.rMgr = rMgr;
-		this.stMgr = stMgr;
-		this.seMgr = seMgr;
+		this.analysers = analysers;
+		this.reporters = reporters;
+		this.stores = stores;
+		this.sensors = sensors;
 	}
 	
 	boolean waiting = true;
 	
 	@Override
-	public void getConfiguration(Map<String, ConfigurationValue> configSpec)
+	public void getConfiguration(final Map<String, ConfigurationValue> configSpec)
 	{
 		SpringLayout layout = new SpringLayout();
 		getContentPane().setLayout(layout);
@@ -60,14 +61,8 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 			{
 				case Analyser:
 				{
-					JComboBox<StrongReference<Analyser>> combo = new JComboBox<>();
-					ArrayList<StrongReference<Analyser>> items = new ArrayList<>();
-					for(InstanceSummary summary : aMgr.getAvailableObjects())
-					{
-						items.add(aMgr.getObjectByID(summary.instanceID));
-					}
-					ComboBoxModel<StrongReference<Analyser>> model = new DefaultComboBoxModel<StrongReference<Analyser>>(items.toArray(new StrongReference[0]));
-					combo.setModel(model);
+					JComboBox<InstanceSummary> combo = new JComboBox<>();
+					combo.setModel(new DefaultComboBoxModel<InstanceSummary>(analysers.toArray(new InstanceSummary[0])));
 					component = combo;
 					++rows;
 					break;
@@ -87,14 +82,8 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				
 				case Reporter:
 				{
-					JComboBox<StrongReference<Reporter>> combo = new JComboBox<>();
-					ArrayList<StrongReference<Reporter>> items = new ArrayList<>();
-					for(InstanceSummary summary : rMgr.getAvailableObjects())
-					{
-						items.add(rMgr.getObjectByID(summary.instanceID));
-					}
-					ComboBoxModel<StrongReference<Reporter>> model = new DefaultComboBoxModel<StrongReference<Reporter>>(items.toArray(new StrongReference[0]));
-					combo.setModel(model);
+					JComboBox<InstanceSummary> combo = new JComboBox<>();
+					combo.setModel(new DefaultComboBoxModel<InstanceSummary>(reporters.toArray(new InstanceSummary[0])));
 					component = combo;
 					++rows;
 					break;
@@ -102,14 +91,8 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				
 				case Sensor:
 				{
-					JComboBox<StrongReference<Sensor>> combo = new JComboBox<>();
-					ArrayList<StrongReference<Sensor>> items = new ArrayList<>();
-					for(InstanceSummary summary : seMgr.getAvailableObjects())
-					{
-						items.add(seMgr.getObjectByID(summary.instanceID));
-					}
-					ComboBoxModel<StrongReference<Sensor>> model = new DefaultComboBoxModel<StrongReference<Sensor>>(items.toArray(new StrongReference[0]));
-					combo.setModel(model);
+					JComboBox<InstanceSummary> combo = new JComboBox<>();
+					combo.setModel(new DefaultComboBoxModel<InstanceSummary>(sensors.toArray(new InstanceSummary[0])));
 					component = combo;
 					++rows;
 					break;
@@ -117,14 +100,8 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				
 				case Store:
 				{
-					JComboBox<StrongReference<Store>> combo = new JComboBox<>();
-					ArrayList<StrongReference<Store>> items = new ArrayList<>();
-					for(InstanceSummary summary : stMgr.getAvailableObjects())
-					{
-						items.add(stMgr.getObjectByID(summary.instanceID));
-					}
-					ComboBoxModel<StrongReference<Store>> model = new DefaultComboBoxModel<StrongReference<Store>>(items.toArray(new StrongReference[0]));
-					combo.setModel(model);
+					JComboBox<InstanceSummary> combo = new JComboBox<>();
+					combo.setModel(new DefaultComboBoxModel<InstanceSummary>(stores.toArray(new InstanceSummary[0])));
 					component = combo;
 					++rows;
 					break;
@@ -147,7 +124,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 			@Override
 			public void windowClosing(WindowEvent e)
 			{
-				waiting = false;
+				close(configSpec);
 			}
 			
 			@Override
@@ -167,20 +144,10 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 		SpringUtilities.makeCompactGrid(getContentPane(), rows, 2, 10, 10, 10, 10);
 		pack();
 		setVisible(true);
-		
-		
-		waiting = true;
-		
-		while(waiting) 
-			try 
-			{
-				Thread.sleep(10);
-			}
-			catch(Exception e)
-			{
-				
-			};
-			
+	}
+	
+	private void close(Map<String, ConfigurationValue> configSpec)
+	{
 		String key = null;
 		for(int i = 0; i < getContentPane().getComponentCount(); ++i)
 		{
@@ -194,28 +161,27 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				switch(configSpec.get(key).type)
 				{
 				case Analyser:
-					val = ((JComboBox<Analyser>)getContentPane().getComponent(i)).getSelectedItem();
+					configSpec.get(key).intValue = ((InstanceSummary)((JComboBox<InstanceSummary>) getContentPane().getComponent(i)).getSelectedItem()).instanceID;
 					break;
 				case Float:
-					val = (Float)((JSpinner)getContentPane().getComponent(i)).getValue();
+					configSpec.get(key).fltValue = (Float)((JSpinner)getContentPane().getComponent(i)).getValue();
 					break;
 				case Integer:
-					val = (Integer)((JSpinner)getContentPane().getComponent(i)).getValue();
+					configSpec.get(key).intValue = (Integer)((JSpinner)getContentPane().getComponent(i)).getValue();
 					break;
 				case Reporter:
-					val = ((JComboBox<Reporter>)getContentPane().getComponent(i)).getSelectedItem();
+					configSpec.get(key).intValue = ((InstanceSummary)((JComboBox<InstanceSummary>) getContentPane().getComponent(i)).getSelectedItem()).instanceID;
 					break;
 				case Sensor:
-					val = ((JComboBox<Sensor>)getContentPane().getComponent(i)).getSelectedItem();
+					configSpec.get(key).intValue = ((InstanceSummary)((JComboBox<InstanceSummary>) getContentPane().getComponent(i)).getSelectedItem()).instanceID;
 					break;
 				case Store:
-					val = ((JComboBox<Store>)getContentPane().getComponent(i)).getSelectedItem();
+					configSpec.get(key).intValue = ((InstanceSummary)((JComboBox<InstanceSummary>) getContentPane().getComponent(i)).getSelectedItem()).instanceID;
 					break;
 				case String:
-					val = ((JTextField)getContentPane().getComponent(i)).getText();
+					configSpec.get(key).strValue = ((JTextField)getContentPane().getComponent(i)).getText();
 					break;				
 				}
-				configSpec.get(key).value = val;
 			}
 		}
 			

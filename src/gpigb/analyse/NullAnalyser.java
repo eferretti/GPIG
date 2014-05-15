@@ -1,14 +1,18 @@
 package gpigb.analyse;
 
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An analyser which is used solely to acquire raw data from the store by reporter modules
@@ -43,12 +47,24 @@ public class NullAnalyser implements Analyser
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
-		configMap.put("Store", new ConfigurationValue(ValueType.Store, null));
-		handler.getConfiguration(configMap);
-		store = (StrongReference<Store>) configMap.get("Store").value;
+		configMap.put("Store", new ConfigurationValue(ValueType.Store, 0));
+		return configMap;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
+		try
+		{
+			this.store = stMgr.getObjectByID(newSpec.get("Store").intValue);
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	private int id;

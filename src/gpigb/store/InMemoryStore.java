@@ -1,9 +1,15 @@
 package gpigb.store;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.Patchable;
+import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 
 import java.util.ArrayList;
@@ -11,6 +17,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A record store which maintains all records in memory. This should not be used
@@ -114,11 +121,16 @@ public class InMemoryStore extends Patchable implements Store
 	}
 
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
+		return true;
+	}
+
 
 	@Override
 	public boolean update(int sensorID, Double reading) {

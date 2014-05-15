@@ -2,12 +2,14 @@ package gpigb.report;
 
 import gpigb.analyse.Analyser;
 import gpigb.analyse.NullAnalyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
 import gpigb.store.InMemoryStore;
 import gpigb.store.Store;
 
@@ -23,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -337,15 +340,25 @@ public class ReporterGUI implements Reporter
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> map = new HashMap<>();
 		
-		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, null));
-		
-		handler.getConfiguration(map);
-		
-		this.analyser = (StrongReference<Analyser>) map.get("AnalyserReference").value;
+		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, 0));
+		return map;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
+		try
+		{
+			this.analyser = aMgr.getObjectByID(newSpec.get("AnalsyerReference").intValue);
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	private int id;

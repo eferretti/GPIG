@@ -1,14 +1,20 @@
 package gpigb.analyse;
 
+import gpigb.classloading.ComponentManager;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An analyser which reports significant acceleration in a sensor reading
@@ -64,12 +70,25 @@ public class AccelerationAnalyser implements Analyser
 	}
 
 	@Override
-	public synchronized void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("Threshold", new ConfigurationValue(ValueType.Integer, threshold));
-		handler.getConfiguration(configSpec);
-		this.threshold = (Integer) configSpec.get("Threshold").value;
+		return configSpec;
+	}
+	
+	@Override
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
+		try
+		{
+			this.threshold = newSpec.get("Threshold").intValue;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	@Override

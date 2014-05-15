@@ -9,6 +9,7 @@ import gpigb.sense.RandomValueSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 
+import java.io.PrintStream;
 import java.util.Date;
 import java.util.Map;
 
@@ -22,16 +23,10 @@ public class SensorTest
 	public void setUp()
 	{
 		Sensor<Integer> s1 = new RandomValueSensor();
-		s1.configure(new ConfigurationHandler()
-		{
-			
-			@Override
-			public void getConfiguration(Map<String, ConfigurationValue> configSpec)
-			{
-				configSpec.put("Min", new ConfigurationValue(ValueType.Integer, -5000));
-				configSpec.put("Max", new ConfigurationValue(ValueType.Integer, 20000));
-			}
-		});
+		Map<String, ConfigurationValue> configSpec = s1.getConfigSpec();
+		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, -5000));
+		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, 20000));
+		s1.setConfig(configSpec, null, null, null, null);
 		
 		s1.registerObserver(new SensorObserver()
 		{

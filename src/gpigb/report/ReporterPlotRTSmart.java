@@ -1,12 +1,20 @@
 package gpigb.report;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
+import gpigb.report.Reporter;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+import gpigb.analyse.Analyser;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mongodb.util.Hash;
 
@@ -31,17 +39,28 @@ public class ReporterPlotRTSmart implements Reporter
 	}
 
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
 		configMap.put("Title", new ConfigurationValue(ValueType.String, "Real Time Graph"));
 		configMap.put("Width", new ConfigurationValue(ValueType.Integer, new Integer(900)));
 		configMap.put("Height", new ConfigurationValue(ValueType.Integer, new Integer(500)));
 		
-		handler.getConfiguration(configMap);
-		
-		this.title = (String) configMap.get("Title").value;
-		grapher = new SmartGrapher(title, ((Integer)configMap.get("Width").value).intValue(), ((Integer)configMap.get("Height").value).intValue());
+		return configMap;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
+		try
+		{
+			this.title = (String) newSpec.get("Title").strValue;
+			this.grapher = new SmartGrapher(title, ((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 	
 	public String toString()

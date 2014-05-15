@@ -10,10 +10,16 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.report.Reporter;
+import gpigb.store.Store;
 
 public class PortSensor implements Sensor<Double>, Runnable {
 	
@@ -65,29 +71,40 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	}
 	
 	@Override
-	public synchronized void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{ 
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		
-		configSpec.put("HostName", new ConfigurationValue(ValueType.String, null ));
-		configSpec.put("Port", new ConfigurationValue(ValueType.Integer, null ));
-		
-		handler.getConfiguration(configSpec);
-		
-		this.hostName = (String) configSpec.get("HostName").value;
-		this.portNumber = (Integer) configSpec.get("Port").value;
+		configSpec.put("HostName", new ConfigurationValue(ValueType.String, ""));
+		configSpec.put("Port", new ConfigurationValue(ValueType.Integer, 0));
+
+		return configSpec;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	{
 		
 		try {
+			this.hostName = (String) newSpec.get("HostName").strValue;
+			this.portNumber = (Integer) newSpec.get("Port").intValue;
+			
 			clientSocket = new Socket(hostName, portNumber);
 			outSocketStream = new PrintWriter(clientSocket.getOutputStream(), true);
 		    inSocketStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		} catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
+            return false;
         } catch (IOException e) {
         	System.err.println("Error. Port Stream IO " + hostName);
 			e.printStackTrace();
+			return false;
+		} catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
 		}
        
+		return true;
 	}
 
 	@Override
