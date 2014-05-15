@@ -24,25 +24,38 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class TestAppGUI implements Reporter{
-
+	
+	private JLabel lblAverage;
 	private JFrame frame;
-	private JTextField avrg1;
-	private JTextField avrg2;
-	private Canvas mode1;
-	private Canvas mode2;
-	private JTextArea textArea;
+	private JTextField _textField;
+	//private 
 	
 	int period;
 	int upperThreshold;
 	int midThreshold;
+	int sensors;
 	
 	private StrongReference<Analyser> analyser;
 
 	/**
-	 * Launch the application.
+	 * Create the application.
 	 */
+	public TestAppGUI() {
+		sensors = 4;
+		
+		initialize();
+		
+		period = 3;
+		upperThreshold = 10;
+		midThreshold = 5;
+		
+	}
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -54,17 +67,6 @@ public class TestAppGUI implements Reporter{
 				}
 			}
 		});
-	}
-
-	/**
-	 * Create the application.
-	 */
-	public TestAppGUI() {
-		initialize();
-		
-		period = 3;
-		upperThreshold = 10;
-		midThreshold = 5;
 	}
 	
 	public void show()
@@ -78,56 +80,65 @@ public class TestAppGUI implements Reporter{
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 400, 250);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{115, 70, 34, 80, 0};
+		gridBagLayout.rowHeights = new int[]{30};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0};
+		frame.getContentPane().setLayout(gridBagLayout);
+		frame.pack();
 		
-		JLabel lblSensor1 = new JLabel("Sensor 1");
-		lblSensor1.setBounds(75, 59, 91, 33);
-		frame.getContentPane().add(lblSensor1);
-		
-		JLabel lblSensor2 = new JLabel("Sensor 2");
-		lblSensor2.setBounds(75, 104, 91, 33);
-		frame.getContentPane().add(lblSensor2);
-		
+			for (int count = 1; count < sensors + 1; count++){
+				
+				JLabel lblSensor1 = new JLabel("Sensor " + count);
+				GridBagConstraints g_lblSensor = new GridBagConstraints();
+				g_lblSensor.fill = GridBagConstraints.BOTH;
+				g_lblSensor.insets = new Insets(0, 0, 5, 5);
+				g_lblSensor.gridx = 0;
+				g_lblSensor.gridy = 1 + count;
+				frame.getContentPane().add(lblSensor1, g_lblSensor);
+				
+				_textField = new JTextField("0");
+				_textField.setEditable(false);
+				_textField.setHorizontalAlignment(JTextField.CENTER);
+				GridBagConstraints g_textField = new GridBagConstraints();
+				g_textField.fill = GridBagConstraints.BOTH;
+				g_textField.insets = new Insets(0, 0, 5, 5);
+				g_textField.gridx = 3;
+				g_textField.gridy = 1 + count;
+				frame.getContentPane().add(_textField, g_textField);
+				
+				Canvas canvas = new Canvas();
+				canvas.setSize(40,20);
+				canvas.setBackground(Color.GREEN);
+				GridBagConstraints gbc_canvas = new GridBagConstraints();
+				gbc_canvas.insets = new Insets(0, 0, 5, 5);
+				gbc_canvas.gridx = 1;
+				gbc_canvas.gridy = 1 + count;
+				frame.getContentPane().add(canvas, gbc_canvas);
+				
+				frame.getContentPane().revalidate();
+				frame.getContentPane().repaint();
+				
+				frame.pack();
+			}
+
 		JLabel lblMode = new JLabel("Mode");
-		lblMode.setBounds(183, 32, 70, 15);
-		frame.getContentPane().add(lblMode);
+		GridBagConstraints gbc_lblMode = new GridBagConstraints();
+		gbc_lblMode.anchor = GridBagConstraints.NORTH;
+		gbc_lblMode.insets = new Insets(0, 0, 0, 5);
+		gbc_lblMode.gridx = 1;
+		gbc_lblMode.gridy = 0;
+		frame.getContentPane().add(lblMode, gbc_lblMode);
 		
-		JLabel lblAverage = new JLabel("Average");
-		lblAverage.setBounds(287, 32, 70, 15);
-		frame.getContentPane().add(lblAverage);
-		
-		textArea = new JTextArea();
-		textArea.setEditable(false);
-		textArea.setBounds(51, 163, 362, 75);
-		frame.getContentPane().add(textArea);
-		
-		avrg1 = new JTextField();
-		avrg1.setEditable(false);
-		avrg1.setBounds(287, 66, 51, 19);
-		frame.getContentPane().add(avrg1);
-		avrg1.setColumns(10);
-		avrg1.setHorizontalAlignment(JTextField.CENTER);
-		avrg1.setText("0");
-		
-		avrg2 = new JTextField();
-		avrg2.setEditable(false);
-		avrg2.setColumns(10);
-		avrg2.setBounds(287, 111, 51, 19);
-		frame.getContentPane().add(avrg2);
-		avrg2.setHorizontalAlignment(JTextField.CENTER);
-		avrg2.setText("0");
-		
-		mode1 = new Canvas();
-		mode1.setBackground(Color.GREEN);
-		mode1.setBounds(183, 65, 39, 25);
-		frame.getContentPane().add(mode1);
-		
-		mode2 = new Canvas();
-		mode2.setBackground(Color.GREEN);
-		mode2.setBounds(183, 110, 39, 25);
-		frame.getContentPane().add(mode2);
+		lblAverage = new JLabel("Average");
+		GridBagConstraints gbc_lblAverage = new GridBagConstraints();
+		gbc_lblAverage.anchor = GridBagConstraints.NORTH;
+		gbc_lblAverage.gridx = 3;
+		gbc_lblAverage.gridy = 0;
+		frame.getContentPane().add(lblAverage, gbc_lblAverage);
 	}
 
 	@Override
@@ -142,10 +153,10 @@ public class TestAppGUI implements Reporter{
 		
 	}
 
+	private int mode = 1;
 	@Override
 	public void generateReport(List<RecordSet<?>> data) {
 		
-		// TODO Auto-generated method stub
 		Calendar c = Calendar.getInstance();
 		//Set from and to dates.
 		Date d2 = c.getTime();
@@ -153,7 +164,6 @@ public class TestAppGUI implements Reporter{
 		d1.setMinutes(d2.getMinutes() - period);
 		
 		//For each sensor set average and check for mode change
-		int sensors = 2;
 		for(int i = 1; i < sensors + 1; i++){
 			
 			//Get average from analyser
@@ -166,29 +176,48 @@ public class TestAppGUI implements Reporter{
 			//Set mode depending on average
 			if (average > midThreshold){
 				if (average > upperThreshold){
-					changeMode(i, 3);
+					//Red
+					if (mode != 3){
+						//changeMode(i, 3);
+						mode = 3;
+					}
 				} else {
-					changeMode(i, 2);
+					//Orange
+					if (mode != 2){
+						//changeMode(i, 2);
+						mode = 2;
+					}
 				}
 			} else {
-				changeMode(i, 1);
+				//Green
+				if (mode != 1){
+					//changeMode(i, 1);
+					mode = 1;
+				}
+				
 			}
 			
 			if (i == 1){
-				avrg1.setText("" + average);
+//				_textField.
+			//	avrg1.setText("" + average);
 			} else {
-				avrg2.setText("" + average);
+			//	avrg2.setText("" + average);
 			}
 		}
 		
 	}
 	
 	private int id;
+
 	@Override
 	public void setID(int newID) {
 		this.id = newID;
 	}
 	
+	/*
+	 * Depending on the sensor and mode change the colour of the canvas and output text to the text area
+	 */
+	/*
 	public void changeMode(int sensor, int mode){
 		if (sensor == 1){
 			switch (mode){
@@ -203,7 +232,7 @@ public class TestAppGUI implements Reporter{
 						
 				default:	mode1.setBackground(Color.GREEN);
 			}
-			textArea.append("Sensor 1: Mode change detected.\n");
+		//	textArea.append("Sensor 1: Mode change detected.\n");
 		} else {
 			switch (mode){
 				case 1: 	mode2.setBackground(Color.GREEN);
@@ -217,11 +246,11 @@ public class TestAppGUI implements Reporter{
 					
 				default:	mode2.setBackground(Color.GREEN);
 			}
-			textArea.append("Sensor 2: Mode change detected.\n");
+		//	textArea.append("Sensor 2: Mode change detected.\n");
 		}
 		
 	}
-
+	*/
 	@Override
 	public int getID() {
 		return this.id;
