@@ -134,17 +134,22 @@ public class TestAppGUI implements Reporter{
 		try
 		{
 			this.analyser = aMgr.getObjectByID(newConfig.get("AnalyserReference").intValue);
+			show();
 			return true;
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	@Override
 	public void generateReport(List<RecordSet<?>> data) {
-		
+		if(analyser == null)
+		{
+			return;
+		}
 		// TODO Auto-generated method stub
 		Calendar c = Calendar.getInstance();
 		//Set from and to dates.
