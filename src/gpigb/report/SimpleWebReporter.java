@@ -158,12 +158,24 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("Store", new ConfigurationValue(ValueType.Store, null));
-		handler.getConfiguration(configSpec);
-		store = (StrongReference<Store>) configSpec.get("Store").value;
+		return configSpec;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
+		{
+			store = (StrongReference<Store>) newSpec.get("Store").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	private int id;

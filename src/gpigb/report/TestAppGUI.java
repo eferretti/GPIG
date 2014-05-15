@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -142,15 +143,23 @@ public class TestAppGUI implements Reporter{
 	}
 
 	@Override
-	public void configure(ConfigurationHandler handler) {
+	public Map<String, ConfigurationValue> getConfigSpec() {
 		HashMap<String, ConfigurationValue> map = new HashMap<>();
-		
 		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, null));
-		
-		handler.getConfiguration(map);
-		
-		this.analyser = (StrongReference<Analyser>) map.get("AnalyserReference").value;
-		
+		return map;
+	}
+	
+	public boolean setConfig(Map<String, ConfigurationValue> newConfig)
+	{
+		try
+		{
+			this.analyser = (StrongReference<Analyser>) newConfig.get("AnalyserReference").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	private int mode = 1;

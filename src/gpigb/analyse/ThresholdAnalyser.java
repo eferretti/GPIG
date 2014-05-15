@@ -10,6 +10,7 @@ import gpigb.report.OutOfRangeReporter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An analyser which takes an upper and lower bound and reports when sensor
@@ -59,18 +60,27 @@ public class ThresholdAnalyser implements Analyser
 	}
 
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, Integer.MIN_VALUE));
 		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, Integer.MAX_VALUE));
-		
-		handler.getConfiguration(configSpec);
-		
-		this.lowerThreshold = ((Integer)configSpec.get("Min").value).intValue();
-		this.upperThreshold = ((Integer)configSpec.get("Max").value).intValue();
+		return configSpec;
 	}
-
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
+		{
+			this.lowerThreshold = (Integer) newSpec.get("Min").value;
+			this.upperThreshold = (Integer) newSpec.get("Max").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+	}
 
 	private int id;
 	public void setID(int newID)

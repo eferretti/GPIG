@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import gpigb.analyse.Analyser;
 import gpigb.analyse.MeanAnalyser;
 import gpigb.classloading.ComponentManager.ModuleSummary;
 import gpigb.classloading.JarFileComponentManager;
 import gpigb.classloading.StrongReference;
+import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.handlers.GUIConfigHandler;
 import gpigb.external.HUMSSystem;
 import gpigb.external.HUMSSystemImpl;
@@ -66,11 +68,25 @@ public class PortSensorHumsLocal {
 //		Integer rStateID = rMgr.getModuleIDByName("gpigb.report.TestAppGUI");
 //		Reporter rState = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
 		
+		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr);
 		
-		st.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
-		aMean.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
-		s1.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));		
-		rState.configure(new GUIConfigHandler(aMgr, rMgr, stMgr, seMgr));
+		Map<String, ConfigurationValue> config;
+		
+		config = st.getConfigSpec();
+		configHandler.getConfiguration(config);
+		st.setConfig(config);
+		
+		config = aMean.getConfigSpec();
+		configHandler.getConfiguration(config);
+		aMean.setConfig(config);
+		
+		config = s1.getConfigSpec();
+		configHandler.getConfiguration(config);
+		s1.setConfig(config);
+		
+		config = rState.getConfigSpec();
+		configHandler.getConfiguration(config);
+		rState.setConfig(config);
 		while (true)
 		{}
 	}

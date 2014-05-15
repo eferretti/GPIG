@@ -10,6 +10,7 @@ import gpigb.store.Store;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StandDevAnalyser implements Analyser{
 	private int id;
@@ -27,12 +28,24 @@ public class StandDevAnalyser implements Analyser{
 	}
 
 	@Override
-	public void configure(ConfigurationHandler handler) {
+	public Map<String, ConfigurationValue> getConfigSpec() {
 		
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
 		configMap.put("Store", new ConfigurationValue(ValueType.Store, null));
-		handler.getConfiguration(configMap);
-		store = (StrongReference<Store>) configMap.get("Store").value;
+		return configMap;
+	}
+	
+	public boolean setConfig(Map<String, ConfigurationValue> newConfig)
+	{
+		try
+		{
+			this.store = (StrongReference<Store>)newConfig.get("Store").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	@Override

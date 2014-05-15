@@ -6,9 +6,11 @@ import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 
+import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
@@ -147,16 +149,31 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 	}
 
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> spec = new HashMap<>();
 		spec.put("OID", new ConfigurationValue(ValueType.String, oidString));
-		spec.put("Port", new ConfigurationValue(ValueType.Integer, port));
-		handler.getConfiguration(spec);
-		synchronized(this)
+		spec.put("Port", new ConfigurationValue(ValueType.String, port));
+		return spec;
+//		handler.getConfiguration(spec);
+//		synchronized(this)
+//		{
+//			oidString = (String) spec.get("OID").value;
+//			port = ((Integer)spec.get("Port").value).toString();
+//		}
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
 		{
-			oidString = (String) spec.get("OID").value;
-			port = ((Integer)spec.get("Port").value).toString();
+			this.oidString = (String) newSpec.get("OID").value;
+			this.port = (String) newSpec.get("Port").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
 		}
 	}
 

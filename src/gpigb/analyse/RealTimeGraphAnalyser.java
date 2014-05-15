@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RealTimeGraphAnalyser implements Analyser
 {
@@ -45,14 +46,25 @@ public class RealTimeGraphAnalyser implements Analyser
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void configure(ConfigurationHandler handler)
+	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("Plotter", new ConfigurationValue(ValueType.Reporter, null));
 		configSpec.put("Title", new ConfigurationValue(ValueType.String, null));
-		handler.getConfiguration(configSpec);
-		this.plotter = (StrongReference<Reporter>) configSpec.get("Plotter").value;
-		System.out.println("New title: " + configSpec.get("Title").value);
+		return configSpec;
+	}
+	
+	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec)
+	{
+		try
+		{
+			this.plotter = (StrongReference<Reporter>) newSpec.get("Plotter").value;
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 
 	@Override
