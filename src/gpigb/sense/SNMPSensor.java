@@ -3,17 +3,12 @@ package gpigb.sense;
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.Patchable;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
-import gpigb.report.Reporter;
-import gpigb.sense.Sensor;
 import gpigb.store.Store;
-import gpigb.analyse.Analyser;
 
-import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;

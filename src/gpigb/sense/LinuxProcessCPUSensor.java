@@ -1,5 +1,13 @@
 package gpigb.sense;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.store.Store;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -7,17 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-
-import gpigb.analyse.Analyser;
-import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
-import gpigb.configuration.ConfigurationValue;
-import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.SensorRecord;
-import gpigb.report.Reporter;
-import gpigb.store.Store;
 
 public class LinuxProcessCPUSensor implements Sensor<Float>
 {

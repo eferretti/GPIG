@@ -3,16 +3,14 @@ package gpigb.report;
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.sense.Sensor;
-import gpigb.report.Reporter;
-import gpigb.sense.Sensor;
 import gpigb.store.Store;
-import gpigb.analyse.Analyser;
 
+import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,13 +22,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JButton;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import java.awt.Canvas;
-import java.awt.Color;
 
 public class TestAppGUI implements Reporter{
 

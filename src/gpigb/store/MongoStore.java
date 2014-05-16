@@ -3,14 +3,12 @@ package gpigb.store;
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.Patchable;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
 import gpigb.sense.Sensor;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;

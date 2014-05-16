@@ -1,7 +1,5 @@
 package gpigb.classloading;
 
-import gpigb.classloading.ComponentManager.ModuleSummary;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;

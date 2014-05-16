@@ -1,12 +1,14 @@
 package gpigb.configuration.handlers;
 
+import gpigb.classloading.ComponentManager.InstanceSummary;
+import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -17,16 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import third_party.SpringUtilities;
-
-import gpigb.analyse.Analyser;
-import gpigb.classloading.ComponentManager;
-import gpigb.classloading.ComponentManager.InstanceSummary;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
-import gpigb.configuration.ConfigurationValue;
-import gpigb.report.Reporter;
-import gpigb.sense.Sensor;
-import gpigb.store.Store;
 
 public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 {

@@ -1,26 +1,15 @@
 package gpigb.testruns;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import gpigb.analyse.Analyser;
-import gpigb.analyse.MeanAnalyser;
-import gpigb.classloading.ComponentManager.ModuleSummary;
 import gpigb.classloading.JarFileComponentManager;
-import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.handlers.GUIConfigHandler;
-import gpigb.external.HUMSSystem;
-import gpigb.external.HUMSSystemImpl;
 import gpigb.report.Reporter;
 import gpigb.report.TestAppGUI;
-import gpigb.sense.PortSensor;
 import gpigb.sense.Sensor;
-import gpigb.store.InMemoryStore;
 import gpigb.store.Store;
+
+import java.util.Map;
 
 public class PortSensorHumsLocal {
 	public static void main(String[] args) throws InterruptedException

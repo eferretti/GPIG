@@ -1,15 +1,13 @@
 package gpigb.sense.tests;
 
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.sense.RandomValueSensor;
 import gpigb.sense.Sensor;
 import gpigb.sense.SensorObserver;
 
-import java.io.PrintStream;
 import java.util.Date;
 import java.util.Map;
 

@@ -2,12 +2,10 @@ package gpigb.store;
 
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
 import gpigb.sense.Sensor;
 
@@ -26,7 +24,6 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mongodb.util.Hash;
 
 /**
  * A store implementation which stores objects as JSON files on the local file

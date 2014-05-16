@@ -1,25 +1,22 @@
 package gpigb.sense;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.report.Reporter;
+import gpigb.store.Store;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import gpigb.analyse.Analyser;
-import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
-import gpigb.configuration.ConfigurationValue;
-import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.report.Reporter;
-import gpigb.store.Store;
 
 public class PortSensor implements Sensor<Double>, Runnable {
 	

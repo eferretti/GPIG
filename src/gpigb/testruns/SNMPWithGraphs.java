@@ -1,12 +1,13 @@
 package gpigb.testruns;
 
+import gpigb.external.HUMSSystem;
+import gpigb.external.HUMSSystemImpl;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import gpigb.external.HUMSSystem;
-import gpigb.external.HUMSSystemImpl;
 
 public class SNMPWithGraphs
 {

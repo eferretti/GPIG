@@ -1,8 +1,8 @@
 package gpigb.report.tests;
 
 import static org.junit.Assert.assertEquals;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.OutOfRangeReporter;
 import gpigb.report.Reporter;
 

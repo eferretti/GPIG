@@ -1,19 +1,14 @@
 package gpigb.report;
 
 import gpigb.analyse.Analyser;
-import gpigb.analyse.NullAnalyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
 import gpigb.sense.Sensor;
-import gpigb.store.InMemoryStore;
 import gpigb.store.Store;
 
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;

@@ -2,10 +2,7 @@ package gpigb.report;
 
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
-import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.sense.Sensor;
 import gpigb.store.Store;

@@ -2,9 +2,7 @@ package gpigb.report;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -15,13 +13,10 @@ import fi.iki.elonen.NanoHTTPD;
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
 import gpigb.sense.Sensor;
-import gpigb.sense.SensorObserver;
 import gpigb.store.Store;
 
 /**
