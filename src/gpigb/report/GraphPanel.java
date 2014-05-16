@@ -63,6 +63,8 @@ class GraphPanel extends JComponent
 	private int avg = 0;
 	private int m_avg = 0;
 	private LinkedList<Integer> moving_avg;
+	
+	protected String label = "m/s";
 
 	/**
 	 * Constructor for GraphPanel
@@ -128,11 +130,12 @@ class GraphPanel extends JComponent
 	private void drawAxis()
 	{
 		Graphics g = graphImage.getGraphics();
-		g.setColor(AXIS_COLOR);
+		
 		int set_x = 6;
 		int cur_y = (int) (yMin);
 		int change_y = (int) ((yMax - yMin) / axisYgran);
-
+		g.drawString(label, 5, yMin - 15);
+		g.setColor(AXIS_COLOR);
 		for (int i = 0; i <= axisYgran; i++) {
 			int toPrint = (int) ((height * yAxisHeight - cur_y) / Math.pow(zoomOut, SCALE_TIMES));
 			toPrint /= zoomIn;
