@@ -19,12 +19,14 @@ public interface HUMSSystem extends Remote
 	public List<ModuleSummary> listAnalyserModules() throws RemoteException;
 	public int createAnalyser(int moduleID) throws RemoteException;
 	public List<InstanceSummary> listAnalysers() throws RemoteException;
-	public StrongReference<Analyser> getAnalyser(int id) throws RemoteException;
+	public Map<String, ConfigurationValue> getAnalyserConfig(int id) throws RemoteException;
+	public boolean setAnalyserConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException;
 
 	public List<ModuleSummary> listReporterModules() throws RemoteException;
 	public int createReporter(int moduleID) throws RemoteException;
 	public List<InstanceSummary> listReporters() throws RemoteException;
-	public StrongReference<Reporter> getReporter(int id) throws RemoteException;
+	public Map<String, ConfigurationValue> getReporterConfig(int id) throws RemoteException;
+	public boolean setReporterConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException;
 
 	public List<ModuleSummary> listSensorModules() throws RemoteException;
 	public int createSensor(int moduleID) throws RemoteException;
@@ -35,7 +37,8 @@ public interface HUMSSystem extends Remote
 	public List<ModuleSummary> listStoreModules() throws RemoteException;
 	public int createStore(int moduleID) throws RemoteException;
 	public List<InstanceSummary> listStores() throws RemoteException;
-	public StrongReference<Store> getStore(int id) throws RemoteException;
+	public Map<String, ConfigurationValue> getStoreConfig(int id) throws RemoteException;
+	public boolean setStoreConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException;
 	
 	public void uploadJarFile(byte[] contents) throws IOException, RemoteException;
 }

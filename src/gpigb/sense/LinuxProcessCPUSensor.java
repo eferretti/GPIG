@@ -29,7 +29,7 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> spec = new HashMap<>();
-		spec.put("Process ID", new ConfigurationValue(ValueType.Integer, 0));
+		spec.put("Process ID", new ConfigurationValue(ValueType.Integer, pid));
 		return spec;
 //		pid = (Integer)spec.get("Process ID").value;
 //		statFile = new File("/proc/" + pid + "/stat");

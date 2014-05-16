@@ -33,9 +33,10 @@ public class OutOfRangeReporter implements Reporter
 	@Override
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
-		HashMap<String, ConfigurationValue> config = new HashMap<>();
-		//config.put("PrintStream", new ConfigurationValue(ValueType.OutStream, null));
-		return config;
+		return null;
+//		HashMap<String, ConfigurationValue> config = new HashMap<>();
+//		//config.put("PrintStream", new ConfigurationValue(ValueType.OutStream, null));
+//		return config;
 	}
 	
 	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)

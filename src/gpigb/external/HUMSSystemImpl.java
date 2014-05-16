@@ -33,6 +33,11 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 		rMgr.addModuleDirectory("./Modules/");
 		seMgr.addModuleDirectory("./Modules/");
 		stMgr.addModuleDirectory("./Modules/");
+		
+		aMgr.refreshModules();
+		rMgr.refreshModules();
+		seMgr.refreshModules();
+		stMgr.refreshModules();
 	}
 	
 	@Override
@@ -54,9 +59,15 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	}
 
 	@Override
-	public StrongReference<Analyser> getAnalyser(int id) throws RemoteException
+	public Map<String, ConfigurationValue> getAnalyserConfig(int id) throws RemoteException
 	{
-		return aMgr.getObjectByID(id);
+		return aMgr.getObjectByID(id).get().getConfigSpec();
+	}
+
+	@Override
+	public boolean setAnalyserConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException
+	{
+		return aMgr.getObjectByID(id).get().setConfig(newConfig, aMgr, rMgr, seMgr, stMgr);
 	}
 
 	@Override
@@ -78,9 +89,15 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	}
 
 	@Override
-	public StrongReference<Reporter> getReporter(int id) throws RemoteException
+	public Map<String, ConfigurationValue> getReporterConfig(int id) throws RemoteException
 	{
-		return rMgr.getObjectByID(id);
+		return rMgr.getObjectByID(id).get().getConfigSpec();
+	}
+
+	@Override
+	public boolean setReporterConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException
+	{
+		return rMgr.getObjectByID(id).get().setConfig(newConfig, aMgr, rMgr, seMgr, stMgr);
 	}
 
 	@Override
@@ -111,7 +128,7 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	@Override
 	public boolean setSensorConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException
 	{
-		return seMgr.getObjectByID(id).get().setConfig(newConfig, null, null, null, null);
+		return seMgr.getObjectByID(id).get().setConfig(newConfig, aMgr, rMgr, seMgr, stMgr);
 	}
 
 	@Override
@@ -133,24 +150,21 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	}
 
 	@Override
-	public StrongReference<Store> getStore(int id) throws RemoteException
+	public Map<String, ConfigurationValue> getStoreConfig(int id) throws RemoteException
 	{
-		return stMgr.getObjectByID(id);
+		return stMgr.getObjectByID(id).get().getConfigSpec();
+	}
+
+	@Override
+	public boolean setStoreConfig(int id, Map<String, ConfigurationValue> newConfig) throws RemoteException
+	{
+		return stMgr.getObjectByID(id).get().setConfig(newConfig, aMgr, rMgr, seMgr, stMgr);
 	}
 
 	@Override
 	public void uploadJarFile(byte[] fileContent) throws IOException, RemoteException
 	{	
-		String name = "./Modules/";
-		Random r = new Random();
-		for(int i = 0; i < 25; ++i)
-		{
-			if(i > 0 && i%5 == 0)
-				name += "-";
-			
-			name += (char)(r.nextInt(26) + (int)'a');
-		}
-		name += ".jar";
+		String name = "./Modules/modules.jar";
 		
 		File saveFile = new File(name);
 		saveFile.getParentFile().mkdirs();

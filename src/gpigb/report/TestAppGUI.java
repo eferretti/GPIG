@@ -161,7 +161,7 @@ public class TestAppGUI implements Reporter{
 	@Override
 	public Map<String, ConfigurationValue> getConfigSpec() {
 		HashMap<String, ConfigurationValue> map = new HashMap<>();
-		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, 0));
+		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, analyser != null ? analyser.get().getID() : 0));
 		return map;
 	}
 	

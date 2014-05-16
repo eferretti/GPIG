@@ -39,7 +39,7 @@ public class MeanAnalyser implements Analyser {
 	public HashMap<String, ConfigurationValue> getConfigSpec() 
 	{
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
-		configMap.put("Store", new ConfigurationValue(ValueType.Store, 0));
+		configMap.put("Store", new ConfigurationValue(ValueType.Store, store != null ? store.get().getID() : 0));
 		return configMap;
 	}
 	
