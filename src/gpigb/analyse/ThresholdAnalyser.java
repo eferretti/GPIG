@@ -66,8 +66,8 @@ public class ThresholdAnalyser implements Analyser
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
-		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, Integer.MIN_VALUE));
-		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, Integer.MAX_VALUE));
+		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, lowerThreshold));
+		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, upperThreshold));
 		return configSpec;
 	}
 	

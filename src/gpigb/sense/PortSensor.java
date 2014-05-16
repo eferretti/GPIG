@@ -104,8 +104,8 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	{ 
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		
-		configSpec.put("HostName", new ConfigurationValue(ValueType.String, "localhost"));
-		configSpec.put("Port", new ConfigurationValue(ValueType.Integer, new Integer(4444)));
+		configSpec.put("HostName", new ConfigurationValue(ValueType.String, hostName));
+		configSpec.put("Port", new ConfigurationValue(ValueType.Integer, portNumber));
 
 		return configSpec;
 	}

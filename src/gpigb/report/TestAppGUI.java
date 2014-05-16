@@ -166,6 +166,7 @@ public class TestAppGUI implements Reporter{
 
 	@Override
 	public Map<String, ConfigurationValue> getConfigSpec() {
+
 		switch(currentConfigStep){
 		case 1 : {
 			HashMap<String, ConfigurationValue> map = new HashMap<>();
@@ -184,6 +185,7 @@ public class TestAppGUI implements Reporter{
 		default : break;
 		}
 		return  new HashMap<>();
+
 	}
 	
 	public boolean setConfig(Map<String, ConfigurationValue> newConfig, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)

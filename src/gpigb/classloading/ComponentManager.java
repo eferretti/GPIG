@@ -90,5 +90,10 @@ public interface ComponentManager<Interface>
 			this.instanceID = instanceID;
 			this.moduleID = moduleID;
 		}
+		
+		public String toString()
+		{
+			return "Component " + instanceID + ": " + this.displayName;
+		}
 	}
 }

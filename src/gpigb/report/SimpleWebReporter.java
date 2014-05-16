@@ -159,7 +159,7 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
-		configSpec.put("Store", new ConfigurationValue(ValueType.Store, 0));
+		configSpec.put("Store", new ConfigurationValue(ValueType.Store, store != null ? store.get().getID() : 0));
 		return configSpec;
 	}
 	
