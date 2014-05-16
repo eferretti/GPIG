@@ -2,8 +2,8 @@ package gpigb.data.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 
 import java.util.Date;
 

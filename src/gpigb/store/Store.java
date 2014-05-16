@@ -2,11 +2,12 @@ package gpigb.store;
 
 import gpigb.configuration.Configurable;
 import gpigb.data.RecordSet;
+import gpigb.sense.SensorObserver;
 
 /**
  * Common methods between all store implementations
  */
-public interface Store extends Configurable
+public interface Store extends Configurable, SensorObserver
 {
 	/**
 	 * Fills a provided record set with values from the store

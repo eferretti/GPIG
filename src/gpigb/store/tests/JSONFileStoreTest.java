@@ -1,8 +1,8 @@
 package gpigb.store.tests;
 
 import static org.junit.Assert.assertEquals;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.store.JSONFileStore;
 
 import java.io.BufferedReader;

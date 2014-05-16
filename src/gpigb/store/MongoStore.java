@@ -3,14 +3,12 @@ package gpigb.store;
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.Patchable;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
 import gpigb.sense.Sensor;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
@@ -109,6 +107,30 @@ public class MongoStore extends Patchable implements Store
 	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		return true;
+	}
+
+	@Override
+	public boolean update(int sensorID, Integer reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, Double reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, String reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(SensorRecord<?> reading) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

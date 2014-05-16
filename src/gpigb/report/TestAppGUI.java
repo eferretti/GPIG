@@ -3,16 +3,14 @@ package gpigb.report;
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.sense.Sensor;
-import gpigb.report.Reporter;
-import gpigb.sense.Sensor;
 import gpigb.store.Store;
-import gpigb.analyse.Analyser;
 
+import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+<<<<<<< HEAD
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
@@ -34,6 +33,8 @@ import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+=======
+>>>>>>> branch 'master' of https://github.com/eferretti/GPIG
 
 public class TestAppGUI implements Reporter{
 	
@@ -173,10 +174,12 @@ public class TestAppGUI implements Reporter{
 		try
 		{
 			this.analyser = aMgr.getObjectByID(newConfig.get("AnalyserReference").intValue);
+			show();
 			return true;
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -184,7 +187,15 @@ public class TestAppGUI implements Reporter{
 	private int mode = 1;
 	@Override
 	public void generateReport(List<RecordSet<?>> data) {
+<<<<<<< HEAD
 		
+=======
+		if(analyser == null)
+		{
+			return;
+		}
+		// TODO Auto-generated method stub
+>>>>>>> branch 'master' of https://github.com/eferretti/GPIG
 		Calendar c = Calendar.getInstance();
 		//Set from and to dates.
 		Date d2 = c.getTime();
@@ -192,13 +203,26 @@ public class TestAppGUI implements Reporter{
 		d1.setMinutes(d2.getMinutes() - period);
 		
 		//For each sensor set average and check for mode change
+<<<<<<< HEAD
 		for(int i = 0; i < sensors; i++){
+=======
+		int sensors = 1;
+		for(int i = 1; i < sensors + 1; i++){
+>>>>>>> branch 'master' of https://github.com/eferretti/GPIG
 			
+<<<<<<< HEAD
 			//Get the measure from analyser
 			RecordSet<Double> rs = new RecordSet<Double>(d1, d2, i);//HOW TO SELECT WHICH SENSOR? WHAT WILL THE IDS BE?
 			//analyser.get().analyse(rs);
 			//double measure = rs.getDataAtPosition(0).getData();
 			double measure = 11;
+=======
+			//Get average from analyser
+			RecordSet<Double> rs = new RecordSet<Double>(d1, d2, i);
+			analyser.get().analyse(rs);
+			double average = rs.getDataAtPosition(0).getData();
+			//double average = 11;
+>>>>>>> branch 'master' of https://github.com/eferretti/GPIG
 			
 			
 			//Set mode depending on the measure and thresholds

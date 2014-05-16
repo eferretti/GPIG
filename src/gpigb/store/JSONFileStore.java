@@ -2,12 +2,10 @@ package gpigb.store;
 
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.SensorRecord;
 import gpigb.data.RecordSet;
+import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
 import gpigb.sense.Sensor;
 
@@ -26,7 +24,6 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mongodb.util.Hash;
 
 /**
  * A store implementation which stores objects as JSON files on the local file
@@ -254,5 +251,29 @@ public class JSONFileStore implements Store
 	public int getID()
 	{
 		return this.id;
+	}
+
+	@Override
+	public boolean update(int sensorID, Integer reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, Double reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, String reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(SensorRecord<?> reading) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

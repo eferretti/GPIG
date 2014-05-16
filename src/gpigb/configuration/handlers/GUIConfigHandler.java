@@ -1,12 +1,14 @@
 package gpigb.configuration.handlers;
 
+import gpigb.classloading.ComponentManager.InstanceSummary;
+import gpigb.configuration.ConfigurationHandler;
+import gpigb.configuration.ConfigurationValue;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -17,16 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import third_party.SpringUtilities;
-
-import gpigb.analyse.Analyser;
-import gpigb.classloading.ComponentManager;
-import gpigb.classloading.ComponentManager.InstanceSummary;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
-import gpigb.configuration.ConfigurationValue;
-import gpigb.report.Reporter;
-import gpigb.sense.Sensor;
-import gpigb.store.Store;
 
 public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 {
@@ -48,6 +40,10 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 	@Override
 	public void getConfiguration(final Map<String, ConfigurationValue> configSpec)
 	{
+		getContentPane().removeAll();
+		for(WindowListener wl : getWindowListeners())
+			removeWindowListener(wl);
+		
 		SpringLayout layout = new SpringLayout();
 		getContentPane().setLayout(layout);
 		
@@ -76,6 +72,8 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				
 				case Integer:
 					JSpinner intSpinner = new JSpinner();
+					intSpinner.setValue(configSpec.get(key).intValue);
+					intSpinner.updateUI();
 					component = intSpinner;
 					++rows;
 					break;
@@ -109,6 +107,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				
 				case String:
 					JTextField textField = new JTextField(30);
+					textField.setText(configSpec.get(key).strValue);
 					component = textField;
 					++rows;
 					break;
@@ -144,6 +143,18 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 		SpringUtilities.makeCompactGrid(getContentPane(), rows, 2, 10, 10, 10, 10);
 		pack();
 		setVisible(true);
+		
+		waiting = true;
+		
+		while(waiting)
+			try
+			{
+				Thread.sleep(10);
+			}
+			catch(Exception e)
+			{
+				
+			}
 	}
 	
 	private void close(Map<String, ConfigurationValue> configSpec)
@@ -186,5 +197,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 		}
 			
 		setVisible(false);
+		
+		waiting = false;
 	}
 }

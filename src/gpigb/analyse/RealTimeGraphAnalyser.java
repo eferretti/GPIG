@@ -2,18 +2,13 @@ package gpigb.analyse;
 
 import gpigb.classloading.ComponentManager;
 import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
 import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
 import gpigb.sense.Sensor;
-import gpigb.sense.SensorObserver;
-import gpigb.report.Reporter;
-import gpigb.sense.Sensor;
 import gpigb.store.Store;
-import gpigb.analyse.Analyser;
 
 import java.util.ArrayList;
 import java.util.Calendar;

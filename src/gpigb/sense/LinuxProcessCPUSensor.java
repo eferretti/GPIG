@@ -1,5 +1,13 @@
 package gpigb.sense;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.data.SensorRecord;
+import gpigb.report.Reporter;
+import gpigb.store.Store;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -7,17 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-
-import gpigb.analyse.Analyser;
-import gpigb.classloading.ComponentManager;
-import gpigb.classloading.StrongReference;
-import gpigb.configuration.ConfigurationHandler;
-import gpigb.configuration.ConfigurationValue;
-import gpigb.configuration.ConfigurationValue.ValueType;
-import gpigb.data.SensorRecord;
-import gpigb.report.Reporter;
-import gpigb.store.Store;
 
 public class LinuxProcessCPUSensor implements Sensor<Float>
 {
@@ -26,7 +23,7 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	int pid = 0;
 	int cpuID = -1;
 	long oldUtime = -1, oldStime = -1;
-	List<SensorObserver<Float>> observers = new ArrayList<>();
+	List<SensorObserver> observers = new ArrayList<>();
 	
 	@Override
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
@@ -116,14 +113,14 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	}
 
 	@Override
-	public void registerObserver(SensorObserver<Float> obs)
+	public void registerObserver(SensorObserver obs)
 	{
 		if(!observers.contains(obs))
 			observers.add(obs);
 	}
 
 	@Override
-	public void removeObserver(SensorObserver<Float> obs)
+	public void removeObserver(SensorObserver obs)
 	{
 		observers.remove(obs);
 	}
@@ -131,7 +128,7 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	@Override
 	public void notifyObservers()
 	{
-		for(SensorObserver<Float> obs : observers)
+		for(SensorObserver obs : observers)
 			obs.update(new SensorRecord<Float>(getID(), lastReading, "CPU_ID", ""+cpuID));
 	}
 
