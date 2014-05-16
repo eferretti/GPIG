@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class PortSensor implements Sensor<Double>, Runnable {
 	
-	private ArrayList<SensorObserver<Double>> observers;
+	private ArrayList<SensorObserver> observers;
 	private Double lastReading;
 	private boolean active;
 	private Socket clientSocket;
@@ -28,43 +28,75 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	private BufferedReader inSocketStream;
 	private String hostName;
 	private Integer portNumber;
+	private boolean blocking = false;
 	
 	public PortSensor()
 	{
 		hostName = "localhost";
-		portNumber = 4444;
-		observers = new ArrayList<SensorObserver<Double>>();
+		portNumber = 444;
+		observers = new ArrayList<SensorObserver>();
 		new Thread(this).start();
 	}
 	
 	public void run()
 	{
 		Double reading;
-		while(true )
+		try 
 		{
-			try {
-					clientSocket = new Socket(hostName, portNumber);
-			        outSocketStream = new PrintWriter(clientSocket.getOutputStream(), true);
-			        inSocketStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			        	        
-			        while ((reading = Double.parseDouble(inSocketStream.readLine())) != null) {
-			        	lastReading = reading;
-			        	System.out.println("echo: " + reading);
-	//		        	this.notifyObservers();
-			        }
-			        Thread.sleep(100);
-		        } catch (UnknownHostException e) {
-		            System.err.println("Don't know about host " + hostName);
-		            	
-		        } catch (IOException e) {
-		        	System.err.println("Error. Port Stream IO " + hostName);
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					System.err.println("Error. Insomnia" + hostName);
-					e.printStackTrace();
-				}
+			clientSocket = new Socket(hostName, portNumber);
+	        outSocketStream = new PrintWriter(clientSocket.getOutputStream(), true);
+	        inSocketStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		} 
+		catch (UnknownHostException e1) 
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		catch (IOException e1) 
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
+		while(true)
+		{
+			try 
+			{
+		        while ((reading = Double.parseDouble(inSocketStream.readLine())) != null) 
+		        {
+		        	lastReading = reading;
+		        	System.out.println("echo: " + reading);
+		        	this.notifyObservers();
+		        }
+	        } 
+			catch (UnknownHostException e) 
+			{
+	            System.err.println("Don't know about host " + hostName);
+	        }
+			catch (IOException e) 
+			{
+	        	System.err.println("Error. Port Stream IO " + hostName);
+//				System.out.println("Pre");
+	        	e.printStackTrace();
+//				System.out.println("Post");	
+			}
+			catch (Exception e) 
+			{
+//				System.err.println("Error. NullPtr?");
+//				e.printStackTrace();
+			}
+//			System.out.println("Post Post");
+			
+			try
+			{
+//				System.out.println("Looping");
+			}
+			catch (Exception e) 
+			{
+				System.err.println("Error. Insomnia" + hostName);
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override
@@ -72,8 +104,8 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	{ 
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		
-		configSpec.put("HostName", new ConfigurationValue(ValueType.String, ""));
-		configSpec.put("Port", new ConfigurationValue(ValueType.Integer, 0));
+		configSpec.put("HostName", new ConfigurationValue(ValueType.String, "localhost"));
+		configSpec.put("Port", new ConfigurationValue(ValueType.Integer, new Integer(4444)));
 
 		return configSpec;
 	}
@@ -84,6 +116,15 @@ public class PortSensor implements Sensor<Double>, Runnable {
 		try {
 			this.hostName = (String) newSpec.get("HostName").strValue;
 			this.portNumber = (Integer) newSpec.get("Port").intValue;
+			
+			if(inSocketStream != null)
+				inSocketStream.close();
+
+			if(outSocketStream != null)
+			outSocketStream.close();
+
+			if(clientSocket != null)
+				clientSocket.close();
 			
 			clientSocket = new Socket(hostName, portNumber);
 			outSocketStream = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -117,12 +158,12 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	}
 
 	@Override
-	public void registerObserver(SensorObserver<Double> obs) {
+	public void registerObserver(SensorObserver obs) {
 		observers.add(obs);
 	}
 
 	@Override
-	public void removeObserver(SensorObserver<Double> obs) {
+	public void removeObserver(SensorObserver obs) {
 		observers.remove(obs);
 		
 	}
@@ -130,9 +171,12 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	@Override
 	public void notifyObservers() {
 		
-		Iterator<SensorObserver<Double>> it = observers.iterator();
+		Iterator<SensorObserver> it = observers.iterator();
 		while (it.hasNext()) {
-			it.next().update(id, lastReading);
+			if(!it.next().update(id, lastReading))
+			{
+				System.out.println("Error Sensor Reading not stored.");
+			}
 		}
 		
 	}

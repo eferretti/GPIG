@@ -1,5 +1,7 @@
 package gpigb.classloading;
 
+import gpigb.configuration.Configurable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -200,8 +202,8 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 			// Lookup the required module and create a new instance and record
 			Interface instance = modules.get(moduleID).clz.newInstance();
 			ret = IDGenerator.getNextID();
-			if(instance instanceof Patchable)
-				((Patchable)instance).setID(ret);
+			if(instance instanceof Configurable)
+				((Configurable)instance).setID(ret);
 			instances.put(new InstanceSummary(ret, moduleID, ""), new StrongReference<Interface>(instance));
 		}
 		catch (Exception e) {

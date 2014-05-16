@@ -40,6 +40,10 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 	@Override
 	public void getConfiguration(final Map<String, ConfigurationValue> configSpec)
 	{
+		getContentPane().removeAll();
+		for(WindowListener wl : getWindowListeners())
+			removeWindowListener(wl);
+		
 		SpringLayout layout = new SpringLayout();
 		getContentPane().setLayout(layout);
 		
@@ -68,6 +72,8 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				
 				case Integer:
 					JSpinner intSpinner = new JSpinner();
+					intSpinner.setValue(configSpec.get(key).intValue);
+					intSpinner.updateUI();
 					component = intSpinner;
 					++rows;
 					break;
@@ -101,6 +107,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				
 				case String:
 					JTextField textField = new JTextField(30);
+					textField.setText(configSpec.get(key).strValue);
 					component = textField;
 					++rows;
 					break;
@@ -136,6 +143,18 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 		SpringUtilities.makeCompactGrid(getContentPane(), rows, 2, 10, 10, 10, 10);
 		pack();
 		setVisible(true);
+		
+		waiting = true;
+		
+		while(waiting)
+			try
+			{
+				Thread.sleep(10);
+			}
+			catch(Exception e)
+			{
+				
+			}
 	}
 	
 	private void close(Map<String, ConfigurationValue> configSpec)
@@ -178,5 +197,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 		}
 			
 		setVisible(false);
+		
+		waiting = false;
 	}
 }

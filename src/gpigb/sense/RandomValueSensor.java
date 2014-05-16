@@ -20,7 +20,7 @@ import java.util.Random;
 public class RandomValueSensor implements Sensor<Integer>, Runnable
 {
 
-	private ArrayList<SensorObserver<Integer>> observers;
+	private ArrayList<SensorObserver> observers;
 	private Integer currentReading;
 
 	private Integer min = 0;
@@ -28,7 +28,7 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 
 	public RandomValueSensor()
 	{
-		observers = new ArrayList<SensorObserver<Integer>>();
+		observers = new ArrayList<SensorObserver>();
 		new Thread(this).start();
 	}
 
@@ -63,13 +63,13 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 	}
 
 	@Override
-	public void registerObserver(SensorObserver<Integer> obs)
+	public void registerObserver(SensorObserver obs)
 	{
 		observers.add(obs);
 	}
 
 	@Override
-	public void removeObserver(SensorObserver<Integer> obs)
+	public void removeObserver(SensorObserver obs)
 	{
 		observers.remove(obs);
 	}
@@ -77,7 +77,7 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 	@Override
 	public void notifyObservers()
 	{
-		Iterator<SensorObserver<Integer>> it = observers.iterator();
+		Iterator<SensorObserver> it = observers.iterator();
 		while (it.hasNext()) {
 			it.next().update(id, currentReading);
 		}

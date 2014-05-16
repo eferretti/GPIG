@@ -109,4 +109,28 @@ public class MongoStore extends Patchable implements Store
 		return true;
 	}
 
+	@Override
+	public boolean update(int sensorID, Integer reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, Double reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(int sensorID, String reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(SensorRecord<?> reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

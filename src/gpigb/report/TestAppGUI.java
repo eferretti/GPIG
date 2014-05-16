@@ -38,21 +38,6 @@ public class TestAppGUI implements Reporter{
 	
 	private StrongReference<Analyser> analyser;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TestAppGUI window = new TestAppGUI();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
@@ -140,17 +125,22 @@ public class TestAppGUI implements Reporter{
 		try
 		{
 			this.analyser = aMgr.getObjectByID(newConfig.get("AnalyserReference").intValue);
+			show();
 			return true;
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	@Override
 	public void generateReport(List<RecordSet<?>> data) {
-		
+		if(analyser == null)
+		{
+			return;
+		}
 		// TODO Auto-generated method stub
 		Calendar c = Calendar.getInstance();
 		//Set from and to dates.
@@ -159,14 +149,14 @@ public class TestAppGUI implements Reporter{
 		d1.setMinutes(d2.getMinutes() - period);
 		
 		//For each sensor set average and check for mode change
-		int sensors = 2;
+		int sensors = 1;
 		for(int i = 1; i < sensors + 1; i++){
 			
 			//Get average from analyser
 			RecordSet<Double> rs = new RecordSet<Double>(d1, d2, i);
-			//analyser.get().analyse(rs);
-			//double average = rs.getDataAtPosition(0).getData();
-			double average = 11;
+			analyser.get().analyse(rs);
+			double average = rs.getDataAtPosition(0).getData();
+			//double average = 11;
 			
 			
 			//Set mode depending on average

@@ -23,7 +23,7 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	int pid = 0;
 	int cpuID = -1;
 	long oldUtime = -1, oldStime = -1;
-	List<SensorObserver<Float>> observers = new ArrayList<>();
+	List<SensorObserver> observers = new ArrayList<>();
 	
 	@Override
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
@@ -113,14 +113,14 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	}
 
 	@Override
-	public void registerObserver(SensorObserver<Float> obs)
+	public void registerObserver(SensorObserver obs)
 	{
 		if(!observers.contains(obs))
 			observers.add(obs);
 	}
 
 	@Override
-	public void removeObserver(SensorObserver<Float> obs)
+	public void removeObserver(SensorObserver obs)
 	{
 		observers.remove(obs);
 	}
@@ -128,7 +128,7 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	@Override
 	public void notifyObservers()
 	{
-		for(SensorObserver<Float> obs : observers)
+		for(SensorObserver obs : observers)
 			obs.update(new SensorRecord<Float>(getID(), lastReading, "CPU_ID", ""+cpuID));
 	}
 

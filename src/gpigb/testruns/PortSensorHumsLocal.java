@@ -1,11 +1,11 @@
 package gpigb.testruns;
 
 import gpigb.analyse.Analyser;
+import gpigb.classloading.IDGenerator;
 import gpigb.classloading.JarFileComponentManager;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.handlers.GUIConfigHandler;
 import gpigb.report.Reporter;
-import gpigb.report.TestAppGUI;
 import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
@@ -14,10 +14,7 @@ import java.util.Map;
 public class PortSensorHumsLocal {
 	public static void main(String[] args) throws InterruptedException
 	{
-
-		
-		
-		
+		IDGenerator.setMinID(47);
 		
 		JarFileComponentManager<Analyser> aMgr = new JarFileComponentManager<>(Analyser.class);
 		JarFileComponentManager<Reporter> rMgr = new JarFileComponentManager<>(Reporter.class);
@@ -35,14 +32,9 @@ public class PortSensorHumsLocal {
 		stMgr.refreshModules();
 			
 //		Sensor<Double> s1 = new PortSensor();
-//		final Store st = new InMemoryStore();
+//		final InMemoryStore st = new InMemoryStore();
 //		Analyser aMean = new MeanAnalyser();
-		Reporter rState = new TestAppGUI();
-		
-		
-	
-		
-		
+//		TestAppGUI rState = new TestAppGUI();
 		
 		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.MeanAnalyser");
 		
@@ -52,32 +44,37 @@ public class PortSensorHumsLocal {
 		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
 		
 		Integer stInMemID = stMgr.getModuleIDByName("gpigb.store.InMemoryStore");
-		final Store st = (Store) stMgr.getObjectByID(stMgr.createObjectOfModule(stInMemID)).get();
+		final Store st = stMgr.getObjectByID(stMgr.createObjectOfModule(stInMemID)).get();
 		
-//		Integer rStateID = rMgr.getModuleIDByName("gpigb.report.TestAppGUI");
-//		Reporter rState = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
+		Integer rStateID = rMgr.getModuleIDByName("gpigb.report.TestAppGUI");
+		Reporter rState = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
 		
 		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr.getAvailableObjects(), rMgr.getAvailableObjects(), stMgr.getAvailableObjects(), seMgr.getAvailableObjects());
 		
 		Map<String, ConfigurationValue> config;
 		
-		config = st.getConfigSpec();
-		configHandler.getConfiguration(config);
-		st.setConfig(config, null, null, null, null);
-		
 		config = aMean.getConfigSpec();
 		configHandler.getConfiguration(config);
-		aMean.setConfig(config, null, null, null, null);
+		aMean.setConfig(config, null, null, null, stMgr);
 		
 		config = s1.getConfigSpec();
 		configHandler.getConfiguration(config);
 		s1.setConfig(config, null, null, null, null);
+		s1.registerObserver(st);
 		
 		config = rState.getConfigSpec();
 		configHandler.getConfiguration(config);
-		rState.setConfig(config, null, null, null, null);
+		rState.setConfig(config, aMgr, null, null, null);
+
 		while (true)
-		{}
+		{	
+			try
+			{
+				Thread.sleep(1000);
+			}
+			catch(Exception e){}
+			rState.generateReport(null);
+		}
 	}
 
 }

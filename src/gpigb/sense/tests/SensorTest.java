@@ -26,21 +26,34 @@ public class SensorTest
 		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, 20000));
 		s1.setConfig(configSpec, null, null, null, null);
 		
-		s1.registerObserver(new SensorObserver<Integer>()
+		s1.registerObserver(new SensorObserver()
 		{
 			@Override
-			public void update(int sensorID, Integer reading)
+			public boolean update(int sensorID, Integer reading)
 			{
 
 				RecordSet<Integer> rs = new RecordSet<>(new Date(), new Date(), sensorID);
 				rs.addRecord(new SensorRecord<Integer>(1, reading));
+				return true;
 			}
 
 			@Override
-			public void update(SensorRecord<Integer> reading)
+			public boolean update(SensorRecord<?> reading)
 			{
-				// TODO Auto-generated method stub
+				return false;
 
+			}
+
+			@Override
+			public boolean update(int sensorID, Double reading) {
+				return false;
+				
+			}
+
+			@Override
+			public boolean update(int sensorID, String reading) {
+				return false;
+				
 			}
 		});
 	}
