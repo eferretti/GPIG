@@ -192,4 +192,10 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	{
 		return this.id;
 	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }

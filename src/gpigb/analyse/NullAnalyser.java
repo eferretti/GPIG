@@ -76,4 +76,10 @@ public class NullAnalyser implements Analyser
 	{
 		return this.id;
 	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }

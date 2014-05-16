@@ -131,4 +131,10 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 	{
 		return this.id;
 	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }
