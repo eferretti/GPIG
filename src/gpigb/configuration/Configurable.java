@@ -13,6 +13,7 @@ public interface Configurable
 {
 	public void setID(int newID);
 	public int getID();
+	public int getConfigurationStepNumber();
 	public Map<String, ConfigurationValue> getConfigSpec();
 	public boolean setConfig(Map<String, ConfigurationValue> newConfig, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr);
 }

@@ -92,5 +92,12 @@ public class MeanAnalyser implements Analyser {
 		store.get().read(input);
 		return true;
 	}
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
+	
+	
 
 }

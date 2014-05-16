@@ -276,4 +276,10 @@ public class JSONFileStore implements Store
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }

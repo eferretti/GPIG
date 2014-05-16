@@ -47,6 +47,10 @@ public class SmartGrapher
 	{
 		this(title, Default_width, Default_height);
 	}
+	
+	public void setLabel(String newLabel) {
+		this.graph.label = newLabel;
+	}
 
 	/**
 	 * Constructor for SmartGrapher using default values
@@ -54,6 +58,14 @@ public class SmartGrapher
 	public SmartGrapher()
 	{
 		this("SmartGrapher", Default_width, Default_height);
+	}
+	
+	public void setTitle(String newTitle) {
+		frame.setTitle(newTitle);
+	}
+	
+	public void setSize(Integer newWidth, Integer newHeight) {
+		frame.setSize(newWidth, newHeight);
 	}
 
 	/**
@@ -170,8 +182,7 @@ public class SmartGrapher
 		frame.setVisible(true);
 	}
 
-	public void reset()
-	{
+	public void reset() {
 		graph.reset();
 	}
 }

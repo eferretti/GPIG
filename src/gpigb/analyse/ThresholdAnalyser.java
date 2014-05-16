@@ -95,4 +95,10 @@ public class ThresholdAnalyser implements Analyser
 	{
 		return this.id;
 	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }

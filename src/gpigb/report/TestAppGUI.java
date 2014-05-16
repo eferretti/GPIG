@@ -34,6 +34,8 @@ import java.awt.Insets;
 
 public class TestAppGUI implements Reporter{
 	
+	private Integer configSteps;
+	private Integer currentConfigStep;
 	private JLabel lblAverage;
 	private JFrame frame;
 	private JTextField[] textField;
@@ -43,8 +45,10 @@ public class TestAppGUI implements Reporter{
 	private int period;
 	private int upperThreshold;
 	private int midThreshold;
-	private int sensors;
+	private int sensorNumber;
 	private String measureName;
+	private Integer[] sensorID;
+	
 	
 	private StrongReference<Analyser> analyser;
 
@@ -52,8 +56,10 @@ public class TestAppGUI implements Reporter{
 	 * Create the application.
 	 */
 	public TestAppGUI() {
-		sensors = 4;
+		sensorNumber = 4;
 		measureName = "Average";
+		configSteps = 2;
+		currentConfigStep = 1;
 		
 		initialize();
 		
@@ -97,10 +103,10 @@ public class TestAppGUI implements Reporter{
 		frame.getContentPane().setLayout(gridBagLayout);
 		frame.pack();
 		
-		textField = new JTextField[sensors];
-		canvas = new Canvas[sensors];
+		textField = new JTextField[sensorNumber];
+		canvas = new Canvas[sensorNumber];
 		
-			for (int count = 0; count < sensors; count++){
+			for (int count = 0; count < sensorNumber; count++){
 				
 				JLabel lblSensor1 = new JLabel("Sensor " + (count+1));
 				GridBagConstraints g_lblSensor = new GridBagConstraints();
@@ -152,7 +158,7 @@ public class TestAppGUI implements Reporter{
 		gbc_textArea.anchor = GridBagConstraints.NORTH;
 		gbc_textArea.insets = new Insets(0, 0, 5, 5);
 		gbc_textArea.gridx = 0;
-		gbc_textArea.gridy = sensors + 1;
+		gbc_textArea.gridy = sensorNumber + 1;
 		frame.getContentPane().add(textArea, gbc_textArea);
 		
 		frame.pack();
@@ -160,18 +166,49 @@ public class TestAppGUI implements Reporter{
 
 	@Override
 	public Map<String, ConfigurationValue> getConfigSpec() {
-		HashMap<String, ConfigurationValue> map = new HashMap<>();
-		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, analyser != null ? analyser.get().getID() : 0));
-		return map;
+
+		switch(currentConfigStep){
+		case 1 : {
+			HashMap<String, ConfigurationValue> map = new HashMap<>();
+			map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, 0));
+			map.put("Sensor Count", new ConfigurationValue(ValueType.Integer, 0));
+			return map;
+		}
+		case 2 : {
+			HashMap<String, ConfigurationValue> map = new HashMap<>();
+			for(int i = 0; i < sensorNumber; ++i)
+			{
+				map.put("Sensor " + i , new ConfigurationValue(ValueType.Sensor, 0));
+			}
+			return map;
+		}
+		default : break;
+		}
+		return  new HashMap<>();
+
 	}
 	
 	public boolean setConfig(Map<String, ConfigurationValue> newConfig, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			this.analyser = aMgr.getObjectByID(newConfig.get("AnalyserReference").intValue);
-			show();
-			return true;
+			switch(currentConfigStep){
+			case 1 : {
+				this.analyser = aMgr.getObjectByID(newConfig.get("AnalyserReference").intValue);
+				this.sensorNumber = (Integer) newConfig.get("Sensor Count").intValue;
+				currentConfigStep = 2;
+				return true;
+			}
+			case 2 : {
+				for(int i =0; i < sensorNumber; ++i)
+				{
+					this.sensorID[i] = newConfig.get("Sensor " + i).intValue;
+				}
+				currentConfigStep = 1;
+				show();
+			}
+			default : return true;
+			}
 		}
 		catch(Exception e)
 		{
@@ -195,14 +232,14 @@ public class TestAppGUI implements Reporter{
 		
 		//For each sensor set average and check for mode change
 		int sensors = 1;
-		for(int i = 1; i < sensors + 1; i++){
+		for(int i = 0; i < sensorNumber; i++){
 			//Get the measure from analyser
 			//analyser.get().analyse(rs);
 			//double measure = rs.getDataAtPosition(0).getData();
 			double measure = 11;
 
 			//Get average from analyser
-			RecordSet<Double> rs = new RecordSet<Double>(d1, d2, i);
+			RecordSet<Double> rs = new RecordSet<Double>(d1, d2, sensorID[i]);
 			analyser.get().analyse(rs);
 			double average = rs.getDataAtPosition(0).getData();
 			//double average = 11;
@@ -248,5 +285,11 @@ public class TestAppGUI implements Reporter{
 	@Override
 	public int getID() {
 		return this.id;
+	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return configSteps;
 	}
 }

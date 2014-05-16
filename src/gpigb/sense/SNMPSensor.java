@@ -178,5 +178,10 @@ public class SNMPSensor extends Patchable implements Sensor<Float>, Runnable
 			return false;
 		}
 	}
-
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }

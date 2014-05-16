@@ -96,4 +96,10 @@ public class StandDevAnalyser implements Analyser{
 		return true;
 	}
 	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
+	
 }

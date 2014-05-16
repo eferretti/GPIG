@@ -186,4 +186,10 @@ public class SimpleWebReporter extends NanoHTTPD implements Reporter
 	{
 		return this.id;
 	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }

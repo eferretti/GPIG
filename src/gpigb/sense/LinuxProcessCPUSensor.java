@@ -161,4 +161,10 @@ public class LinuxProcessCPUSensor implements Sensor<Float>, Configurable
 	{
 		this.id = newID;
 	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }
