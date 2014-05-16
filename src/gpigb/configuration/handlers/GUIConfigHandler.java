@@ -14,6 +14,7 @@ import java.util.concurrent.Semaphore;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,6 +22,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultFormatter;
 
 import third_party.SpringUtilities;
 
@@ -77,6 +79,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 					JSpinner intSpinner = new JSpinner();
 					intSpinner.setValue(configSpec.get(key).intValue);
 					intSpinner.updateUI();
+					((DefaultFormatter)((JFormattedTextField)intSpinner.getEditor().getComponent(0)).getFormatter()).setCommitsOnValidEdit(true);
 					component = intSpinner;
 					++rows;
 					break;
@@ -162,7 +165,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 		try{sem.acquire();}catch(Exception e){}
 		SwingUtilities.invokeLater(new Runnable(){public void run(){showGUI(configSpec);}});
 		try{sem.acquire();}catch(Exception e){}
-	
+		sem.release();
 		close(configSpec);
 	}
 	

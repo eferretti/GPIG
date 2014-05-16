@@ -67,6 +67,7 @@ public class TestAppGUI implements Reporter{
 		upperThreshold = 10;
 		midThreshold = 5;
 		
+		
 	}
 	
 	public static void main(String[] args) {
@@ -196,13 +197,14 @@ public class TestAppGUI implements Reporter{
 			case 1 : {
 				this.analyser = aMgr.getObjectByID(newConfig.get("AnalyserReference").intValue);
 				this.sensorNumber = (Integer) newConfig.get("Sensor Count").intValue;
+				sensorID = new Integer[sensorNumber];
 				currentConfigStep = 2;
 				return true;
 			}
 			case 2 : {
 				for(int i =0; i < sensorNumber; ++i)
 				{
-					this.sensorID[i] = newConfig.get("Sensor " + i).intValue;
+					this.sensorID[i] = (Integer) newConfig.get("Sensor " + i).intValue;
 				}
 				currentConfigStep = 1;
 				show();
