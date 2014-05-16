@@ -55,7 +55,7 @@ public class TestAppGUI implements Reporter{
 	 * Create the application.
 	 */
 	public TestAppGUI() {
-		sensors = 27;
+		sensors = 4;
 		measureName = "Average";
 		
 		initialize();
