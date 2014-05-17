@@ -89,28 +89,24 @@ public class ReporterGUI implements Reporter
 		String[] months = {"January", "February", "March", "April", "May","June","July","August","September","October","November","December"};
 		
 		String[] days = new String[31];
-		for(int i=1; i<32; i++)
-		{
-			days[i-1] = Integer.toString(i);
-		}
-		
 		String[] hours = new String[24];
-		for(int i=10; i<24; i++)
-		{
-			hours[i] = Integer.toString(i);
-		}
-		
 		String[] minutes = new String[60];
-		for(int i=10; i<60; i++)
-		{
-			minutes[i] = Integer.toString(i);
-		}
 		
-		//Leading 0s for hours and minutes on <10
-		for(int i=0; i<10; i++)
+		for(int i=0; i<60; i++)
 		{
-			hours[i] = "0" + Integer.toString(i);
-			minutes[i] = "0" + Integer.toString(i);
+			if(i<31) {
+				days[i] = Integer.toString(i);
+			}
+		
+			if(i<10) {
+				hours[i] = "0" + Integer.toString(i);
+				minutes[i] = "0" + Integer.toString(i);
+			}
+			else {
+				if(i<24) hours[i] = Integer.toString(i);
+				minutes[i] = Integer.toString(i);
+			}
+			
 		}
 		
 		JButton btnNewButton = new JButton("Get Analysis");
@@ -339,7 +335,7 @@ public class ReporterGUI implements Reporter
 	{
 		HashMap<String, ConfigurationValue> map = new HashMap<>();
 		
-		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, 0));
+		map.put("AnalyserReference", new ConfigurationValue(ValueType.Analyser, analyser != null ? analyser.get().getID() : 0));
 		return map;
 	}
 	
@@ -365,5 +361,11 @@ public class ReporterGUI implements Reporter
 	public int getID()
 	{
 		return this.id;
+	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
 	}
 }

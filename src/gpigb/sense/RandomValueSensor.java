@@ -100,8 +100,8 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 	{ 
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		
-		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, Integer.MIN_VALUE));
-		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, Integer.MAX_VALUE));
+		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, min));
+		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, max));
 		
 		return configSpec;
 	}
@@ -130,5 +130,11 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 	public int getID()
 	{
 		return this.id;
+	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
 	}
 }

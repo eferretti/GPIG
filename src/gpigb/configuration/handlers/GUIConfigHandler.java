@@ -6,17 +6,23 @@ import gpigb.configuration.ConfigurationValue;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultFormatter;
 
 import third_party.SpringUtilities;
 
@@ -37,8 +43,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 	
 	boolean waiting = true;
 	
-	@Override
-	public void getConfiguration(final Map<String, ConfigurationValue> configSpec)
+	private void showGUI(final Map<String, ConfigurationValue> configSpec)
 	{
 		getContentPane().removeAll();
 		for(WindowListener wl : getWindowListeners())
@@ -74,6 +79,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 					JSpinner intSpinner = new JSpinner();
 					intSpinner.setValue(configSpec.get(key).intValue);
 					intSpinner.updateUI();
+					((DefaultFormatter)((JFormattedTextField)intSpinner.getEditor().getComponent(0)).getFormatter()).setCommitsOnValidEdit(true);
 					component = intSpinner;
 					++rows;
 					break;
@@ -111,6 +117,9 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 					component = textField;
 					++rows;
 					break;
+					
+				case InStream:
+				case OutStream:
 			}
 
 			getContentPane().add(label);
@@ -123,7 +132,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 			@Override
 			public void windowClosing(WindowEvent e)
 			{
-				close(configSpec);
+				sem.release();
 			}
 			
 			@Override
@@ -143,18 +152,21 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 		SpringUtilities.makeCompactGrid(getContentPane(), rows, 2, 10, 10, 10, 10);
 		pack();
 		setVisible(true);
-		
+	}
+
+	private Semaphore sem = new Semaphore(1);
+
+	@Override
+	public void getConfiguration(final Map<String, ConfigurationValue> configSpec)
+	{
+		if(configSpec == null)
+			return;
 		waiting = true;
-		
-		while(waiting)
-			try
-			{
-				Thread.sleep(10);
-			}
-			catch(Exception e)
-			{
-				
-			}
+		try{sem.acquire();}catch(Exception e){}
+		SwingUtilities.invokeLater(new Runnable(){public void run(){showGUI(configSpec);}});
+		try{sem.acquire();}catch(Exception e){}
+		sem.release();
+		close(configSpec);
 	}
 	
 	private void close(Map<String, ConfigurationValue> configSpec)
@@ -192,12 +204,12 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				case String:
 					configSpec.get(key).strValue = ((JTextField)getContentPane().getComponent(i)).getText();
 					break;				
+				case InStream:
+				case OutStream:
 				}
 			}
 		}
 			
 		setVisible(false);
-		
-		waiting = false;
 	}
 }

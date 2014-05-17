@@ -132,5 +132,10 @@ public class MongoStore extends Patchable implements Store
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
+	}
 }

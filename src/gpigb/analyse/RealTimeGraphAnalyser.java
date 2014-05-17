@@ -50,8 +50,7 @@ public class RealTimeGraphAnalyser implements Analyser
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
-		configSpec.put("Plotter", new ConfigurationValue(ValueType.Reporter, 0));
-		configSpec.put("Title", new ConfigurationValue(ValueType.String, ""));
+		configSpec.put("Plotter", new ConfigurationValue(ValueType.Reporter, plotter != null ? plotter.get().getID() : 0));
 		return configSpec;
 	}
 	
@@ -96,5 +95,10 @@ public class RealTimeGraphAnalyser implements Analyser
 	public int getID()
 	{
 		return this.id;
+	}
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
 	}
 }

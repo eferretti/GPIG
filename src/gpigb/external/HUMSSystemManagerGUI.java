@@ -16,6 +16,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -34,15 +35,30 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 
 	private JPanel contentPane;
 	private JTextField txtHostName;
-	private JComboBox<ModuleSummary> cboSensorModules;
-	private JButton btnNewSensor;
 	private JButton btnConnectToSystem;
 	private JButton btnUploadJar;
-	
 	private HUMSSystem system = null;
+
+	private JComboBox<ModuleSummary> cboSensorModules;
 	private JComboBox<InstanceSummary> cboSensorInstances;
 	private JButton btnConfigureSensor;
+	private JButton btnNewSensor;
 
+	private JComboBox<ModuleSummary> cboAnalyserModules;
+	private JComboBox<InstanceSummary> cboAnalyserInstances;
+	private JButton btnConfigureAnalyser;
+	private JButton btnNewAnalyser;
+
+	private JComboBox<ModuleSummary> cboStoreModules;
+	private JComboBox<InstanceSummary> cboStoreInstances;
+	private JButton btnConfigureStore;
+	private JButton btnNewStore;
+
+	private JComboBox<ModuleSummary> cboReporterModules;
+	private JComboBox<InstanceSummary> cboReporterInstances;
+	private JButton btnConfigureReporter;
+	private JButton btnNewReporter;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -68,7 +84,9 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 	 */
 	public HUMSSystemManagerGUI()
 	{
-		setBounds(100, 100, 450, 190);
+		setTitle("Configure Remote HUMS");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 700, 190);
 		contentPane = new JPanel();
 		setContentPane(contentPane);
 		SpringLayout sl_contentPane = new SpringLayout();
@@ -85,6 +103,11 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblNewLabel, 10, SpringLayout.NORTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblNewLabel, 10, SpringLayout.WEST, contentPane);
 		contentPane.add(lblNewLabel);
+
+		setupSensorTab(tabbedPane);
+		setupStoreTab(tabbedPane);
+		setupAnalyserTab(tabbedPane);
+		setupReporterTab(tabbedPane);
 		
 		txtHostName = new JTextField();
 		sl_contentPane.putConstraint(SpringLayout.NORTH, txtHostName, 0, SpringLayout.NORTH, lblNewLabel);
@@ -97,6 +120,21 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, lblNewLabel, 0, SpringLayout.SOUTH, btnConnectToSystem);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, txtHostName, 0, SpringLayout.SOUTH, btnConnectToSystem);
 		
+		sl_contentPane.putConstraint(SpringLayout.EAST, txtHostName, -5, SpringLayout.WEST, btnConnectToSystem);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnConnectToSystem, 10, SpringLayout.NORTH, contentPane);
+		contentPane.add(btnConnectToSystem);
+		
+		btnUploadJar = new JButton("Upload JAR");
+		btnUploadJar.addActionListener(this);
+		sl_contentPane.putConstraint(SpringLayout.EAST, btnConnectToSystem, -10, SpringLayout.WEST, btnUploadJar);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnUploadJar, 0, SpringLayout.NORTH, btnConnectToSystem);
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnUploadJar, 0, SpringLayout.SOUTH, btnConnectToSystem);
+		sl_contentPane.putConstraint(SpringLayout.EAST, btnUploadJar, -10, SpringLayout.EAST, contentPane);
+		contentPane.add(btnUploadJar);
+	}
+
+	private void setupSensorTab(JTabbedPane tabbedPane)
+	{
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Sensors", null, panel, null);
 		SpringLayout sl_panel = new SpringLayout();
@@ -143,19 +181,158 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 		sl_panel.putConstraint(SpringLayout.SOUTH, btnConfigureSensor, 0, SpringLayout.SOUTH, cboSensorInstances);
 		sl_panel.putConstraint(SpringLayout.EAST, btnConfigureSensor, 0, SpringLayout.EAST, btnNewSensor);
 		panel.add(btnConfigureSensor);
-		sl_contentPane.putConstraint(SpringLayout.EAST, txtHostName, -5, SpringLayout.WEST, btnConnectToSystem);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, btnConnectToSystem, 10, SpringLayout.NORTH, contentPane);
-		contentPane.add(btnConnectToSystem);
-		
-		btnUploadJar = new JButton("Upload JAR");
-		btnUploadJar.addActionListener(this);
-		sl_contentPane.putConstraint(SpringLayout.EAST, btnConnectToSystem, -10, SpringLayout.WEST, btnUploadJar);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, btnUploadJar, 0, SpringLayout.NORTH, btnConnectToSystem);
-		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnUploadJar, 0, SpringLayout.SOUTH, btnConnectToSystem);
-		sl_contentPane.putConstraint(SpringLayout.EAST, btnUploadJar, -10, SpringLayout.EAST, contentPane);
-		contentPane.add(btnUploadJar);
 	}
 
+	private void setupAnalyserTab(JTabbedPane tabbedPane)
+	{
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Analysers", null, panel, null);
+		SpringLayout sl_panel = new SpringLayout();
+		panel.setLayout(sl_panel);
+		
+		cboAnalyserModules = new JComboBox<ModuleSummary>();
+		sl_panel.putConstraint(SpringLayout.NORTH, cboAnalyserModules, 10, SpringLayout.NORTH, panel);
+		panel.add(cboAnalyserModules);
+		
+		btnNewAnalyser = new JButton("Create New");
+		btnNewAnalyser.addActionListener(this);
+		sl_panel.putConstraint(SpringLayout.EAST, cboAnalyserModules, -10, SpringLayout.WEST, btnNewAnalyser);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnNewAnalyser, 0, SpringLayout.NORTH, cboAnalyserModules);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnNewAnalyser, 0, SpringLayout.SOUTH, cboAnalyserModules);
+		sl_panel.putConstraint(SpringLayout.EAST, btnNewAnalyser, -10, SpringLayout.EAST, panel);
+		panel.add(btnNewAnalyser);
+		
+		cboAnalyserInstances = new JComboBox<InstanceSummary>();
+		sl_panel.putConstraint(SpringLayout.WEST, cboAnalyserModules, 0, SpringLayout.WEST, cboAnalyserInstances);
+		sl_panel.putConstraint(SpringLayout.EAST, cboAnalyserInstances, 0, SpringLayout.EAST, cboAnalyserModules);
+		panel.add(cboAnalyserInstances);
+		
+		JLabel lblModules = new JLabel("Modules:");
+		lblModules.setHorizontalAlignment(SwingConstants.TRAILING);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblModules, 0, SpringLayout.NORTH, cboAnalyserModules);
+		sl_panel.putConstraint(SpringLayout.WEST, lblModules, 10, SpringLayout.WEST, panel);
+		sl_panel.putConstraint(SpringLayout.SOUTH, lblModules, 0, SpringLayout.SOUTH, cboAnalyserModules);
+		panel.add(lblModules);
+		
+		JLabel lblInstances = new JLabel("Instances:");
+		sl_panel.putConstraint(SpringLayout.SOUTH, lblInstances, 0, SpringLayout.SOUTH, cboAnalyserInstances);
+		lblInstances.setHorizontalAlignment(SwingConstants.TRAILING);
+		sl_panel.putConstraint(SpringLayout.EAST, lblModules, 0, SpringLayout.EAST, lblInstances);
+		sl_panel.putConstraint(SpringLayout.WEST, cboAnalyserInstances, 10, SpringLayout.EAST, lblInstances);
+		sl_panel.putConstraint(SpringLayout.NORTH, cboAnalyserInstances, 0, SpringLayout.NORTH, lblInstances);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblInstances, 10, SpringLayout.SOUTH, lblModules);
+		sl_panel.putConstraint(SpringLayout.WEST, lblInstances, 0, SpringLayout.WEST, lblModules);
+		panel.add(lblInstances);
+		
+		btnConfigureAnalyser = new JButton("Configure");
+		btnConfigureAnalyser.addActionListener(this);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnConfigureAnalyser, 0, SpringLayout.NORTH, cboAnalyserInstances);
+		sl_panel.putConstraint(SpringLayout.WEST, btnConfigureAnalyser, 0, SpringLayout.WEST, btnNewAnalyser);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnConfigureAnalyser, 0, SpringLayout.SOUTH, cboAnalyserInstances);
+		sl_panel.putConstraint(SpringLayout.EAST, btnConfigureAnalyser, 0, SpringLayout.EAST, btnNewAnalyser);
+		panel.add(btnConfigureAnalyser);
+	}
+	
+	private void setupReporterTab(JTabbedPane tabbedPane)
+	{
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Reporters", null, panel, null);
+		SpringLayout sl_panel = new SpringLayout();
+		panel.setLayout(sl_panel);
+		
+		cboReporterModules = new JComboBox<ModuleSummary>();
+		sl_panel.putConstraint(SpringLayout.NORTH, cboReporterModules, 10, SpringLayout.NORTH, panel);
+		panel.add(cboReporterModules);
+		
+		btnNewReporter = new JButton("Create New");
+		btnNewReporter.addActionListener(this);
+		sl_panel.putConstraint(SpringLayout.EAST, cboReporterModules, -10, SpringLayout.WEST, btnNewReporter);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnNewReporter, 0, SpringLayout.NORTH, cboReporterModules);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnNewReporter, 0, SpringLayout.SOUTH, cboReporterModules);
+		sl_panel.putConstraint(SpringLayout.EAST, btnNewReporter, -10, SpringLayout.EAST, panel);
+		panel.add(btnNewReporter);
+		
+		cboReporterInstances = new JComboBox<InstanceSummary>();
+		sl_panel.putConstraint(SpringLayout.WEST, cboReporterModules, 0, SpringLayout.WEST, cboReporterInstances);
+		sl_panel.putConstraint(SpringLayout.EAST, cboReporterInstances, 0, SpringLayout.EAST, cboReporterModules);
+		panel.add(cboReporterInstances);
+		
+		JLabel lblModules = new JLabel("Modules:");
+		lblModules.setHorizontalAlignment(SwingConstants.TRAILING);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblModules, 0, SpringLayout.NORTH, cboReporterModules);
+		sl_panel.putConstraint(SpringLayout.WEST, lblModules, 10, SpringLayout.WEST, panel);
+		sl_panel.putConstraint(SpringLayout.SOUTH, lblModules, 0, SpringLayout.SOUTH, cboReporterModules);
+		panel.add(lblModules);
+		
+		JLabel lblInstances = new JLabel("Instances:");
+		sl_panel.putConstraint(SpringLayout.SOUTH, lblInstances, 0, SpringLayout.SOUTH, cboReporterInstances);
+		lblInstances.setHorizontalAlignment(SwingConstants.TRAILING);
+		sl_panel.putConstraint(SpringLayout.EAST, lblModules, 0, SpringLayout.EAST, lblInstances);
+		sl_panel.putConstraint(SpringLayout.WEST, cboReporterInstances, 10, SpringLayout.EAST, lblInstances);
+		sl_panel.putConstraint(SpringLayout.NORTH, cboReporterInstances, 0, SpringLayout.NORTH, lblInstances);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblInstances, 10, SpringLayout.SOUTH, lblModules);
+		sl_panel.putConstraint(SpringLayout.WEST, lblInstances, 0, SpringLayout.WEST, lblModules);
+		panel.add(lblInstances);
+		
+		btnConfigureReporter = new JButton("Configure");
+		btnConfigureReporter.addActionListener(this);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnConfigureReporter, 0, SpringLayout.NORTH, cboReporterInstances);
+		sl_panel.putConstraint(SpringLayout.WEST, btnConfigureReporter, 0, SpringLayout.WEST, btnNewReporter);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnConfigureReporter, 0, SpringLayout.SOUTH, cboReporterInstances);
+		sl_panel.putConstraint(SpringLayout.EAST, btnConfigureReporter, 0, SpringLayout.EAST, btnNewReporter);
+		panel.add(btnConfigureReporter);
+	}
+	
+	private void setupStoreTab(JTabbedPane tabbedPane)
+	{
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Stores", null, panel, null);
+		SpringLayout sl_panel = new SpringLayout();
+		panel.setLayout(sl_panel);
+		
+		cboStoreModules = new JComboBox<ModuleSummary>();
+		sl_panel.putConstraint(SpringLayout.NORTH, cboStoreModules, 10, SpringLayout.NORTH, panel);
+		panel.add(cboStoreModules);
+		
+		btnNewStore = new JButton("Create New");
+		btnNewStore.addActionListener(this);
+		sl_panel.putConstraint(SpringLayout.EAST, cboStoreModules, -10, SpringLayout.WEST, btnNewStore);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnNewStore, 0, SpringLayout.NORTH, cboStoreModules);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnNewStore, 0, SpringLayout.SOUTH, cboStoreModules);
+		sl_panel.putConstraint(SpringLayout.EAST, btnNewStore, -10, SpringLayout.EAST, panel);
+		panel.add(btnNewStore);
+		
+		cboStoreInstances = new JComboBox<InstanceSummary>();
+		sl_panel.putConstraint(SpringLayout.WEST, cboStoreModules, 0, SpringLayout.WEST, cboStoreInstances);
+		sl_panel.putConstraint(SpringLayout.EAST, cboStoreInstances, 0, SpringLayout.EAST, cboStoreModules);
+		panel.add(cboStoreInstances);
+		
+		JLabel lblModules = new JLabel("Modules:");
+		lblModules.setHorizontalAlignment(SwingConstants.TRAILING);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblModules, 0, SpringLayout.NORTH, cboStoreModules);
+		sl_panel.putConstraint(SpringLayout.WEST, lblModules, 10, SpringLayout.WEST, panel);
+		sl_panel.putConstraint(SpringLayout.SOUTH, lblModules, 0, SpringLayout.SOUTH, cboStoreModules);
+		panel.add(lblModules);
+		
+		JLabel lblInstances = new JLabel("Instances:");
+		sl_panel.putConstraint(SpringLayout.SOUTH, lblInstances, 0, SpringLayout.SOUTH, cboStoreInstances);
+		lblInstances.setHorizontalAlignment(SwingConstants.TRAILING);
+		sl_panel.putConstraint(SpringLayout.EAST, lblModules, 0, SpringLayout.EAST, lblInstances);
+		sl_panel.putConstraint(SpringLayout.WEST, cboStoreInstances, 10, SpringLayout.EAST, lblInstances);
+		sl_panel.putConstraint(SpringLayout.NORTH, cboStoreInstances, 0, SpringLayout.NORTH, lblInstances);
+		sl_panel.putConstraint(SpringLayout.NORTH, lblInstances, 10, SpringLayout.SOUTH, lblModules);
+		sl_panel.putConstraint(SpringLayout.WEST, lblInstances, 0, SpringLayout.WEST, lblModules);
+		panel.add(lblInstances);
+		
+		btnConfigureStore = new JButton("Configure");
+		btnConfigureStore.addActionListener(this);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnConfigureStore, 0, SpringLayout.NORTH, cboStoreInstances);
+		sl_panel.putConstraint(SpringLayout.WEST, btnConfigureStore, 0, SpringLayout.WEST, btnNewStore);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnConfigureStore, 0, SpringLayout.SOUTH, cboStoreInstances);
+		sl_panel.putConstraint(SpringLayout.EAST, btnConfigureStore, 0, SpringLayout.EAST, btnNewStore);
+		panel.add(btnConfigureStore);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent event)
 	{
@@ -211,14 +388,47 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 			}
 		}
 		
-		if(event.getSource() == this.btnConfigureSensor)
+		if (event.getSource() == this.btnConfigureSensor) {
+			new Thread(new Runnable()
+			{
+				public void run()
+				{
+					try {
+						int id = ((InstanceSummary) cboSensorInstances.getSelectedItem()).instanceID;
+						Map<String, ConfigurationValue> config = system.getSensorConfig(id);
+						new GUIConfigHandler(system.listAnalysers(), system.listReporters(), system.listStores(),
+								system.listSensors()).getConfiguration(config);
+						system.setSensorConfig(id, config);
+						refresh();
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+		
+		if(event.getSource() == this.btnNewAnalyser)
 		{
 			try
 			{
-				int id = ((InstanceSummary)this.cboSensorInstances.getSelectedItem()).instanceID;
-				Map<String, ConfigurationValue> config = this.system.getSensorConfig(id);
+				this.system.createAnalyser(((ModuleSummary)this.cboAnalyserModules.getSelectedItem()).moduleID);
+				refresh();
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+		
+		if(event.getSource() == this.btnConfigureAnalyser)
+		{
+			try
+			{
+				int id = ((InstanceSummary)this.cboAnalyserInstances.getSelectedItem()).instanceID;
+				Map<String, ConfigurationValue> config = this.system.getAnalyserConfig(id);
 				new GUIConfigHandler(this.system.listAnalysers(), this.system.listReporters(), this.system.listStores(), this.system.listSensors()).getConfiguration(config);
-				this.system.setSensorConfig(id, config);
+				this.system.setAnalyserConfig(id, config);
 				refresh();
 			}
 			catch(Exception e)
@@ -248,6 +458,9 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 	private void refresh()
 	{
 		refreshSensors();
+		refreshAnalysers();
+		refreshReporters();
+		refreshStores();
 	}
 	
 	private void refreshSensors()
@@ -268,6 +481,84 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 			{
 				List<InstanceSummary> summary = this.system.listSensors();
 				this.cboSensorInstances.setModel(new DefaultComboBoxModel<InstanceSummary>(summary.toArray(new InstanceSummary[]{})));
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+	}
+	
+	private void refreshAnalysers()
+	{
+		if(this.system != null)
+		{
+			try
+			{
+				List<ModuleSummary> summary = this.system.listAnalyserModules();
+				this.cboAnalyserModules.setModel(new DefaultComboBoxModel<ModuleSummary>(summary.toArray(new ModuleSummary[]{})));
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			try
+			{
+				List<InstanceSummary> summary = this.system.listAnalysers();
+				this.cboAnalyserInstances.setModel(new DefaultComboBoxModel<InstanceSummary>(summary.toArray(new InstanceSummary[]{})));
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+	}
+	
+	private void refreshReporters()
+	{
+		if(this.system != null)
+		{
+			try
+			{
+				List<ModuleSummary> summary = this.system.listReporterModules();
+				this.cboReporterModules.setModel(new DefaultComboBoxModel<ModuleSummary>(summary.toArray(new ModuleSummary[]{})));
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			try
+			{
+				List<InstanceSummary> summary = this.system.listReporters();
+				this.cboReporterInstances.setModel(new DefaultComboBoxModel<InstanceSummary>(summary.toArray(new InstanceSummary[]{})));
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+	}
+	
+	private void refreshStores()
+	{
+		if(this.system != null)
+		{
+			try
+			{
+				List<ModuleSummary> summary = this.system.listStoreModules();
+				this.cboStoreModules.setModel(new DefaultComboBoxModel<ModuleSummary>(summary.toArray(new ModuleSummary[]{})));
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			try
+			{
+				List<InstanceSummary> summary = this.system.listStores();
+				this.cboStoreInstances.setModel(new DefaultComboBoxModel<InstanceSummary>(summary.toArray(new InstanceSummary[]{})));
 			}
 			catch(Exception e)
 			{

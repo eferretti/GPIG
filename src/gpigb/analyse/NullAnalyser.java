@@ -49,7 +49,7 @@ public class NullAnalyser implements Analyser
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
-		configMap.put("Store", new ConfigurationValue(ValueType.Store, 0));
+		configMap.put("Store", new ConfigurationValue(ValueType.Store, store != null ? store.get().getID() : 0));
 		return configMap;
 	}
 	
@@ -75,5 +75,11 @@ public class NullAnalyser implements Analyser
 	public int getID()
 	{
 		return this.id;
+	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
 	}
 }

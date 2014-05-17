@@ -2,6 +2,7 @@ package gpigb.sense;
 
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
+import gpigb.configuration.Configurable;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.SensorRecord;
@@ -16,45 +17,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LinuxProcessCPUSensor implements Sensor<Float>
+public class LinuxProcessCPUSensor implements Sensor<Float>, Configurable
 {
-	float lastReading = 0;
 	File statFile = null;
-	int pid = 0;
-	int cpuID = -1;
-	long oldUtime = -1, oldStime = -1;
+	int pid = 21794;
 	List<SensorObserver> observers = new ArrayList<>();
+	Float averageUsage = null;
+	Float dampingFactor = 0.5f;
 	
 	@Override
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
 		HashMap<String, ConfigurationValue> spec = new HashMap<>();
-		spec.put("Process ID", new ConfigurationValue(ValueType.Integer, 0));
+		spec.put("Process ID", new ConfigurationValue(ValueType.Integer, pid));
+		spec.put("Damping Factor", new ConfigurationValue(ValueType.Float, dampingFactor));
 		return spec;
-//		pid = (Integer)spec.get("Process ID").value;
-//		statFile = new File("/proc/" + pid + "/stat");
-//		
-//		try
-//		{
-//			Scanner s = new Scanner(statFile);
-//			String[] contents = s.nextLine().split("\\s");
-//			s.close();
-//			cpuID = Integer.parseInt(contents[38]);
-//			oldStime = Long.parseLong(contents[14]);
-//			oldUtime = Long.parseLong(contents[13]);
-//		}
-//		catch(Exception e)
-//		{
-//			
-//		}
 	}
 	
 	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		try
 		{
-			pid = (Integer)newSpec.get("Process ID").intValue;
+			pid = newSpec.get("Process ID").intValue;
 			statFile = new File("/proc/" + pid + "/stat");
+			dampingFactor = newSpec.get("Damping Factor").fltValue;
+			averageUsage = null;
 			return true;
 		}
 		catch(Exception e)
@@ -76,29 +63,66 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	    try {
 	        RandomAccessFile reader = new RandomAccessFile("/proc/" + pid + "/stat", "r");
 	        String load = reader.readLine();
-
 	        String[] toks = load.split(" ");
 
-	        long idle1 = Long.parseLong(toks[4]);
-	        long cpu1 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[5])
+	        long sutime = Long.parseLong(toks[13]);
+	        long sstime = Long.parseLong(toks[14]);
+	        long scutime = Long.parseLong(toks[15]);
+	        long scstime = Long.parseLong(toks[16]);
+	        
+	        reader.close();
+	        reader = new RandomAccessFile("/proc/stat", "r");
+	        toks = reader.readLine().split(" ");
+	        reader.close();
+	        long time1 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4]) + Long.parseLong(toks[5])
 	              + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
-
-	        try {
-	            Thread.sleep(360);
-	        } catch (Exception e) {}
-
-	        reader.seek(0);
+	        
+	        try
+	        {
+	        	Thread.sleep(100);
+	        }
+	        catch(Exception e)
+	        {
+	        	
+	        }
+	        
+	        reader.close();
+	        reader = new RandomAccessFile("/proc/" + pid + "/stat", "r");
 	        load = reader.readLine();
 	        reader.close();
-
 	        toks = load.split(" ");
 
-	        long idle2 = Long.parseLong(toks[4]);
-	        long cpu2 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[5])
-	            + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
+	        long eutime = Long.parseLong(toks[13]);
+	        long estime = Long.parseLong(toks[14]);
+	        long ecutime = Long.parseLong(toks[15]);
+	        long ecstime = Long.parseLong(toks[16]);
+	        reader.close();
+	        reader = new RandomAccessFile("/proc/stat", "r");
+	        toks = reader.readLine().split(" ");
+	        reader.close();
+	        long time2 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4]) + Long.parseLong(toks[5])
+	              + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
+	        
+	        long dutime = eutime - sutime;
+	        long dstime = estime - sstime;
+	        long dcutime = ecutime - scutime;
+	        long dcstime = ecstime - scstime;
+	        long dt = time2 - time1;
+	        
+	        Float instantaniousUsage = 100*((dutime + dstime + dcutime + dcstime)/(1.0f*dt));
 
-	        return 100f*(cpu2 - cpu1) / ((cpu2 + idle2) - (cpu1 + idle1));
-
+	        if(averageUsage == null)
+	        {
+	        	averageUsage = instantaniousUsage;
+	        }
+	        else
+	        {
+	        	averageUsage = (dampingFactor * averageUsage) + ((1-dampingFactor) * instantaniousUsage);
+	        }
+	        
+	        System.out.println("Reading: " + averageUsage);
+	        return averageUsage;
+	        
 	    } catch (IOException ex) {
 	        ex.printStackTrace();
 	    }
@@ -129,12 +153,18 @@ public class LinuxProcessCPUSensor implements Sensor<Float>
 	public void notifyObservers()
 	{
 		for(SensorObserver obs : observers)
-			obs.update(new SensorRecord<Float>(getID(), lastReading, "CPU_ID", ""+cpuID));
+			obs.update(new SensorRecord<Float>(getID(), averageUsage));
 	}
 
 	@Override
 	public void setID(int newID)
 	{
 		this.id = newID;
+	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
 	}
 }

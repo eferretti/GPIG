@@ -42,9 +42,10 @@ public class UnexpectedAccelerationReporter implements Reporter
 	@Override
 	public synchronized Map<String, ConfigurationValue> getConfigSpec()
 	{
-		HashMap<String, ConfigurationValue> config = new HashMap<>();
-//		config.put("PrintStream", new ConfigurationValue(ValueType.OutStream, null));
-		return config;
+		return null;
+//		HashMap<String, ConfigurationValue> config = new HashMap<>();
+////		config.put("PrintStream", new ConfigurationValue(ValueType.OutStream, null));
+//		return config;
 		
 //		outputStream = (PrintStream) (config.get("PrintStream") != null ? config.get("PrintStream").value : System.out);
 	}
@@ -71,5 +72,11 @@ public class UnexpectedAccelerationReporter implements Reporter
 	public int getID()
 	{
 		return this.id;
+	}
+	
+	@Override
+	public int getConfigurationStepNumber() {
+		
+		return 1;
 	}
 }
