@@ -86,7 +86,7 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	@Override
 	public String toString()
 	{
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return "Reading: " + data.toString() + " (Date&Time:" + dateFormat.format(timestamp) + ", SensorID:" + sensorID + ")\n";
 	}
 	
