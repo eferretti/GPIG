@@ -116,11 +116,11 @@ public class EmailReporter implements Reporter{
 		}
 		
 		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
 		String dateStr = dateFormat.format(cal.getTime());
 		
-		String fileName = "HUMS_report_" + dateStr + ".txt";
-		File tmp = new File(fileName);
+		String fileName = "HUMS_" + dateStr + ".txt";
+		File file = new File(fileName);
 		
 		Session session = Session.getInstance(props,
 				  new javax.mail.Authenticator() {
@@ -130,10 +130,26 @@ public class EmailReporter implements Reporter{
 				  });
 		
 		 try {
-		 tmp.createNewFile();
-		 BufferedWriter output = new BufferedWriter(new FileWriter(tmp));
-		 output.write(body.toString());
+			 
+			 if (file.getParentFile() != null && !file.getParentFile().mkdirs()) {
+				    System.out.println("handle permission problems here");
+				}
+		    System.out.println("either no parent directories there the missing directories have been created");
+			if (file.createNewFile() || file.isFile()) {
+				System.out.println("ready to write content");
+				file.createNewFile();
+				BufferedWriter output = new BufferedWriter(new FileWriter(file));
+				output.write(body.toString());
+				output.flush();
+				output.close();
+			} else {
+				System.out.println("handle directory here");
+			}	 
+			 
+		 
          MimeMessage msg = new MimeMessage(session);
+         
+         // Set message details
          msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
          msg.addHeader("format", "flowed");
          msg.addHeader("Content-Transfer-Encoding", "8bit");	           
@@ -168,9 +184,7 @@ public class EmailReporter implements Reporter{
  
          // Send message
          Transport.send(msg);
-         
-         output.close();
-         tmp.delete();
+         file.delete();
          System.out.println("E-mail Sent Successfully with attachment!!");
 	      }catch (MessagingException e) {
 	         e.printStackTrace();

@@ -85,7 +85,7 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	@Override
 	public String toString()
 	{
-		return "" + data.toString() + "(d:" + timestamp.toString() + ", id:" + sensorID;
+		return "" + data.toString() + " (d:" + timestamp.toString() + ", id:" + sensorID + ")\n";
 	}
 	
 	
