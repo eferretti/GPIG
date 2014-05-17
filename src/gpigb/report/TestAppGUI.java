@@ -61,7 +61,7 @@ public class TestAppGUI implements Reporter{
 		configSteps = 2;
 		currentConfigStep = 1;
 		
-		initialize();
+		
 		
 		period = 3;
 		upperThreshold = 10;
@@ -207,6 +207,7 @@ public class TestAppGUI implements Reporter{
 					this.sensorID[i] = (Integer) newConfig.get("Sensor " + i).intValue;
 				}
 				currentConfigStep = 1;
+				initialize();
 				show();
 			}
 			default : return true;
