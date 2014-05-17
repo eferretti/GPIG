@@ -76,7 +76,7 @@ public class SpikeDetectorAnalyser implements RealTimeAnalyser{
 	@Override
 	public boolean update(int sensorID, Integer reading) {
 		
-		/* if enough data acquired use moving average to somoothen the data and then check if the current reading is an outlier */
+		/* if enough data acquired use moving average to smoothen the data and then check if the current reading is an outlier */
 		if(rawData.size() >= WINDOW_SIZE) {
 			    rawData.addLast(reading);
 				ListIterator<Integer> itRaw = rawData.listIterator(rawData.size() - WINDOW_SIZE);

@@ -66,7 +66,6 @@ public class OutOfRangeReporter implements Reporter
 	
 	@Override
 	public int getConfigurationStepNumber() {
-		
 		return 1;
 	}
 }
