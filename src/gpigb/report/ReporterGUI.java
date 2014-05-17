@@ -94,16 +94,16 @@ public class ReporterGUI implements Reporter
 		
 		for(int i=0; i<60; i++)
 		{
-			if(i<31)days[i] = Integer.toString(i);
+			if(i<31) {
+				days[i] = Integer.toString(i);
+			}
 		
 			if(i<10) {
 				hours[i] = "0" + Integer.toString(i);
 				minutes[i] = "0" + Integer.toString(i);
 			}
-			else if(i<24){
-				hours[i] = Integer.toString(i);
-			}
 			else {
+				if(i<24) hours[i] = Integer.toString(i);
 				minutes[i] = Integer.toString(i);
 			}
 			

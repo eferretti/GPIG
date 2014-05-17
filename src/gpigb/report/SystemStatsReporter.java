@@ -70,7 +70,7 @@ public class SystemStatsReporter implements Reporter {
 			        try
 			        {
 			            System.out.println (
-			                methodName.substring (3) + ": " + 
+			                methodName + ": " + 
 			                method.invoke (operatingSystemMXBean));
 			        }
 			        catch (Throwable ex)
