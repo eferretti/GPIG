@@ -110,11 +110,22 @@ public class EmailReporter implements Reporter{
 		
 		/* populate e-mail body text */
 		StringBuffer body = new StringBuffer();
+		body.append("Dear HUMS user,");
+		body.append(System.getProperty("line.separator"));
+		body.append(System.getProperty("line.separator"));
+		body.append("You have just recieved your latest report!");
+		body.append(System.getProperty("line.separator"));
+		body.append(System.getProperty("line.separator"));
 		for(RecordSet<?> dataItem : data) {
 			body.append(dataItem.toString());
 			body.append(System.getProperty("line.separator"));
 		}
-		
+		body.append(System.getProperty("line.separator"));
+		body.append(System.getProperty("line.separator"));
+		body.append("Kindest Regards,");
+		body.append(System.getProperty("line.separator"));
+		body.append(System.getProperty("line.separator"));
+		body.append("Your awesome HUMS");
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
 		String dateStr = dateFormat.format(cal.getTime());
