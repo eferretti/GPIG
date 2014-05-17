@@ -27,8 +27,11 @@ import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
@@ -153,14 +156,16 @@ public class TestAppGUI implements Reporter{
 		gbc_lblAverage.gridy = 0;
 		frame.getContentPane().add(lblAverage, gbc_lblAverage);
 		
-		textArea = new JTextArea();
+		textArea = new JTextArea(6,32);
+		JScrollPane scroll = new JScrollPane(textArea);
+		scroll.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridwidth = 5;
 		gbc_textArea.anchor = GridBagConstraints.NORTH;
 		gbc_textArea.insets = new Insets(0, 0, 5, 5);
 		gbc_textArea.gridx = 0;
 		gbc_textArea.gridy = sensorNumber + 1;
-		frame.getContentPane().add(textArea, gbc_textArea);
+		frame.getContentPane().add(scroll, gbc_textArea);
 		
 		frame.pack();
 	}
@@ -263,7 +268,7 @@ public class TestAppGUI implements Reporter{
 					{
 						canvas[i].setBackground(Color.RED);
 						mode[i] = 3;
-						textArea.append(sdf.format(d) + " Mode change detected. Sensor " + (i+1) + ": ERROR\n");
+						textArea.append(sdf.format(d) + ": Mode change detected. Sensor " + (i+1) + ": ERROR\n");
 					}
 				} 
 				else 
@@ -282,7 +287,7 @@ public class TestAppGUI implements Reporter{
 				{
 					canvas[i].setBackground(Color.GREEN);
 					mode[i] = 1;
-					textArea.append(sdf.format(d) + " Mode change detected. Sensor " + (i+1) + ": Normal\n");
+					textArea.append(sdf.format(d) + ": Mode change detected. Sensor " + (i+1) + ": Normal\n");
 				}
 			}
 			
