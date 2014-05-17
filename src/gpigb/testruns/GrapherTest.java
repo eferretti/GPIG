@@ -1,6 +1,7 @@
 package gpigb.testruns;
 
 import gpigb.analyse.Analyser;
+import gpigb.analyse.RTNullAnalyser;
 import gpigb.classloading.IDGenerator;
 import gpigb.classloading.JarFileComponentManager;
 import gpigb.configuration.ConfigurationValue;
@@ -8,6 +9,7 @@ import gpigb.configuration.handlers.GUIConfigHandler;
 import gpigb.report.Reporter;
 import gpigb.report.TestAppGUI;
 import gpigb.sense.Sensor;
+import gpigb.sense.SensorObserver;
 import gpigb.store.Store;
 
 import java.util.Map;
@@ -34,12 +36,12 @@ public class GrapherTest {
 			
 //		Sensor<Double> s1 = new PortSensor();
 //		final InMemoryStore st = new InMemoryStore();
-//		Analyser aMean = new MeanAnalyser();
+		Analyser aRTNull = new RTNullAnalyser();
 //		TestAppGUI rState = new TestAppGUI();
 		
-		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.RTNullAnalyser");
-		
-		Analyser aRTNull = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
+//		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.RTNullAnalyser");
+//		
+//		Analyser aRTNull = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
 		
 		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.PortSensor");
 		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
@@ -54,21 +56,22 @@ public class GrapherTest {
 		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr.getAvailableObjects(), rMgr.getAvailableObjects(), stMgr.getAvailableObjects(), seMgr.getAvailableObjects());
 		
 		Map<String, ConfigurationValue> config;
-		
-		config = aRTNull.getConfigSpec();
-		configHandler.getConfiguration(config);
-		aRTNull.setConfig(config, null, null, null, stMgr);
-		
+				
 		config = s1.getConfigSpec();
 		configHandler.getConfiguration(config);
 		s1.setConfig(config, null, null, null, null);
-		s1.registerObserver(st);
 		
-	
-	
-			config = rState.getConfigSpec();
-			configHandler.getConfiguration(config);
-			rState.setConfig(config, aMgr, null, seMgr, null);
+			
+		config = rState.getConfigSpec();
+		configHandler.getConfiguration(config);
+		rState.setConfig(config, aMgr, null, seMgr, null);
+		
+		config = aRTNull.getConfigSpec();
+		configHandler.getConfiguration(config);
+		aRTNull.setConfig(config, null, rMgr, null, stMgr);
+		
+		s1.registerObserver(st);
+		s1.registerObserver((SensorObserver) aRTNull);
 		
 		while (true)
 		{	
