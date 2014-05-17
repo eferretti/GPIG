@@ -1,7 +1,16 @@
 package gpigb.report;
 
+import gpigb.analyse.Analyser;
+import gpigb.classloading.ComponentManager;
+import gpigb.configuration.ConfigurationValue;
+import gpigb.data.RecordSet;
+import gpigb.sense.Sensor;
+import gpigb.store.Store;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -19,7 +28,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
  
-public class EmailReporter {
+public class EmailReporter implements Reporter{
+	
+	private int id;
+	
 	/**
     Outgoing Mail (SMTP) Server
     requires TLS or SSL: smtp.gmail.com (use authentication)
@@ -133,5 +145,43 @@ public class EmailReporter {
 	public static void main(String[] args) {
 		EmailReporter.sendSimpleEmail("miromarinov@gmail.com", "Sub1", "Test1");
 		EmailReporter.sendAttachmentEmail("miromarinov@gmail.com", "Sub2", "Test2", "abc.txt");
+	}
+
+	@Override
+	public void setID(int newID) {
+		// TODO Auto-generated method stub
+		this.id =  newID;
+	}
+
+	@Override
+	public int getID() {
+		// TODO Auto-generated method stub
+		return this.id;
+	}
+
+	@Override
+	public int getConfigurationStepNumber() {
+		// TODO Auto-generated method stub
+		return 1;
+	}
+
+	@Override
+	public Map<String, ConfigurationValue> getConfigSpec() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean setConfig(Map<String, ConfigurationValue> newConfig,
+			ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr,
+			ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void generateReport(List<RecordSet<?>> data) {
+		// TODO Auto-generated method stub
+		
 	}
 }
