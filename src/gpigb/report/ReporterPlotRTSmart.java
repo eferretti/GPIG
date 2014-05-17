@@ -45,7 +45,7 @@ public class ReporterPlotRTSmart implements Reporter
 		configMap.put("Title", new ConfigurationValue(ValueType.String, "Real Time Graph"));
 		configMap.put("Width", new ConfigurationValue(ValueType.Integer, new Integer(900)));
 		configMap.put("Height", new ConfigurationValue(ValueType.Integer, new Integer(500)));
-		configMap.put("AxisLabel", new ConfigurationValue(ValueType.String, "amount of fucks I give LOL"));
+		configMap.put("AxisLabel", new ConfigurationValue(ValueType.String, ""));
 		return configMap;
 	}
 	
@@ -54,14 +54,15 @@ public class ReporterPlotRTSmart implements Reporter
 	{
 		try
 		{
-			//this.grapher = new SmartGrapher((String) newSpec.get("Title").strValue, ((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
-			this.grapher.setSize(((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
-			this.grapher.setTitle((String) newSpec.get("Title").strValue);
+			this.grapher = new SmartGrapher((String) newSpec.get("Title").strValue, ((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
+//			this.grapher.setSize(((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
+//			this.grapher.setTitle((String) newSpec.get("Title").strValue);
 			this.grapher.setLabel((String) newSpec.get("AxisLabel").strValue);
 			return true;
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
