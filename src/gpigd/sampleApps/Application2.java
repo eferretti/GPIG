@@ -25,8 +25,8 @@ public class Application2 {
 		Thread t2 = new Thread(new Runnable() {
 	         public void run()
 	         {
-	        	int[] sd = {20, 20 , 20 };
-	     		int[] mean = {20, 40, 80};
+	        	int[] sd = {10, 20 , 40 };
+	     		int[] mean = {50, 50, 50};
 	     		GaussianApp sensor1 = new GaussianApp(4445,sd, mean);
 	            sensor1.runSensor(); 
 	         }
