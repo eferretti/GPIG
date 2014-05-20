@@ -11,6 +11,9 @@ import gpigb.data.RecordSet;
 import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +25,8 @@ import java.util.Map;
 public class ReporterPlotRTSmart implements Reporter
 {
 	String title;
+	Integer height;
+	Integer width;
 	SmartGrapher grapher;
 	private int id;
 
@@ -54,14 +59,18 @@ public class ReporterPlotRTSmart implements Reporter
 	{
 		try
 		{
-			//this.grapher = new SmartGrapher((String) newSpec.get("Title").strValue, ((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
-			this.grapher.setSize(((Integer)newSpec.get("Width").intValue).intValue(), ((Integer)newSpec.get("Height").intValue).intValue());
-			this.grapher.setTitle((String) newSpec.get("Title").strValue);
-			this.grapher.setLabel((String) newSpec.get("AxisLabel").strValue);
+			title = (String) newSpec.get("Title").strValue;
+			width = ((Integer)newSpec.get("Width").intValue).intValue();
+			height = ((Integer)newSpec.get("Height").intValue).intValue();
+			System.out.println("Title: " + title + " Width: " + width + " Height: " + height);
+			grapher = new SmartGrapher(title, width, height);
+			grapher.setLabel((String) newSpec.get("AxisLabel").strValue);
+			
 			return true;
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -83,14 +92,12 @@ public class ReporterPlotRTSmart implements Reporter
 	}
 	
 	@Override
-	public int getConfigurationStepNumber() {
-		
+	public int getConfigurationStepNumber() {	
 		return 1;
-
 	}
 
 	/* test the configures */
-		public static void main() {
+		public static void main(String[] args) {
 			IDGenerator.setMinID(47);
 			
 			JarFileComponentManager<Analyser> aMgr = new JarFileComponentManager<>(Analyser.class);

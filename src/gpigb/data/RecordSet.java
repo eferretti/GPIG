@@ -111,4 +111,10 @@ public class RecordSet<DataType>
 	{
 		return sensorID;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return data.toString();
+	}
 }

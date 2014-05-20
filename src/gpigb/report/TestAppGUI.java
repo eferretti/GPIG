@@ -181,13 +181,14 @@ public class TestAppGUI implements Reporter{
 		textArea.setEditable(false);
 		JScrollPane scroll = new JScrollPane(textArea);
 		scroll.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+		
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridwidth = 6;
 		gbc_textArea.anchor = GridBagConstraints.NORTH;
 		gbc_textArea.insets = new Insets(0, 0, 5, 5);
 		gbc_textArea.gridx = 1;
 		gbc_textArea.gridy = sensorNumber + 1;
-		frame.getContentPane().add(scroll, gbc_textArea);
+		frame.getContentPane().add(textArea, gbc_textArea);
 		
 		frame.pack();
 	}
@@ -303,7 +304,7 @@ public class TestAppGUI implements Reporter{
 					{
 						canvas[i].setBackground(Color.RED);
 						mode[i] = 3;
-						textArea.append(sdf.format(d) + ": Mode change detected. Sensor " + (i+1) + ": ERROR\n");
+						textArea.append(sdf.format(d) + " Mode change detected. Sensor " + (i+1) + ": ERROR\n");
 					}
 				} 
 				else 
@@ -322,7 +323,7 @@ public class TestAppGUI implements Reporter{
 				{
 					canvas[i].setBackground(Color.GREEN);
 					mode[i] = 1;
-					textArea.append(sdf.format(d) + ": Mode change detected. Sensor " + (i+1) + ": Normal\n");
+					textArea.append(sdf.format(d) + " Mode change detected. Sensor " + (i+1) + ": Normal\n");
 				}
 			}
 			

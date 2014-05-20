@@ -1,5 +1,6 @@
 package gpigb.data;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -81,4 +82,14 @@ public class SensorRecord<ReadingType> implements Comparable<SensorRecord<?>>
 	{
 		return this.timestamp.compareTo(o.timestamp);
 	}
+	
+	@Override
+	public String toString()
+	{
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return "Reading: " + data.toString() + " (Date&Time:" + dateFormat.format(timestamp) + ", SensorID:" + sensorID + ")\n";
+	}
+	
+	
+	
 }

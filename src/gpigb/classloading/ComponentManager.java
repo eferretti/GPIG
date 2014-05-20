@@ -20,7 +20,7 @@ public interface ComponentManager<Interface>
 	public boolean addModuleDirectory(String path);
 
 	/**
-	 * Refreshes the available modules, canning the directories provided and
+	 * Refreshes the available modules, scanning the directories provided and
 	 * updating references as required
 	 */
 	public void refreshModules();
@@ -91,6 +91,7 @@ public interface ComponentManager<Interface>
 			this.moduleID = moduleID;
 		}
 		
+		@Override
 		public String toString()
 		{
 			return "Component " + instanceID + ": " + this.displayName;
