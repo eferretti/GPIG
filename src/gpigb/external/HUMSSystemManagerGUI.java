@@ -423,18 +423,94 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 		
 		if(event.getSource() == this.btnConfigureAnalyser)
 		{
+			new Thread(new Runnable()
+			{
+				public void run()
+				{
+					try
+					{
+						int id = ((InstanceSummary)cboAnalyserInstances.getSelectedItem()).instanceID;
+						Map<String, ConfigurationValue> config = system.getAnalyserConfig(id);
+						new GUIConfigHandler(system.listAnalysers(), system.listReporters(), system.listStores(), system.listSensors()).getConfiguration(config);
+						system.setAnalyserConfig(id, config);
+						refresh();
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+		
+		if(event.getSource() == this.btnNewReporter)
+		{
 			try
 			{
-				int id = ((InstanceSummary)this.cboAnalyserInstances.getSelectedItem()).instanceID;
-				Map<String, ConfigurationValue> config = this.system.getAnalyserConfig(id);
-				new GUIConfigHandler(this.system.listAnalysers(), this.system.listReporters(), this.system.listStores(), this.system.listSensors()).getConfiguration(config);
-				this.system.setAnalyserConfig(id, config);
+				this.system.createReporter(((ModuleSummary)this.cboReporterModules.getSelectedItem()).moduleID);
 				refresh();
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				
 			}
+		}
+		
+		if(event.getSource() == this.btnConfigureReporter)
+		{
+			new Thread(new Runnable()
+			{
+				public void run()
+				{
+					try
+					{
+						int id = ((InstanceSummary)cboReporterInstances.getSelectedItem()).instanceID;
+						Map<String, ConfigurationValue> config = system.getAnalyserConfig(id);
+						new GUIConfigHandler(system.listAnalysers(), system.listReporters(), system.listStores(), system.listSensors()).getConfiguration(config);
+						system.setReporterConfig(id, config);
+						refresh();
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+		
+		if(event.getSource() == this.btnNewStore)
+		{
+			try
+			{
+				this.system.createStore(((ModuleSummary)this.cboStoreModules.getSelectedItem()).moduleID);
+				refresh();
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+		
+		if(event.getSource() == this.btnConfigureStore)
+		{
+			new Thread(new Runnable()
+			{
+				public void run()
+				{
+					try
+					{
+						int id = ((InstanceSummary)cboStoreInstances.getSelectedItem()).instanceID;
+						Map<String, ConfigurationValue> config = system.getAnalyserConfig(id);
+						new GUIConfigHandler(system.listAnalysers(), system.listReporters(), system.listStores(), system.listSensors()).getConfiguration(config);
+						system.setStoreConfig(id, config);
+						refresh();
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}).start();
 		}
 	}
 	
