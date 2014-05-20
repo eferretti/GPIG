@@ -33,7 +33,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	public PortSensor()
 	{
 		hostName = "localhost";
-		portNumber = 444;
+		portNumber = 4444;
 		observers = new ArrayList<SensorObserver>();
 		new Thread(this).start();
 	}
