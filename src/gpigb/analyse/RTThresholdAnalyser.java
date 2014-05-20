@@ -82,6 +82,8 @@ public class RTThresholdAnalyser implements RealTimeAnalyser
 	{
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
 		configMap.put("Reporter", new ConfigurationValue(ValueType.Reporter, 0));
+		configMap.put("Upper Threshold", new ConfigurationValue(ValueType.Integer, upperThreshold));
+		configMap.put("Lower Threshold", new ConfigurationValue(ValueType.Integer, lowerThreshold));
 		return configMap;
 	}
 
@@ -93,6 +95,8 @@ public class RTThresholdAnalyser implements RealTimeAnalyser
 		try
 		{
 			this.reporter = rMgr.getObjectByID(newConfig.get("Reporter").intValue);
+			this.upperThreshold = newConfig.get("Upper Threshold").intValue;
+			this.lowerThreshold = newConfig.get("Lower Threshold").intValue;
 			return true;
 		}
 		catch(Exception e)

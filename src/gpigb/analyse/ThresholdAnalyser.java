@@ -50,8 +50,6 @@ public class ThresholdAnalyser implements RealTimeAnalyser
 				add.addRecord(inputs.getDataAtPosition(i));
 				rt.add(add);
 
-				new OutOfRangeReporter().generateReport(rt);
-
 			}
 
 		}
