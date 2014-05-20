@@ -41,8 +41,15 @@ public class PortSensorHumsLocal {
 //		PortReporter rPort = new PortReporter();
 		
 		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.MeanAnalyser");
+		Integer aStDeID = aMgr.getModuleIDByName("gpigb.analyse.StandDevAnalyser");
+		
+
 		Analyser aMean = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
+
 		System.out.println("Mean Analyser : Component " + aMean.getID());
+
+		Analyser aSD = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aStDeID)).get();
+		System.out.println("SD Analyser : Component " + aMean.getID());
 		
 		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.PortSensor");
 		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
@@ -72,6 +79,10 @@ public class PortSensorHumsLocal {
 		
 		Map<String, ConfigurationValue> config;
 		
+		config = aSD.getConfigSpec();
+		configHandler.getConfiguration(config);
+		aSD.setConfig(config, null, null, null, stMgr);
+		
 		config = aMean.getConfigSpec();
 		configHandler.getConfiguration(config);
 		aMean.setConfig(config, null, null, null, stMgr);
@@ -100,10 +111,10 @@ public class PortSensorHumsLocal {
 		s1.registerObserver(st);
 		s1.registerObserver((SensorObserver)rtaThreshold);
 		
-//		config = s2.getConfigSpec();
-//		configHandler.getConfiguration(config);
-//		s2.setConfig(config, null, null, null, null);
-//		s2.registerObserver(st);
+		config = s2.getConfigSpec();
+		configHandler.getConfiguration(config);
+		s2.setConfig(config, null, null, null, null);
+		s2.registerObserver(st);
 		
 		while (true)
 		{	
