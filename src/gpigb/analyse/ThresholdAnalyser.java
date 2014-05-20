@@ -1,6 +1,7 @@
 package gpigb.analyse;
 
 import gpigb.classloading.ComponentManager;
+import gpigb.classloading.StrongReference;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
 import gpigb.data.RecordSet;
@@ -11,6 +12,7 @@ import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +21,12 @@ import java.util.Map;
  * An analyser which takes an upper and lower bound and reports when sensor
  * readings exceed these values
  */
-public class ThresholdAnalyser implements Analyser
+public class ThresholdAnalyser implements RealTimeAnalyser
 {
-	int upperThreshold;
-	int lowerThreshold;
-
+	private int upperThreshold;
+	private int lowerThreshold;
+	private StrongReference<Reporter> reporter;
+	
 	public ThresholdAnalyser()
 	{
 	}
@@ -68,6 +71,7 @@ public class ThresholdAnalyser implements Analyser
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, lowerThreshold));
 		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, upperThreshold));
+		configSpec.put("Reporter", new ConfigurationValue(ValueType.Reporter, 0));
 		return configSpec;
 	}
 	
@@ -77,6 +81,7 @@ public class ThresholdAnalyser implements Analyser
 		{
 			this.lowerThreshold = (Integer) newSpec.get("Min").intValue;
 			this.upperThreshold = (Integer) newSpec.get("Max").intValue;
+			this.reporter = rMgr.getObjectByID(newSpec.get("Reporter").intValue);
 			return true;
 		}
 		catch(Exception e)
@@ -100,5 +105,61 @@ public class ThresholdAnalyser implements Analyser
 	public int getConfigurationStepNumber() {
 		
 		return 1;
+	}
+
+	@Override
+	public boolean update(int sensorID, Integer reading) {
+		if (reading < lowerThreshold || reading > upperThreshold) {
+
+			List<RecordSet<?>> rt = new ArrayList<RecordSet<?>>();
+			RecordSet<Integer> add = new RecordSet<Integer>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(),
+					sensorID);
+			add.addRecord(new SensorRecord<Integer>(sensorID, 1 ));
+			rt.add(add);
+
+			reporter.get().generateReport(rt);
+			return true;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean update(int sensorID, Double reading) {
+		if (reading < lowerThreshold || reading > upperThreshold) {
+			System.out.println("Threshold Analyser , Sending a signal");
+			List<RecordSet<?>> rt = new ArrayList<RecordSet<?>>();
+			RecordSet<Integer> add = new RecordSet<Integer>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(),
+					sensorID);
+			add.addRecord(new SensorRecord<Integer>(sensorID, 1 ));
+			rt.add(add);
+
+			reporter.get().generateReport(rt);
+			return true;
+		}
+		System.out.println("Threshold Analyser , Not Sending Signal");
+		return true;
+	}
+
+	@Override
+	public boolean update(int sensorID, String reading) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean update(SensorRecord<?> reading) {
+		if ((Integer)reading.getData() < lowerThreshold || (Integer)reading.getData() > upperThreshold) {
+			System.out.println("Threshold Analyser , Sending a signal");
+			List<RecordSet<?>> rt = new ArrayList<RecordSet<?>>();
+			RecordSet<Integer> add = new RecordSet<Integer>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(),
+					reading.getSensorID());
+			add.addRecord(new SensorRecord<Integer>(reading.getSensorID(), 1 ));
+			rt.add(add);
+
+			reporter.get().generateReport(rt);
+			return true;
+		}
+		System.out.println("Threshold Analyser , Not Sending Signal");
+		return true;
 	}
 }

@@ -83,6 +83,7 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 	public boolean addModuleDirectory(String path)
 	{
 		path = path.replace("~", System.getProperty("user.home"));
+		System.out.println("Path: " + path);
 		File newDir = new File(path);
 
 		if (newDir.exists() && newDir.isDirectory()) {

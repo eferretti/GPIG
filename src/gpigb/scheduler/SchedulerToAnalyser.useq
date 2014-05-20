@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.1.6" icons="true">  
+  <object id="1" language="java" name="gpigb.scheduler.Scheduler" project="GPIG_HUMS" 
+    file="/GPIG_HUMS/src/gpigb/scheduler/Scheduler.java" binary="false" label="scheduler" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="2" y="0"/>    
+    <execution id="2">      
+      <position height="147" width="81" x="5" y="86"/>    
+    </execution>  
+  </object>  
+  <object id="5" language="java" name="gpigb.scheduler.Scheduler.AnalyserSchedulerTask" project="GPIG_HUMS" 
+    file="/GPIG_HUMS/src/gpigb/scheduler/Scheduler.java" binary="false" label="analyserSchedulerTask" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="17" y="0"/>    
+    <execution id="4">      
+      <position height="105" width="158" x="5" y="107"/>    
+    </execution>  
+  </object>  
+  <object id="8" language="java" name="gpigb.analyse.Analyser" project="GPIG_HUMS" 
+    file="/GPIG_HUMS/src/gpigb/analyse/Analyser.java" binary="false" label="analyser" type="interface" autoSize="false">    
+    <position height="211" width="152" x="162" y="0"/>    
+    <execution id="7">      
+      <position height="63" width="73" x="90" y="128"/>    
+    </execution>  
+  </object>  
+  <object id="11" language="java" name="gpigb.report.Reporter" project="GPIG_HUMS" 
+    file="/GPIG_HUMS/src/gpigb/report/Reporter.java" binary="false" label="reporter" type="interface" autoSize="false">    
+    <position height="190" width="164" x="314" y="0"/>    
+    <execution id="10">      
+      <position height="21" width="73" x="167" y="149"/>    
+    </execution>  
+  </object>  
+  <message id="3" operation="run():void">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="6" operation="analyse(java.util.List&lt;gpigb.data.RecordSet&lt;?&gt;&gt;):boolean">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </message>  
+  <message id="9" operation="generateReport(java.util.List&lt;gpigb.data.RecordSet&lt;?&gt;&gt;):void">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="10"/>  
+  </message>
+</sequence-diagram>

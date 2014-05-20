@@ -70,8 +70,9 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 				}
 					
 				case Float:
-					JSpinner floatSpinner = new JSpinner();
-					component = floatSpinner;
+					JTextField floatTextField = new JTextField(30);
+					floatTextField.setText(Float.toString(configSpec.get(key).fltValue));
+					component = floatTextField;
 					++rows;
 					break;
 				
@@ -187,7 +188,7 @@ public class GUIConfigHandler extends JFrame implements ConfigurationHandler
 					configSpec.get(key).intValue = ((InstanceSummary)((JComboBox<InstanceSummary>) getContentPane().getComponent(i)).getSelectedItem()).instanceID;
 					break;
 				case Float:
-					configSpec.get(key).fltValue = (Float)((JSpinner)getContentPane().getComponent(i)).getValue();
+					configSpec.get(key).fltValue = (Float) Float.parseFloat(configSpec.get(key).strValue = ((JTextField)getContentPane().getComponent(i)).getText());
 					break;
 				case Integer:
 					configSpec.get(key).intValue = (Integer)((JSpinner)getContentPane().getComponent(i)).getValue();

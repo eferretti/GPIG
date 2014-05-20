@@ -107,6 +107,11 @@ public class RTNullAnalyser implements RealTimeAnalyser {
 
 	@Override
 	public boolean update(SensorRecord<?> reading) {
+		//RecordSet<?> rs = new RecordSet<String>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), reading.getSensorID());
+		//rs.addRecord(reading);
+		//List<RecordSet<?>> ls = new ArrayList();
+		//ls.add(rs);
+		//reporter.get().generateReport(ls);
 		return false;
 	}
 

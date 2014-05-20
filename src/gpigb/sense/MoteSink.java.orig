@@ -1,0 +1,295 @@
+package gpigb.sense;
+
+import com.ibm.saguaro.system.*;
+
+public class MoteSink {
+
+	private static byte[] xmitNode;
+
+	private static final byte MR_APP_PORT = 111;
+	private static final int MOTE_PORT = 6;
+	private static byte[] lipSend;
+	private static byte port;
+	private static int offset;
+
+	private static byte srcRx;
+	private static long timeRx;
+	private static byte typeRx;
+	private static int infoRx;
+
+	private static Timer tLED;
+	private static TimerEvent teLED;
+	
+	private static Timer tBroadcast;
+	private static TimerEvent teBroadcast;
+
+	private static Timer tTOG;
+	private static TimerEvent teTOG;
+
+	/** Constant referring to the yellow LED. */
+	private static final byte YELLOW_LED = 0;
+
+	/** Constant referring to the green LED. */
+	private static final byte GREEN_LED = 1;
+
+	/** Constant referring to the red LED. */
+	private static final byte RED_LED = 2;
+
+	private static final byte OFF = 0;
+	private static final byte ON = 1;
+
+	private static byte channel = (byte) 0;
+	private static int sinkPanId = 0x11;
+	private static int nodePanId = 0x11;
+	private static int sinkAddress = 0x23;
+
+	/** Create radio object. */
+	static Radio radio = new Radio();
+
+	static {
+
+		initialiseRadio();
+		initialiseFrame();
+		initialiseDelegates();
+		initialiseTimers();
+
+		lipSend = new byte[17];
+
+		port = Assembly.getActiveAsmId();
+
+		Util.set16be(lipSend, MOTE_PORT, port);
+
+		// Turn on receiving on the radio
+		radio.startRx(Device.ASAP, 0, Time.currentTicks() + 0x7FFFFFFF);
+	}
+
+	private static void tcLED(byte param, long time) {
+		LED.setState(RED_LED, OFF);
+	}
+
+	private static void tcBroadcast(byte param, long time) {
+		radio.transmit(Device.ASAP | Radio.TXMODE_POWER_MAX, xmitNode, 0, 12, 0);
+	}
+	
+	private static void tcTOG(byte param, long time) {
+		tTOG.setAlarmBySpan(Time.toTickSpan(Time.SECONDS, 1));
+
+		if (LED.getState(YELLOW_LED) == OFF) {
+			LED.setState(YELLOW_LED, ON);
+		} else {
+			LED.setState(YELLOW_LED, OFF);
+		}
+	}
+	
+	private static void toggleLED(byte colour) {
+		switch (colour) {
+		case YELLOW_LED:
+			if (LED.getState(YELLOW_LED) == (byte)0) {
+				LED.setState(YELLOW_LED, (byte)1);
+			} else {
+				LED.setState(YELLOW_LED, (byte)0);
+			}
+			break;
+		case GREEN_LED:
+			if (LED.getState(GREEN_LED) == (byte)0) {
+				LED.setState(GREEN_LED, (byte)1);
+			} else {
+				LED.setState(GREEN_LED, (byte)0);
+			}
+			break;
+		case RED_LED:
+			if (LED.getState(RED_LED) == (byte)0) {
+				LED.setState(RED_LED, (byte)1);
+			} else {
+				LED.setState(RED_LED, (byte)0);
+			}
+			break;
+		}
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Mote Runner delegates
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+
+	public static int onTx(int flags, byte[] data, int len, int info, long time) {
+		return 0;
+	}
+
+	public static int onRx(int flags, byte[] data, int len, int info, long time) {
+		if (data == null) {
+
+			return 0;
+		}
+		if (Util.get16le(data, 3) == sinkPanId && Util.get16le(data, 5) == sinkAddress) {
+
+			srcRx = data[11];
+			timeRx = Util.get32be(data, 12);
+			typeRx = data[16];
+			infoRx = Util.get16be(data, 17);
+
+			if (typeRx == Log.LIGHT) {
+				toggleLED(RED_LED);
+			} else {
+				toggleLED(GREEN_LED);
+			}
+			sendLogEntry(srcRx, timeRx, typeRx, infoRx);
+			
+		}
+
+		return 0;
+	}
+
+	private static void sendLogEntry(byte src, long time, byte type, int info) {
+		lipSend[offset + 1] = (byte) src;
+
+		Util.set32be(lipSend, offset + 2, time);
+
+		lipSend[offset + 6] = type;
+
+		if (type == Log.LIGHT || type == Log.TEMP) {
+			Util.set16be(lipSend, offset + 7, info);
+		} else {
+			Util.set16be(lipSend, offset + 7, 0);
+		}
+		LIP.send(lipSend, 0, 17);
+	}
+
+	static int onLIP(int info, byte[] data, int len) {
+		offset = LIP.getPortOff();
+		byte[] cmd = new byte[1];
+		// len usually 10, offset 6, size 2
+		byte[] payload = new byte[len - offset - 2];
+
+		Util.copyData(data, offset + 1, cmd, 0, 1);
+
+		switch ((int) cmd[0]) {
+		case LIPCmd.SETUP:
+			// Logger.appendString(csr.s2b("Setting up initial LIP header"));
+			// Logger.flush(Mote.INFO);
+			// remember who we got the last serial message from
+			// copy data( source | source start index | destination |
+			// destination start index | length)
+			Util.copyData(data, 0, lipSend, 0, MOTE_PORT); // setup initial LIP
+															// header
+			break;
+		default:
+
+			break;
+		}
+
+		return 200;
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Initialisation methods
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	private static void initialiseRadio() {
+
+		// Open the default radio
+		radio.open(Radio.DID, null, 0, 0);
+		// Set the radio to be on channel we decide to start on
+		radio.setChannel(channel);
+		// Set PAN ID
+		radio.setPanId(sinkPanId, true);
+		// Set the short address
+		radio.setShortAddr(sinkAddress);
+
+	}
+
+	private static void initialiseFrame() {
+		// Prepare data frame with source and destination addressing
+		xmitNode = new byte[12];
+		xmitNode[0] = Radio.FCF_DATA | Radio.FCF_ACKRQ;
+		xmitNode[1] = Radio.FCA_SRC_SADDR | Radio.FCA_DST_SADDR;
+		Util.set16le(xmitNode, 3, nodePanId); // destination pan id
+		Util.set16le(xmitNode, 5, Radio.SADDR_BROADCAST); // destination address
+		Util.set16le(xmitNode, 7, sinkPanId); // source pan id
+		Util.set16le(xmitNode, 9, radio.getShortAddr()); // source address
+		xmitNode[11] = (byte) 5;
+	}
+
+	private static void initialiseDelegates() {
+		radio.setRxHandler(new DevCallback(null) {
+			public int invoke(int flags, byte[] data, int len, int info,
+					long time) {
+				return MoteSink.onRx(flags, data, len, info, time);
+			}
+		});
+
+		radio.setTxHandler(new DevCallback(null) {
+			public int invoke(int flags, byte[] data, int len, int info,
+					long time) {
+				return MoteSink.onTx(flags, data, len, info, time);
+			}
+		});
+
+		Assembly.setDataHandler(new DataHandler(null) {
+			public int invoke(int info, byte[] data, int len) {
+				return MoteSink.onLIP(info, data, len);
+			}
+		});
+		LIP.open(MR_APP_PORT);
+	}
+
+	private static void initialiseTimers() {
+		teLED = new TimerEvent(null) {
+			public void invoke(byte param, long time) {
+				MoteSink.tcLED(param, time);
+			}
+		};
+		tLED = new Timer();
+		tLED.setCallback(teLED);
+		
+		teBroadcast = new TimerEvent(null) {
+			public void invoke(byte param, long time) {
+				MoteSink.tcBroadcast(param, time);
+			}
+		};
+		tBroadcast = new Timer();
+		tBroadcast.setCallback(teBroadcast);
+
+		teTOG = new TimerEvent(null) {
+			public void invoke(byte param, long time) {
+				MoteSink.tcTOG(param, time);
+			}
+		};
+		tTOG = new Timer();
+		tTOG.setCallback(teTOG);
+
+		tTOG.setAlarmBySpan(Time.toTickSpan(Time.SECONDS, 1));
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Classes containing constants
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+
+
+	class Log {
+		static final byte TEMP = (byte) 1;
+		static final byte LIGHT = (byte) 2;
+	}
+
+	class NodeCMD {
+		static final int REG_REQ = 1;
+		static final int SIM_RESULT = 2;
+	}
+
+	class LIPCmd {
+		static final int SETUP = 1;
+		static final int START = 2;
+		static final int PARAM = 3;
+	}
+
+}

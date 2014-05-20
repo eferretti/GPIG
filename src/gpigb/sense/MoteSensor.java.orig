@@ -1,0 +1,285 @@
+package gpigb.sense;
+
+import com.ibm.iris.IRIS;
+import com.ibm.saguaro.system.*;
+
+public class MoteSensor {
+
+	private static byte[] xmitSink;
+	private static byte[] xmitNode;
+
+	private static final int MDA100_ADC_CHANNEL_MASK = 0x02;
+	private static final byte LIGHT_PWR_PIN   = IRIS.PIN_INT5;
+	private static final byte TEMP_PWR_PIN    = IRIS.PIN_PW0;
+	private static final int ADC_SAMPLE_PERIOD = 500;
+
+	private static int adcReadVal;
+
+	private static final byte YELLOW_LED = 0;
+
+	private static final byte GREEN_LED = 1;
+
+	private static final byte RED_LED = 2;
+
+	private static byte channel = (byte) 0;
+	private static int nodePanId = 0x11;
+	private static int sinkPanId = 0x11;
+
+	private static int sinkAddress = 0x23;
+	private static byte nodeAddress;
+
+	private static Timer timerSendLog;
+	private static Timer timerADC;
+	private static Timer timerBroadcast;
+
+	private static TimerEvent teSendLog;
+	private static TimerEvent teADC;
+	private static TimerEvent teBroadcast;
+
+	private static GPIO gpioDev = new GPIO();
+	private static ADC adcDev = new ADC();
+
+	/** Create radio object. */
+	static Radio radio = new Radio();
+
+
+	static {
+		initialiseRadio();
+		initialiseFrame();
+		initialiseDelegates();
+		initialiseTimers();
+
+		gpioDev.open();
+		gpioDev.configureOutput(TEMP_PWR_PIN, GPIO.OUT_SET);
+
+		adcDev.open(MDA100_ADC_CHANNEL_MASK, GPIO.NO_PIN/* use manual power */,
+				0/* no warmup */, 0/* no interval, sample as fast as possible */);
+
+		adcDev.setReadHandler(new DevCallback(null) {
+			public int invoke(int flags, byte[] data, int len, int info,
+					long time) {
+				return MoteSensor.onADC(flags, data, len, info, time);
+			}
+		});
+		LED.setState(YELLOW_LED, (byte)1);
+		timerADC.setAlarmBySpan(Time.toTickSpan(Time.SECONDS, 3));
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Timer Callbacks
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+
+	private static void tcSendLog(byte param, long time) {
+		radio.transmit(Device.ASAP | Radio.TXMODE_POWER_MAX, xmitSink, 0, 19, 0);
+	}
+
+	private static void tcADC(byte param, long time) {
+		LED.setState(YELLOW_LED, (byte)0);
+		adcDev.read(Device.TIMED, 1, Device.ASAP);
+		timerADC.setAlarmBySpan(Time.toTickSpan(Time.MILLISECS,
+				ADC_SAMPLE_PERIOD));
+	}
+
+	private static void tcBroadcast(byte param, long time) {
+		radio.transmit(Device.ASAP | Radio.TXMODE_POWER_MIN, xmitNode, 0, 12, 0);
+		timerBroadcast.setAlarmBySpan(Time.toTickSpan(Time.SECONDS, 2));
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Mote Runner Delegates
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+
+	public static int onADC(int flags, byte[] data, int len, int info,
+			long time) {
+		adcReadVal = Util.make16(data[1], data[0]);
+		if (gpioDev.doPin(GPIO.CTRL_READ,TEMP_PWR_PIN) != 0) { 
+			sendLogEntry(Log.TEMP, adcReadVal);
+			switchLED(GREEN_LED);
+		    gpioDev.configureOutput(LIGHT_PWR_PIN,GPIO.OUT_SET);
+		    gpioDev.configureOutput(TEMP_PWR_PIN,GPIO.OUT_CLR);
+		} else {
+			sendLogEntry(Log.LIGHT, adcReadVal);
+			switchLED(RED_LED);
+		    gpioDev.configureOutput(TEMP_PWR_PIN,GPIO.OUT_SET);
+		    gpioDev.configureOutput(LIGHT_PWR_PIN,GPIO.OUT_CLR);		
+		}
+		
+		return 0;
+	}
+
+	public static int onTx(int flags, byte[] data, int len, int info, long time) {
+
+		return 0;
+	}
+
+	public static int onRx(int flags, byte[] data, int len, int info, long time) {
+		if (data == null) {
+			return 0;
+		}
+
+		return 0;
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Logging of simulation events helper methods
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+
+	private static void sendLogEntry(byte type, int info) {
+		Util.set32be(xmitSink, 12,
+				Time.fromTickSpan(Time.SECONDS, Time.currentTicks()));
+
+		xmitSink[16] = type;
+
+		if (type == Log.LIGHT || type == Log.TEMP) {
+			Util.set16be(xmitSink, 17, info);
+		} else {
+			Util.set16be(xmitSink, 17, 0);
+		}
+		timerSendLog.setAlarm(teSendLog, Time.toTickSpan(Time.MILLISECS, 500));
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Initialisation methods
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+
+	private static void initialiseRadio() {
+		// unique mote address
+		// eui64 little endian e.g: Mote ID: 02-00-00-00-00-1A-A7-00 stored as
+		// 00 A7 1A 00 00 00 00 02
+		byte[] eui64 = new byte[8];
+		Mote.getParam(Mote.EUI64, eui64, 0);
+		nodeAddress = eui64[0];
+		// Open the default radio
+		radio.open(Radio.DID, null, 0, 0);
+		// Set the radio to be on channel we decide to start on
+		radio.setChannel(channel);
+		// Set PAN ID
+		radio.setPanId(nodePanId, true);
+		// Set the short address
+		radio.setShortAddr(nodeAddress);
+
+	}
+
+	private static void initialiseFrame() {
+		xmitNode = new byte[12];
+		xmitNode[0] = Radio.FCF_DATA | Radio.FCF_ACKRQ;
+		xmitNode[1] = Radio.FCA_SRC_SADDR | Radio.FCA_DST_SADDR;
+		Util.set16le(xmitNode, 3, nodePanId); // destination pan id
+		Util.set16le(xmitNode, 5, Radio.SADDR_BROADCAST); // destination address
+		Util.set16le(xmitNode, 7, nodePanId); // source pan id
+		Util.set16le(xmitNode, 9, nodeAddress); // source address
+		xmitNode[11] = (byte) 5;
+		
+		xmitSink = new byte[19];
+		xmitSink[0] = Radio.FCF_DATA | Radio.FCF_ACKRQ;
+		xmitSink[1] = Radio.FCA_SRC_SADDR | Radio.FCA_DST_SADDR;
+		Util.set16le(xmitSink, 3, sinkPanId); // destination pan id
+		Util.set16le(xmitSink, 5, sinkAddress); // destination address
+		Util.set16le(xmitSink, 7, nodePanId); // source pan id
+		Util.set16le(xmitSink, 9, nodeAddress); // source address
+		xmitSink[11] = (byte) nodeAddress;
+		
+		Util.set32be(xmitSink, 12, 0);
+		
+		xmitSink[16] = Log.LIGHT;
+		
+		Util.set16be(xmitSink, 17, 0);
+	}
+
+	private static void initialiseDelegates() {
+		radio.setRxHandler(new DevCallback(null) {
+			public int invoke(int flags, byte[] data, int len, int info,
+					long time) {
+				return MoteSensor.onRx(flags, data, len, info, time);
+			}
+		});
+
+		radio.setTxHandler(new DevCallback(null) {
+			public int invoke(int flags, byte[] data, int len, int info,
+					long time) {
+				return MoteSensor.onTx(flags, data, len, info, time);
+			}
+		});
+
+
+	}
+
+	private static void initialiseTimers() {
+
+		teSendLog = new TimerEvent(null) {
+			public void invoke(byte param, long time) {
+				MoteSensor.tcSendLog(param, time);
+			}
+		};
+		timerSendLog = new Timer();
+		timerSendLog.setCallback(teSendLog);
+
+		teADC = new TimerEvent(null) {
+			public void invoke(byte param, long time) {
+				MoteSensor.tcADC(param, time);
+			}
+		};
+		timerADC = new Timer();
+		timerADC.setCallback(teADC);
+		
+		
+		teBroadcast = new TimerEvent(null) {
+			public void invoke(byte param, long time) {
+				MoteSensor.tcBroadcast(param, time);
+			}
+		};
+		timerBroadcast = new Timer();
+		timerBroadcast.setCallback(teBroadcast);
+		
+	}
+
+	private static void switchLED(byte colour) {
+		switch (colour) {
+		case 0:
+			break;
+		case 1:
+			LED.setState(GREEN_LED, (byte) 1);
+			LED.setState(RED_LED, (byte) 0);
+			break;
+		case 2:
+			LED.setState(GREEN_LED, (byte) 0);
+			LED.setState(RED_LED, (byte) 1);
+			break;
+		case 3:
+			LED.setState(RED_LED, (byte) 0);
+			LED.setState(GREEN_LED, (byte) 0);
+			break;
+
+		}
+	}
+
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+	// Classes containing constants
+	// ================================================================================
+	// ================================================================================
+	// ================================================================================
+
+	class Log {
+		static final byte TEMP = (byte) 1;
+		static final byte LIGHT = (byte) 2;
+	}
+
+}
