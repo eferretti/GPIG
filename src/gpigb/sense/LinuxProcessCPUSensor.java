@@ -2,9 +2,12 @@ package gpigb.sense;
 
 import gpigb.analyse.Analyser;
 import gpigb.classloading.ComponentManager;
+import gpigb.classloading.IDGenerator;
+import gpigb.classloading.JarFileComponentManager;
 import gpigb.configuration.Configurable;
 import gpigb.configuration.ConfigurationValue;
 import gpigb.configuration.ConfigurationValue.ValueType;
+import gpigb.configuration.handlers.GUIConfigHandler;
 import gpigb.data.SensorRecord;
 import gpigb.report.Reporter;
 import gpigb.store.Store;
@@ -120,13 +123,14 @@ public class LinuxProcessCPUSensor implements Sensor<Float>, Configurable
 	        	averageUsage = (dampingFactor * averageUsage) + ((1-dampingFactor) * instantaniousUsage);
 	        }
 	        
-	        System.out.println("Reading: " + averageUsage);
+	        //System.out.println("Reading: " + averageUsage);
+	        notifyObservers();
 	        return averageUsage;
 	        
 	    } catch (IOException ex) {
 	        ex.printStackTrace();
 	    }
-
+	    notifyObservers();
 	    return 0f;
 	}
 
@@ -150,21 +154,51 @@ public class LinuxProcessCPUSensor implements Sensor<Float>, Configurable
 	}
 
 	@Override
-	public void notifyObservers()
-	{
+	public void notifyObservers() {
 		for(SensorObserver obs : observers)
-			obs.update(new SensorRecord<Float>(getID(), averageUsage));
+			obs.update(id, averageUsage.intValue());
 	}
 
 	@Override
-	public void setID(int newID)
-	{
+	public void setID(int newID) {
 		this.id = newID;
 	}
 	
 	@Override
 	public int getConfigurationStepNumber() {
-		
 		return 1;
+	}
+	
+	public static void main(String[] args) {
+		IDGenerator.setMinID(47);
+		
+		JarFileComponentManager<Analyser> aMgr = new JarFileComponentManager<>(Analyser.class);
+		JarFileComponentManager<Reporter> rMgr = new JarFileComponentManager<>(Reporter.class);
+		JarFileComponentManager<Sensor> seMgr = new JarFileComponentManager<>(Sensor.class);
+		JarFileComponentManager<Store> stMgr = new JarFileComponentManager<>(Store.class);
+		
+		aMgr.addModuleDirectory("~/HUMS_Modules");
+		rMgr.addModuleDirectory("~/HUMS_Modules");
+		seMgr.addModuleDirectory("~/HUMS_Modules");
+		stMgr.addModuleDirectory("~/HUMS_Modules");
+		
+		aMgr.refreshModules();
+		rMgr.refreshModules();
+		seMgr.refreshModules();
+		stMgr.refreshModules();
+			
+		Integer cpuSensID = seMgr.getModuleIDByName("gpigb.sense.LinuxProcessCPUSensor");
+		Sensor<Double> cpuSens = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(cpuSensID)).get();
+		
+		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr.getAvailableObjects(), rMgr.getAvailableObjects(), stMgr.getAvailableObjects(), seMgr.getAvailableObjects());
+		
+		Map<String, ConfigurationValue> config;		
+		config = cpuSens.getConfigSpec();
+		configHandler.getConfiguration(config);
+		cpuSens.setConfig(config, null, null, null, null);
+		
+		while(true) {
+			System.out.println(cpuSens.poll());
+		}
 	}
 }
