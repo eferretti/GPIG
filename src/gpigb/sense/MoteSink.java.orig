@@ -1,13 +1,9 @@
-package gpig.sense
+package gpigb.sense;
 
 import com.ibm.saguaro.system.*;
 
 public class MoteSink {
 
-	/**
-	 * Byte array containing IEEE 802.15.4 radio frame information for
-	 * transmission of pheromone.
-	 */
 	private static byte[] xmitNode;
 
 	private static final byte MR_APP_PORT = 111;
@@ -128,7 +124,6 @@ public class MoteSink {
 
 			return 0;
 		}
-		toggleLED(GREEN_LED);
 		if (Util.get16le(data, 3) == sinkPanId && Util.get16le(data, 5) == sinkAddress) {
 
 			srcRx = data[11];
@@ -136,20 +131,24 @@ public class MoteSink {
 			typeRx = data[16];
 			infoRx = Util.get16be(data, 17);
 
+			if (typeRx == Log.LIGHT) {
+				toggleLED(RED_LED);
+			} else {
+				toggleLED(GREEN_LED);
+			}
 			sendLogEntry(srcRx, timeRx, typeRx, infoRx);
-			
 			
 		}
 
 		return 0;
 	}
 
-	private static void sendLogEntry(byte src, long time, int type, int info) {
+	private static void sendLogEntry(byte src, long time, byte type, int info) {
 		lipSend[offset + 1] = (byte) src;
 
 		Util.set32be(lipSend, offset + 2, time);
 
-		lipSend[offset + 6] = (byte) type;
+		lipSend[offset + 6] = type;
 
 		if (type == Log.LIGHT || type == Log.TEMP) {
 			Util.set16be(lipSend, offset + 7, info);
@@ -278,8 +277,8 @@ public class MoteSink {
 
 
 	class Log {
-		static final int TEMP = 1;
-		static final int LIGHT = 2;
+		static final byte TEMP = (byte) 1;
+		static final byte LIGHT = (byte) 2;
 	}
 
 	class NodeCMD {

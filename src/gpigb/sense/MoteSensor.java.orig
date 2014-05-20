@@ -1,26 +1,24 @@
-package gpig.sense;
+package gpigb.sense;
 
 import com.ibm.iris.IRIS;
 import com.ibm.saguaro.system.*;
 
-public class MoteLightSensor {
-	private static long alarmCurrentTicks;
+public class MoteSensor {
 
 	private static byte[] xmitSink;
 	private static byte[] xmitNode;
 
 	private static final int MDA100_ADC_CHANNEL_MASK = 0x02;
-	private static final int ADC_SAMPLE_PERIOD = 1500;
+	private static final byte LIGHT_PWR_PIN   = IRIS.PIN_INT5;
+	private static final byte TEMP_PWR_PIN    = IRIS.PIN_PW0;
+	private static final int ADC_SAMPLE_PERIOD = 500;
 
 	private static int adcReadVal;
 
-	/** Constant referring to the yellow LED. */
 	private static final byte YELLOW_LED = 0;
 
-	/** Constant referring to the green LED. */
 	private static final byte GREEN_LED = 1;
 
-	/** Constant referring to the red LED. */
 	private static final byte RED_LED = 2;
 
 	private static byte channel = (byte) 0;
@@ -32,12 +30,10 @@ public class MoteLightSensor {
 
 	private static Timer timerSendLog;
 	private static Timer timerADC;
-	private static Timer timerEventLED;
 	private static Timer timerBroadcast;
 
 	private static TimerEvent teSendLog;
 	private static TimerEvent teADC;
-	private static TimerEvent teEventLED;
 	private static TimerEvent teBroadcast;
 
 	private static GPIO gpioDev = new GPIO();
@@ -54,14 +50,18 @@ public class MoteLightSensor {
 		initialiseTimers();
 
 		gpioDev.open();
-		gpioDev.configureOutput(IRIS.PIN_INT5, GPIO.OUT_SET);
+		gpioDev.configureOutput(TEMP_PWR_PIN, GPIO.OUT_SET);
 
 		adcDev.open(MDA100_ADC_CHANNEL_MASK, GPIO.NO_PIN/* use manual power */,
 				0/* no warmup */, 0/* no interval, sample as fast as possible */);
 
-		switchLED(GREEN_LED);
-
-
+		adcDev.setReadHandler(new DevCallback(null) {
+			public int invoke(int flags, byte[] data, int len, int info,
+					long time) {
+				return MoteSensor.onADC(flags, data, len, info, time);
+			}
+		});
+		LED.setState(YELLOW_LED, (byte)1);
 		timerADC.setAlarmBySpan(Time.toTickSpan(Time.SECONDS, 3));
 	}
 
@@ -78,15 +78,12 @@ public class MoteLightSensor {
 	}
 
 	private static void tcADC(byte param, long time) {
+		LED.setState(YELLOW_LED, (byte)0);
 		adcDev.read(Device.TIMED, 1, Device.ASAP);
 		timerADC.setAlarmBySpan(Time.toTickSpan(Time.MILLISECS,
 				ADC_SAMPLE_PERIOD));
 	}
 
-	private static void tcEventLED(byte param, long time) {
-		LED.setState(GREEN_LED, (byte) 1);
-	}
-	
 	private static void tcBroadcast(byte param, long time) {
 		radio.transmit(Device.ASAP | Radio.TXMODE_POWER_MIN, xmitNode, 0, 12, 0);
 		timerBroadcast.setAlarmBySpan(Time.toTickSpan(Time.SECONDS, 2));
@@ -100,11 +97,21 @@ public class MoteLightSensor {
 	// ================================================================================
 	// ================================================================================
 
-	public static int onLight(int flags, byte[] data, int len, int info,
+	public static int onADC(int flags, byte[] data, int len, int info,
 			long time) {
 		adcReadVal = Util.make16(data[1], data[0]);
-		toggleLED(RED_LED);
-		sendLogEntry(Log.LIGHT, adcReadVal);
+		if (gpioDev.doPin(GPIO.CTRL_READ,TEMP_PWR_PIN) != 0) { 
+			sendLogEntry(Log.TEMP, adcReadVal);
+			switchLED(GREEN_LED);
+		    gpioDev.configureOutput(LIGHT_PWR_PIN,GPIO.OUT_SET);
+		    gpioDev.configureOutput(TEMP_PWR_PIN,GPIO.OUT_CLR);
+		} else {
+			sendLogEntry(Log.LIGHT, adcReadVal);
+			switchLED(RED_LED);
+		    gpioDev.configureOutput(TEMP_PWR_PIN,GPIO.OUT_SET);
+		    gpioDev.configureOutput(LIGHT_PWR_PIN,GPIO.OUT_CLR);		
+		}
+		
 		return 0;
 	}
 
@@ -129,11 +136,11 @@ public class MoteLightSensor {
 	// ================================================================================
 	// ================================================================================
 
-	private static void sendLogEntry(int type, int info) {
+	private static void sendLogEntry(byte type, int info) {
 		Util.set32be(xmitSink, 12,
 				Time.fromTickSpan(Time.SECONDS, Time.currentTicks()));
 
-		xmitSink[16] = (byte) type;
+		xmitSink[16] = type;
 
 		if (type == Log.LIGHT || type == Log.TEMP) {
 			Util.set16be(xmitSink, 17, info);
@@ -190,7 +197,7 @@ public class MoteLightSensor {
 		
 		Util.set32be(xmitSink, 12, 0);
 		
-		xmitSink[16] = (byte) Log.LIGHT;
+		xmitSink[16] = Log.LIGHT;
 		
 		Util.set16be(xmitSink, 17, 0);
 	}
@@ -199,23 +206,17 @@ public class MoteLightSensor {
 		radio.setRxHandler(new DevCallback(null) {
 			public int invoke(int flags, byte[] data, int len, int info,
 					long time) {
-				return MoteLightSensor.onRx(flags, data, len, info, time);
+				return MoteSensor.onRx(flags, data, len, info, time);
 			}
 		});
 
 		radio.setTxHandler(new DevCallback(null) {
 			public int invoke(int flags, byte[] data, int len, int info,
 					long time) {
-				return MoteLightSensor.onTx(flags, data, len, info, time);
+				return MoteSensor.onTx(flags, data, len, info, time);
 			}
 		});
 
-		adcDev.setReadHandler(new DevCallback(null) {
-			public int invoke(int flags, byte[] data, int len, int info,
-					long time) {
-				return MoteLightSensor.onLight(flags, data, len, info, time);
-			}
-		});
 
 	}
 
@@ -223,7 +224,7 @@ public class MoteLightSensor {
 
 		teSendLog = new TimerEvent(null) {
 			public void invoke(byte param, long time) {
-				MoteLightSensor.tcSendLog(param, time);
+				MoteSensor.tcSendLog(param, time);
 			}
 		};
 		timerSendLog = new Timer();
@@ -231,7 +232,7 @@ public class MoteLightSensor {
 
 		teADC = new TimerEvent(null) {
 			public void invoke(byte param, long time) {
-				MoteLightSensor.tcADC(param, time);
+				MoteSensor.tcADC(param, time);
 			}
 		};
 		timerADC = new Timer();
@@ -240,21 +241,12 @@ public class MoteLightSensor {
 		
 		teBroadcast = new TimerEvent(null) {
 			public void invoke(byte param, long time) {
-				MoteLightSensor.tcBroadcast(param, time);
+				MoteSensor.tcBroadcast(param, time);
 			}
 		};
 		timerBroadcast = new Timer();
 		timerBroadcast.setCallback(teBroadcast);
 		
-
-		teEventLED = new TimerEvent(null) {
-			public void invoke(byte param, long time) {
-				MoteLightSensor.tcEventLED(param, time);
-			}
-		};
-		timerEventLED = new Timer();
-		timerEventLED.setCallback(teEventLED);
-
 	}
 
 	private static void switchLED(byte colour) {
@@ -276,32 +268,6 @@ public class MoteLightSensor {
 
 		}
 	}
-	
-	private static void toggleLED(byte colour) {
-		switch (colour) {
-		case YELLOW_LED:
-			if (LED.getState(YELLOW_LED) == (byte)0) {
-				LED.setState(YELLOW_LED, (byte)1);
-			} else {
-				LED.setState(YELLOW_LED, (byte)0);
-			}
-			break;
-		case GREEN_LED:
-			if (LED.getState(GREEN_LED) == (byte)0) {
-				LED.setState(GREEN_LED, (byte)1);
-			} else {
-				LED.setState(GREEN_LED, (byte)0);
-			}
-			break;
-		case RED_LED:
-			if (LED.getState(RED_LED) == (byte)0) {
-				LED.setState(RED_LED, (byte)1);
-			} else {
-				LED.setState(RED_LED, (byte)0);
-			}
-			break;
-		}
-	}
 
 	// ================================================================================
 	// ================================================================================
@@ -312,8 +278,8 @@ public class MoteLightSensor {
 	// ================================================================================
 
 	class Log {
-		static final int TEMP = 1;
-		static final int LIGHT = 2;
+		static final byte TEMP = (byte) 1;
+		static final byte LIGHT = (byte) 2;
 	}
 
 }
