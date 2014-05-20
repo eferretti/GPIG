@@ -173,7 +173,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 		
 		Iterator<SensorObserver> it = observers.iterator();
 		while (it.hasNext()) {
-			if(!it.next().update(id, lastReading))
+			if(!it.next().update(id, lastReading.intValue()))
 			{
 				System.out.println("Error Sensor Reading not stored.");
 			}

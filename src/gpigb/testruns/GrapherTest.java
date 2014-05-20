@@ -36,22 +36,28 @@ public class GrapherTest {
 			
 //		Sensor<Double> s1 = new PortSensor();
 //		final InMemoryStore st = new InMemoryStore();
-		Analyser aRTNull = new RTNullAnalyser();
+//		Analyser aRTNull = new RTNullAnalyser();
 //		TestAppGUI rState = new TestAppGUI();
 		
-//		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.RTNullAnalyser");
-//		
-//		Analyser aRTNull = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
+		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.RTNullAnalyser");
+		
+		Analyser aRTNull = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
 		
 		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.PortSensor");
 		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
+		Sensor<Double> s2 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
+		Sensor<Double> s3 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
+		Sensor<Double> s4 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
 		
 		
 		Integer stInMemID = stMgr.getModuleIDByName("gpigb.store.InMemoryStore");
 		final Store st = stMgr.getObjectByID(stMgr.createObjectOfModule(stInMemID)).get();
 		
 		Integer rStateID = rMgr.getModuleIDByName("gpigb.report.ReporterPlotRTSmart");
-		Reporter rState = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
+		Reporter rState1 = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
+		Reporter rState2 = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
+		Reporter rState3 = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
+		Reporter rState4 = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
 		
 		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr.getAvailableObjects(), rMgr.getAvailableObjects(), stMgr.getAvailableObjects(), seMgr.getAvailableObjects());
 		
@@ -61,9 +67,9 @@ public class GrapherTest {
 		s1.setConfig(config, null, null, null, null);
 		
 			
-		config = rState.getConfigSpec();
+		config = rState1.getConfigSpec();
 		configHandler.getConfiguration(config);
-		rState.setConfig(config, aMgr, null, seMgr, null);
+		rState1.setConfig(config, aMgr, null, seMgr, null);
 		
 		config = aRTNull.getConfigSpec();
 		configHandler.getConfiguration(config);
