@@ -58,6 +58,7 @@ public class TestAppGUI implements Reporter{
 	
 	
 	private StrongReference<Analyser> analyser;
+	private StrongReference<Reporter> systemSignal;
 
 	/**
 	 * Create the application.

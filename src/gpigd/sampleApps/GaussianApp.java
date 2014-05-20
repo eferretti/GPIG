@@ -12,17 +12,19 @@ public class GaussianApp {
 	private int currentSD;
 	private int currentMean;
 	private int[] gaussianSD;
-	private ServerSocket serverSocket;
-	private Socket clientSocket;
+	private ServerSocket serverSocket, controlSocket;
+	private Socket clientSocket, controlSocketClient ;
 	private PrintWriter outStream;
-	private BufferedReader inStream;
-	private int portNumber;
+	private BufferedReader controlStream;
+	private int portNumberOut;
+	private int portNumberIn;
 	@SuppressWarnings("unchecked")
 
 	
-	public GaussianApp(int portNumber, int[] SD, int[] mean)
+	public GaussianApp(int portNumberOut, int portNumberIn, int[] SD, int[] mean)
 	{
-		this.portNumber = portNumber;
+		this.portNumberOut = portNumberOut;
+		this.portNumberIn = portNumberIn;
 		currentSD = 0;
 		currentMean = 0;
 		gaussianSD = SD;
@@ -32,13 +34,19 @@ public class GaussianApp {
 	public void runSensor()
 	{
 		try {
-            serverSocket = new ServerSocket(portNumber);
+			
+            controlSocket = new ServerSocket(portNumberIn);
+            controlSocketClient = controlSocket.accept();
+            controlStream = new BufferedReader(new InputStreamReader(controlSocketClient.getInputStream()));
+            controlSocketClient.setSoTimeout(250);
+            
+            serverSocket = new ServerSocket(portNumberOut);
             clientSocket = serverSocket.accept();    
             outStream = new PrintWriter(clientSocket.getOutputStream(), true);                  
-            inStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            
-        } catch (IOException e) {
            
+           
+        } catch (IOException e) {
+           System.out.println("Control Socket Fail");
         }
 		int val;
 		double rndNum;
@@ -60,8 +68,21 @@ public class GaussianApp {
 			    {
 			    	if(currentSD == 2)
 			    	{
-			    		currentSD = 2;
-			    		currentMean = 2;
+			    		try {
+			    			System.out.println("Checking control Stream");
+							if(controlStream.readLine() != null)
+							{
+								System.out.println("Control Signal Recived, Resetting...");
+								currentSD = 0;
+								currentMean = 0;
+							}else {
+								currentSD = 2;
+								currentMean = 2;
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 			    	}else {
 			    		System.out.println("Moving");
 			    		currentSD++;
