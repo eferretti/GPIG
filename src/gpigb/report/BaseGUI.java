@@ -89,7 +89,7 @@ public class BaseGUI {
 		gbc_tf1M.gridy = 1;
 		frmHumsBase.getContentPane().add(tf1M, gbc_tf1M);
 		tf1M.setColumns(10);
-		tf1M.setText("0");
+		tf1M.setText("3");
 		tf1M.setHorizontalAlignment(JTextField.CENTER);
 		
 		tf1F = new JTextField();
@@ -102,7 +102,7 @@ public class BaseGUI {
 		gbc_tf1F.gridx = 3;
 		gbc_tf1F.gridy = 1;
 		frmHumsBase.getContentPane().add(tf1F, gbc_tf1F);
-		tf1F.setText("0");
+		tf1F.setText("4");
 		tf1F.setHorizontalAlignment(JTextField.CENTER);
 		
 		JLabel lblApp2 = new JLabel("Application 2");
@@ -123,7 +123,7 @@ public class BaseGUI {
 		gbc_tf2M.gridx = 2;
 		gbc_tf2M.gridy = 3;
 		frmHumsBase.getContentPane().add(tf2M, gbc_tf2M);
-		tf2M.setText("0");
+		tf2M.setText("1");
 		tf2M.setHorizontalAlignment(JTextField.CENTER);
 		
 		tf2F = new JTextField();
@@ -135,7 +135,7 @@ public class BaseGUI {
 		gbc_tf2F.gridx = 3;
 		gbc_tf2F.gridy = 3;
 		frmHumsBase.getContentPane().add(tf2F, gbc_tf2F);
-		tf2F.setText("0");
+		tf2F.setText("7");
 		tf2F.setHorizontalAlignment(JTextField.CENTER);
 		
 		frmHumsBase.pack();

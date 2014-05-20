@@ -38,8 +38,10 @@ public class PortSensorHumsLocal {
 		TestAppGUI rState = new TestAppGUI();
 		
 		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.MeanAnalyser");
+		Integer aStDeID = aMgr.getModuleIDByName("gpigb.analyse.StandDevAnalyser");
 		
 		Analyser aMean = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
+		Analyser aSD = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aStDeID)).get();
 		
 		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.PortSensor");
 		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
@@ -56,6 +58,10 @@ public class PortSensorHumsLocal {
 		GUIConfigHandler configHandler = new GUIConfigHandler(aMgr.getAvailableObjects(), rMgr.getAvailableObjects(), stMgr.getAvailableObjects(), seMgr.getAvailableObjects());
 		
 		Map<String, ConfigurationValue> config;
+		
+		config = aSD.getConfigSpec();
+		configHandler.getConfiguration(config);
+		aSD.setConfig(config, null, null, null, stMgr);
 		
 		config = aMean.getConfigSpec();
 		configHandler.getConfiguration(config);
