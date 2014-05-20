@@ -48,19 +48,16 @@ public class EmailReporter implements Reporter{
 
 	@Override
 	public void setID(int newID) {
-		// TODO Auto-generated method stub
 		this.id =  newID;
 	}
 
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
 		return this.id;
 	}
 
 	@Override
 	public int getConfigurationStepNumber() {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 

@@ -10,6 +10,8 @@ import gpigb.report.Reporter;
 import gpigb.sense.Sensor;
 import gpigb.store.Store;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,8 +23,10 @@ public class SpikeDetectorAnalyser implements RealTimeAnalyser{
 	private LinkedList<Double> movAvgDiff;
 	private LinkedList<Integer> rawData;
 	public StrongReference<Store> store;
-	private static final int WINDOW_SIZE = 5;
-	private static final int ALPHA = 4;
+	private static final int WINDOW_SIZE = 4;
+	private static final int ALPHA = 3;
+	
+	private StrongReference<Reporter> reporter;
 	
 	public SpikeDetectorAnalyser() {
 		movAvgDiff = new LinkedList<>();
@@ -41,22 +45,24 @@ public class SpikeDetectorAnalyser implements RealTimeAnalyser{
 	}
 
 	@Override
-	public HashMap<String, ConfigurationValue> getConfigSpec() 
-	{
+	public Map<String, ConfigurationValue> getConfigSpec() {
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
-		configMap.put("Store", new ConfigurationValue(ValueType.Store, 0));
+		configMap.put("Reporter", new ConfigurationValue(ValueType.Reporter, 0));
 		return configMap;
 	}
-	
-	public boolean setConfig(Map<String, ConfigurationValue> newConfig, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
-	{
+
+	@Override
+	public boolean setConfig(Map<String, ConfigurationValue> newConfig,
+			ComponentManager<Analyser> aMgr,ComponentManager<Reporter> rMgr,
+			ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr) {
 		try
 		{
-			this.store = stMgr.getObjectByID(newConfig.get("Store").intValue);
+			this.reporter = rMgr.getObjectByID(newConfig.get("Reporter").intValue);
 			return true;
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -66,72 +72,76 @@ public class SpikeDetectorAnalyser implements RealTimeAnalyser{
 		return false;
 	}
 	
-
 	@Override
 	public boolean analyse(RecordSet<?> input) {
 		return false;
 	}
-	
 
 	@Override
 	public boolean update(int sensorID, Integer reading) {
 		
-		/* if enough data acquired use moving average to smoothen the data and then check if the current reading is an outlier */
-		if(rawData.size() >= WINDOW_SIZE) {
-			    rawData.addLast(reading);
-				ListIterator<Integer> itRaw = rawData.listIterator(rawData.size() - WINDOW_SIZE);
-				Integer sum = 0;
-				while(itRaw.hasNext()) {
-					sum += itRaw.next();
+		Double total = 0.;
+		Double mean =  0.;
+		Double sd = 0.;
+		
+		RecordSet<Integer> rs = new RecordSet<Integer>(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), sensorID);
+		rs.addRecord(new SensorRecord<Integer>(sensorID, reading));
+		List<RecordSet<?>> ls = new ArrayList<>();
+		ls.add(rs);
+		reporter.get().generateReport(ls);
+		
+		// if enough data acquired use moving average to smoothen the data and then check if the current reading is an outlier 
+		
+		
+		if(movAvgDiff.size() >= WINDOW_SIZE) {
+			    
+				if(movAvgDiff.size() > WINDOW_SIZE) movAvgDiff.removeFirst();
+			    //Calculate moving average of the last windows in the X (data)
+				for(Integer data : rawData) {
+					total = total + data;				
 				}
-				Double m_avg = reading - ((double) sum / WINDOW_SIZE);
-				movAvgDiff.addLast( reading - m_avg);
-				Double total = 0.;
-				Double mean =  0.;
-				Double sd = 0.;
-	
-	
-				//Calculate mean
+				Double m_avg = ((double) total / rawData.size());
+				
+				total = 0.;
+				//Calculate mean in X(t) - Y(t), where Y(t) is the smoother data (the moving average)
 				for(Double dataDiff : movAvgDiff) {
 					total = total + dataDiff;				
 				}
 				mean = total / movAvgDiff.size();
-				
 				//Calculate SD
 				for(Double dataDiff : movAvgDiff) {
 					sd = sd + Math.pow((dataDiff- mean), 2);
 				}
 				sd = Math.sqrt(sd / (movAvgDiff.size() - 1));
+
 				if(Math.abs(reading - m_avg) > ALPHA * sd) {
-					/* need to change to some Reporter .. which also means that we need to have config for that reporter (not only store) */
 					System.out.println("SPIKE DETECTED!");
 				}
+				movAvgDiff.addLast(reading - m_avg);
+				if(movAvgDiff.size() > WINDOW_SIZE) movAvgDiff.removeFirst();
 			}
-		/* if not enough data acquired use simple method: if current reading is above mean + sd or below mean - sd it's a spike */
-		else if (rawData.size() > 2) { 
-			Double total = 0.;
-			Double mean =  0.;
-			Double sd = 0.;
+		
+		// if not enough data acquired use simple method: if current reading is above mean + sd or below mean - sd it's a spike 
+		else  if(rawData.size() > 2){ 
 			
 			//Calculate mean
-			for(Double dataDiff : movAvgDiff) {
-				total = total + dataDiff;				
+			for(Integer data : rawData) {
+				total = total + data;				
 			}
-			mean = total / movAvgDiff.size();
-			
+			mean = (double) total / rawData.size();
+			movAvgDiff.addLast( reading - mean);
 			//Calculate SD
-			for(Double dataDiff : movAvgDiff) {
-				sd = sd + Math.pow((dataDiff- mean), 2);
+			for(Integer data : rawData) {
+				sd = sd + Math.pow((data- mean), 2);
 			}
-			sd = Math.sqrt(sd / (movAvgDiff.size() - 1));
-			
+			sd = Math.sqrt(sd / (rawData.size() - 1));
 			if(reading >= mean + sd || reading <= mean - sd) {
-				/* need to change to some Reporter .. which also means that we need to have config for that reporter (not only store) */
 				System.out.println("SPIKE DETECTED!");
 			}
-			rawData.add(reading);	
 		}
 		
+		rawData.addLast(reading);
+		if(rawData.size() > WINDOW_SIZE) rawData.removeFirst();
 		
 		return false;
 	}
