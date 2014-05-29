@@ -205,7 +205,7 @@ public class JarFileComponentManager<Interface> implements ComponentManager<Inte
 			ret = IDGenerator.getNextID();
 			if(instance instanceof Configurable)
 				((Configurable)instance).setID(ret);
-			instances.put(new InstanceSummary(ret, moduleID, ""), new StrongReference<Interface>(instance));
+			instances.put(new InstanceSummary(ret, moduleID, instance.getClass().getSimpleName()), new StrongReference<Interface>(instance));
 		}
 		catch (Exception e) {
 			System.err.println("Failed to instantiate object of type " + moduleID + "\n\t" + e.getLocalizedMessage());

@@ -55,6 +55,7 @@ public class RTNullAnalyser implements RealTimeAnalyser {
 	public Map<String, ConfigurationValue> getConfigSpec() {
 		HashMap<String, ConfigurationValue> configMap = new HashMap<>();
 		configMap.put("Reporter", new ConfigurationValue(ValueType.Reporter, 0));
+		configMap.put("Sensor", new ConfigurationValue(ValueType.Sensor, 0));
 		return configMap;
 	}
 
@@ -65,6 +66,7 @@ public class RTNullAnalyser implements RealTimeAnalyser {
 		try
 		{
 			this.reporter = rMgr.getObjectByID(newConfig.get("Reporter").intValue);
+			seMgr.getObjectByID(newConfig.get("Sensor").intValue).get().registerObserver(this);
 			return true;
 		}
 		catch(Exception e)

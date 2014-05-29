@@ -96,8 +96,9 @@ public class EmailReporter implements Reporter{
     Port for TLS/STARTTLS: 587
     */
 	@Override
-	public void generateReport(List<RecordSet<?>> data) {
-
+	public void generateReport(final List<RecordSet<?>> data) {
+		new Thread(new Runnable(){
+			public void run(){
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
@@ -143,6 +144,7 @@ public class EmailReporter implements Reporter{
 				    System.out.println("handle permission problems here");
 				}
 		    System.out.println("either no parent directories there the missing directories have been created");
+		    System.out.println(file.getAbsolutePath());
 			if (file.createNewFile() || file.isFile()) {
 				System.out.println("ready to write content");
 				file.createNewFile();
@@ -202,6 +204,8 @@ public class EmailReporter implements Reporter{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+			}
+		}).start();
 		
 	}
 }

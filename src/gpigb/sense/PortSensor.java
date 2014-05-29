@@ -33,7 +33,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	public PortSensor()
 	{
 		hostName = "localhost";
-		portNumber = 4440;
+		portNumber = 1111;
 		observers = new ArrayList<SensorObserver>();
 		new Thread(this).start();
 	}
@@ -100,7 +100,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 	}
 	
 	@Override
-	public synchronized Map<String, ConfigurationValue> getConfigSpec()
+	public Map<String, ConfigurationValue> getConfigSpec()
 	{ 
 		HashMap<String, ConfigurationValue> configSpec = new HashMap<>();
 		
@@ -110,7 +110,7 @@ public class PortSensor implements Sensor<Double>, Runnable {
 		return configSpec;
 	}
 	
-	public synchronized boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
+	public boolean setConfig(Map<String, ConfigurationValue> newSpec, ComponentManager<Analyser> aMgr, ComponentManager<Reporter> rMgr, ComponentManager<Sensor> seMgr, ComponentManager<Store> stMgr)
 	{
 		
 		try {

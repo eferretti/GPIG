@@ -29,10 +29,10 @@ public class HUMSSystemImpl extends UnicastRemoteObject implements HUMSSystem
 	public HUMSSystemImpl() throws RemoteException
 	{
 		super(0);
-		aMgr.addModuleDirectory("./Modules/");
-		rMgr.addModuleDirectory("./Modules/");
-		seMgr.addModuleDirectory("./Modules/");
-		stMgr.addModuleDirectory("./Modules/");
+		aMgr.addModuleDirectory("~/HUMS_Modules/");
+		rMgr.addModuleDirectory("~/HUMS_Modules/");
+		seMgr.addModuleDirectory("~/HUMS_Modules/");
+		stMgr.addModuleDirectory("~/HUMS_Modules/");
 		
 		aMgr.refreshModules();
 		rMgr.refreshModules();

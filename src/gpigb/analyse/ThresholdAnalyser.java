@@ -70,6 +70,7 @@ public class ThresholdAnalyser implements RealTimeAnalyser
 		configSpec.put("Min", new ConfigurationValue(ValueType.Integer, lowerThreshold));
 		configSpec.put("Max", new ConfigurationValue(ValueType.Integer, upperThreshold));
 		configSpec.put("Reporter", new ConfigurationValue(ValueType.Reporter, 0));
+		configSpec.put("Sensor", new ConfigurationValue(ValueType.Sensor, 0));
 		return configSpec;
 	}
 	
@@ -80,6 +81,7 @@ public class ThresholdAnalyser implements RealTimeAnalyser
 			this.lowerThreshold = (Integer) newSpec.get("Min").intValue;
 			this.upperThreshold = (Integer) newSpec.get("Max").intValue;
 			this.reporter = rMgr.getObjectByID(newSpec.get("Reporter").intValue);
+			seMgr.getObjectByID(newSpec.get("Sensor").intValue).get().registerObserver(this);
 			return true;
 		}
 		catch(Exception e)
