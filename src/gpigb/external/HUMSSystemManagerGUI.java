@@ -465,7 +465,7 @@ public class HUMSSystemManagerGUI extends JFrame implements ActionListener
 					try
 					{
 						int id = ((InstanceSummary)cboReporterInstances.getSelectedItem()).instanceID;
-						Map<String, ConfigurationValue> config = system.getAnalyserConfig(id);
+						Map<String, ConfigurationValue> config = system.getReporterConfig(id);
 						new GUIConfigHandler(system.listAnalysers(), system.listReporters(), system.listStores(), system.listSensors()).getConfiguration(config);
 						system.setReporterConfig(id, config);
 						refresh();

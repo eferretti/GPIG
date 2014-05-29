@@ -50,7 +50,7 @@ public class ReporterPlotRTSmart implements Reporter
 		configMap.put("Title", new ConfigurationValue(ValueType.String, "Real Time Graph"));
 		configMap.put("Width", new ConfigurationValue(ValueType.Integer, new Integer(900)));
 		configMap.put("Height", new ConfigurationValue(ValueType.Integer, new Integer(500)));
-		configMap.put("AxisLabel", new ConfigurationValue(ValueType.String, "amount of fucks I give LOL"));
+		configMap.put("AxisLabel", new ConfigurationValue(ValueType.String, "Default Label"));
 		return configMap;
 	}
 	
