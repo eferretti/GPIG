@@ -3,6 +3,7 @@ package gpigb.testruns;
 import gpigb.analyse.Analyser;
 import gpigb.analyse.NullAnalyser;
 import gpigb.analyse.RTNullAnalyser;
+import gpigb.analyse.RealTimeAnalyser;
 import gpigb.classloading.IDGenerator;
 import gpigb.classloading.JarFileComponentManager;
 import gpigb.configuration.ConfigurationValue;
@@ -41,7 +42,7 @@ public class GraphAvgCPULoad {
 
 			
 		Integer analID = aMgr.getModuleIDByName("gpigb.analyse.RTNullAnalyser");	
-		Analyser aRTNull = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(analID)).get();
+		RealTimeAnalyser aRTNull = (RealTimeAnalyser) aMgr.getObjectByID(aMgr.createObjectOfModule(analID)).get();
 		
 		Integer cpuSensID = seMgr.getModuleIDByName("gpigb.sense.averageSystemCPULoadSensor");
 		Sensor<Double> cpuSens = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(cpuSensID)).get();
@@ -69,7 +70,7 @@ public class GraphAvgCPULoad {
 		aRTNull.setConfig(config, null, rMgr, null, stMgr);
 		
 		cpuSens.registerObserver(storMem);
-		cpuSens.registerObserver((SensorObserver) aRTNull);
+		cpuSens.registerObserver(aRTNull);
 		
 		while (true) {	
 			cpuSens.poll();

@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,8 +44,8 @@ public class EmailReporter implements Reporter{
 	private String subject;
 	private String fromEmail;
 	private String password;
-
-	
+	Calendar whenToSend = null;
+	private List<RecordSet<?>> bufferedData = new ArrayList<>();
 
 	@Override
 	public void setID(int newID) {
@@ -97,6 +98,17 @@ public class EmailReporter implements Reporter{
     */
 	@Override
 	public void generateReport(final List<RecordSet<?>> data) {
+		bufferedData.addAll(data);
+		
+		if(whenToSend == null) {
+			whenToSend = Calendar.getInstance();
+			whenToSend.add(Calendar.SECOND, 5);	
+			return;
+		}
+		else if( Calendar.getInstance().before(whenToSend)) {
+			return;
+		}
+
 		new Thread(new Runnable(){
 			public void run(){
 		Properties props = new Properties();
@@ -114,7 +126,7 @@ public class EmailReporter implements Reporter{
 		body.append("You have just recieved your latest report!");
 		body.append(System.getProperty("line.separator"));
 		body.append(System.getProperty("line.separator"));
-		for(RecordSet<?> dataItem : data) {
+		for(RecordSet<?> dataItem : bufferedData) {
 			body.append(dataItem.toString());
 			body.append(System.getProperty("line.separator"));
 		}
@@ -196,6 +208,11 @@ public class EmailReporter implements Reporter{
          Transport.send(msg);
          file.delete();
          System.out.println("E-mail Sent Successfully with attachment!!");
+         
+         whenToSend = Calendar.getInstance();
+		 whenToSend.add(Calendar.SECOND, 5);
+		 bufferedData.clear();
+		 
 	      }catch (MessagingException e) {
 	         e.printStackTrace();
 	      } catch (UnsupportedEncodingException e) {

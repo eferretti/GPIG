@@ -3,6 +3,8 @@ package gpigb.testruns;
 import gpigb.analyse.Analyser;
 import gpigb.analyse.NullAnalyser;
 import gpigb.analyse.RTNullAnalyser;
+import gpigb.analyse.RealTimeAnalyser;
+import gpigb.analyse.RealTimeGraphAnalyser;
 import gpigb.classloading.IDGenerator;
 import gpigb.classloading.JarFileComponentManager;
 import gpigb.configuration.ConfigurationValue;
@@ -40,20 +42,17 @@ public class EmailerTest {
 			
 //		Sensor<Double> s1 = new PortSensor();
 //		final InMemoryStore st = new InMemoryStore();
-		Analyser aRTNull = new NullAnalyser();
+
 //		TestAppGUI rState = new TestAppGUI();
 		
-//		Integer aMeanID = aMgr.getModuleIDByName("gpigb.analyse.RTNullAnalyser");
-//		
-//		Analyser aRTNull = (Analyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aMeanID)).get();
+		Integer aRTNullID = aMgr.getModuleIDByName("gpigb.analyse.RTNullAnalyser");		
+		RealTimeAnalyser aRTNull = (RealTimeAnalyser) aMgr.getObjectByID(aMgr.createObjectOfModule(aRTNullID)).get();
 		
-		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.PortSensor");
-		Sensor<Double> s1 = (Sensor<Double>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
-		
+		Integer sPort1ID = seMgr.getModuleIDByName("gpigb.sense.RandomValueSensor");
+		Sensor<Integer> s1 = (Sensor<Integer>) seMgr.getObjectByID(seMgr.createObjectOfModule(sPort1ID)).get();
 		
 		Integer stInMemID = stMgr.getModuleIDByName("gpigb.store.InMemoryStore");
 		final Store st = stMgr.getObjectByID(stMgr.createObjectOfModule(stInMemID)).get();
-		
 		
 		Integer rStateID = rMgr.getModuleIDByName("gpigb.report.EmailReporter");
 		Reporter rState = (Reporter) rMgr.getObjectByID(rMgr.createObjectOfModule(rStateID)).get();
@@ -64,7 +63,6 @@ public class EmailerTest {
 		config = s1.getConfigSpec();
 		configHandler.getConfiguration(config);
 		s1.setConfig(config, null, null, null, null);
-		
 			
 		config = rState.getConfigSpec();
 		configHandler.getConfiguration(config);
@@ -75,8 +73,8 @@ public class EmailerTest {
 		aRTNull.setConfig(config, null, rMgr, null, stMgr);
 		
 		s1.registerObserver(st);
-		
-		
+		s1.registerObserver(aRTNull);
+		/*
 		while (true)
 		{	
 			try
@@ -92,5 +90,7 @@ public class EmailerTest {
 			catch(Exception e){}
 			
 		}
+		*/
+		
 	}
 }

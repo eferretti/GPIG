@@ -37,10 +37,11 @@ public class RandomValueSensor implements Sensor<Integer>, Runnable
 	{
 		while (true) {
 			currentReading = this.generateRandom(min, max);
+			System.out.println("Notyfing!");
 			notifyObservers();
 			try {
 				// sleep for 2 seconds
-				Thread.sleep(2000);
+				Thread.sleep(200);
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();
