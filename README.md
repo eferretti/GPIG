@@ -1,4 +1,4 @@
 GPIG
 ====
 
-Horrible Evil Module of Death
+Implementation of a generic Health and Usage Monitoring System
